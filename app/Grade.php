@@ -5,17 +5,22 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Grade extends Model
-{
+{   
+    //This model is for the courses 
+    protected $table = "grades";
+
+
     protected $fillable = [
-        'class_name',
-        'class_numeric',
-        'teacher_id',
-        'class_description'
+        'course_code',          
+        'course_name' ,        
+        'course_description',          
+        'currency',           
+        'fees'
     ];
 
     public function students()
     {
-        return $this->hasMany(Student::class,'class_id');
+        return $this->hasMany(Student::class);
     }
 
     public function subjects()

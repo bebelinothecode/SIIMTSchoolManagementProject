@@ -24,11 +24,11 @@
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                        Roll Number :
+                        Student Index Number :
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <span class="text-gray-600 font-bold">{{ $student->roll_number }}</span>
+                    <span class="text-gray-600 font-bold">{{ $student->index_number ?? 'Index number not found' }}</span>
                 </div>
             </div>
             <div class="md:flex md:items-center mb-6">
@@ -74,11 +74,11 @@
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                        Permanent Address :
+                        Student Type :
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <span class="text-gray-600 font-bold">{{ $student->permanent_address }}</span>
+                    <span class="text-gray-600 font-bold">{{ $student->student_type }}</span>
                 </div>
             </div>
             <div class="md:flex md:items-center mb-6">
@@ -94,11 +94,40 @@
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                        Admission Date :
+                    </label>
+                </div>
+                <div class="md:w-2/3">
+                    <span class="text-gray-600 font-bold">{{ $student->created_at }}</span>
+                </div>
+            </div>
+            @php
+            use Carbon\Carbon;
+
+            $date = Carbon::parse($student->created_at);
+
+            $newDate = $date->addYears(4);
+
+            $monthName = $newDate->format('F Y'); // Returns "November"
+            @endphp
+            <div class="md:flex md:items-center mb-6">
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                        Expected Graduation Month :
+                    </label>
+                </div>
+                <div class="md:w-2/3">
+                    <span class="text-gray-600 font-bold">{{ $monthName }}</span>
+                </div>
+            </div>
+            <div class="md:flex md:items-center mb-6">
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
                         Student Parent :
                     </label>
                 </div>
                 <div class="md:w-2/3 block text-gray-600 font-bold">
-                    <span class="text-gray-600 font-bold">{{ $student->parent->user->name }}</span>
+                    <span class="text-gray-600 font-bold">{{ $student->user->parent }}</span>
                 </div>
             </div>
             <div class="md:flex md:items-center mb-6">
@@ -108,7 +137,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3 block text-gray-600 font-bold">
-                    <span class="text-gray-600 font-bold">{{ $student->parent->user->email }}</span>
+                    {{-- <span class="text-gray-600 font-bold">{{ $student->parent->user->email }}</span> --}}
                 </div>
             </div>
             <div class="md:flex md:items-center mb-6">
@@ -118,7 +147,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3 block text-gray-600 font-bold">
-                    <span class="text-gray-600 font-bold">{{ $student->parent->phone }}</span>
+                    {{-- <span class="text-gray-600 font-bold">{{ $student->parent->phone }}</span> --}}
                 </div>
             </div>
             <div class="md:flex md:items-center mb-6">
@@ -128,7 +157,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3 block text-gray-600 font-bold">
-                    <span class="text-gray-600 font-bold">{{ $student->parent->current_address }}</span>
+                    {{-- <span class="text-gray-600 font-bold">{{ $student->parent->current_address }}</span> --}}
                 </div>
             </div>
 

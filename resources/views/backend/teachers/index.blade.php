@@ -13,11 +13,10 @@
                 </a>
             </div>
         </div>
-        <div class="mt-8 bg-white rounded border-b-4 border-gray-300">
+        {{-- <div class="mt-8 bg-white rounded border-b-4 border-gray-300">
             <div class="flex flex-wrap items-center uppercase text-sm font-semibold bg-gray-300 text-gray-600 rounded-tl rounded-tr">
                 <div class="w-2/12 px-4 py-3">Name</div>
                 <div class="w-3/12 px-4 py-3">Email</div>
-                <div class="w-3/12 px-4 py-3">Subject Code</div>
                 <div class="w-2/12 px-4 py-3">Phone</div>
                 <div class="w-2/12 px-4 py-3 text-right">Action</div>
             </div>
@@ -25,11 +24,6 @@
                 <div class="flex flex-wrap items-center text-gray-700 border-t-2 border-l-4 border-r-4 border-gray-300">
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $teacher->user->name }}</div>
                     <div class="w-3/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $teacher->user->email }}</div>
-                    <div class="w-3/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">
-                        @foreach ($teacher->subjects as $subject)
-                            <span class="bg-gray-200 text-sm mr-1 mb-1 px-2 border rounded-full">{{ $subject->subject_code }}</span>
-                        @endforeach
-                    </div>
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $teacher->phone }}</div>
                     <div class="w-2/12 flex items-center justify-end px-3">
                         <a href="{{ route('teacher.edit',$teacher->id) }}">
@@ -42,6 +36,63 @@
                 </div>
             @endforeach
         </div>
+        <div class="mt-8">
+            {{ $teachers->links() }}
+        </div> --}}
+        <div class="mt-6 bg-white rounded-lg shadow">
+            <table class="w-full table-auto">
+                <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <tr>
+                        <th class="py-3 px-6 text-left">Name</th>
+                        <th class="py-3 px-6 text-left">Email</th>
+                        <th class="py-3 px-6 text-left">Phone</th>
+                        <th class="py-3 px-6 text-left">Subject</th>
+                        <th class="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    @forelse ($teachers as $teacher)
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $teacher->user->name }}</td>
+                        <td class="py-3 px-6 text-left">{{ $teacher->user->email }}</td>
+                        {{-- <td class="py-3 px-6 text-left">{{ $teacher->user->email ?? 'N/A' }}</td> --}}
+                        <td class="py-3 px-6 text-left">{{ $teacher->phone }}</td>
+                        <td class="py-3 px-6 text-left">{{ $teacher->subjects->subject_name ?? "No subject found" }}</td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="{{ route('teacher.profile', $teacher->id) }}" class="text-blue-600 hover:underline">Profile</a>
+                            <a href="{{ route('assign.subject', $teacher->id) }} " class="ml-4 text-green-600 hover:underline">Assign Subject</a>
+                            <form action="{{route('teacher.delete', $teacher->id)}} " method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
+                            </form>
+                            @if (session('success'))
+                                <script>
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: '{{ session('success') }}',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    });
+                                </script>
+                            @endif 
+                            {{-- <a href="{{route('student.print', $student->id)}}" 
+                                target="_blank"
+                                class="ml-4 text-green-600 hover:underline">
+                                Print Admission Letter
+                            </a> --}}
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-3 px-6 text-center text-gray-500">No students found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Pagination -->
         <div class="mt-8">
             {{ $teachers->links() }}
         </div>

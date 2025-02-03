@@ -8,17 +8,48 @@ use App\Teacher;
 use Illuminate\Http\Request;
 
 class GradeController extends Controller
-{
+{   
+    //This controller is for subjects
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $classes = Grade::withCount('students')->latest()->paginate(10);
+        // $classes = Grade::withCount('students')->latest()->paginate(10);
+        $query = Subject::with('course');
+
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+    
+            // Parse the search term into key-value pairs
+            $filters = $this->parseSearchTerm($searchTerm);
+    
+            // Apply filters based on the parsed key-value pairs
+            foreach ($filters as $key => $value) {
+                $query->where($key, 'like', '%' . $value . '%');
+            }
+        }
+
+        $classes = $query->latest()->paginate(10);
 
         return view('backend.classes.index', compact('classes'));
+    }
+
+    private function parseSearchTerm($searchTerm)
+    {
+        $filters = [];
+        $terms = explode(' and ', $searchTerm);
+
+        foreach ($terms as $term) {
+            if (str_contains($term, '=')) {
+                list($key, $value) = explode('=', $term, 2);
+                $filters[trim($key)] = trim($value);
+            }
+        }
+
+        return $filters;
     }
 
     /**
@@ -28,9 +59,11 @@ class GradeController extends Controller
      */
     public function create()
     {
-        $teachers = Teacher::latest()->get();
+        $teachers = Teacher::with('user')->get();
+
+        $courses = Grade::all();
         
-        return view('backend.classes.create', compact('teachers'));
+        return view('backend.classes.create', compact('teachers', 'courses'));
     }
 
     /**
@@ -41,21 +74,27 @@ class GradeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'class_name'        => 'required|string|max:255|unique:grades',
-            'class_numeric'     => 'required|numeric',
-            'teacher_id'        => 'required|numeric',
-            'class_description' => 'required|string|max:255'
+        // dd($request->all());
+
+        $validatedData = $request->validate([
+            'subject_name'     => 'required',
+            'subject_code'     => 'required',
+            // 'course_id'        => 'required',
+            'level'            => 'required',
+            'semester'         => 'required',
+            'credit_hours'     => 'required',
         ]);
 
-        Grade::create([
-            'class_name'        => $request->class_name,
-            'class_numeric'     => $request->class_numeric,
-            'teacher_id'        => $request->teacher_id,
-            'class_description' => $request->class_description
+        Subject::create([
+            'subject_name'  => $validatedData['subject_name'],
+            'subject_code'  => $validatedData['subject_code'],
+            // 'course_id'     => $validatedData['course_id'],
+            'level'         => $validatedData['level'],
+            'semester'      => $validatedData['semester'],
+            'credit_hours'  => $validatedData['credit_hours'],
         ]);
 
-        return redirect()->route('classes.index');
+        return redirect()->back()->with('success', 'Subject created successfully!');
     }
 
     /**
@@ -77,10 +116,13 @@ class GradeController extends Controller
      */
     public function edit($id)
     {
-        $teachers = Teacher::latest()->get();
-        $class = Grade::findOrFail($id);
+        $subjects = Subject::findOrFail($id);
 
-        return view('backend.classes.edit', compact('class','teachers'));
+        $teachers = Teacher::with('user')->get();
+
+        $courses = Grade::all();
+
+        return view('backend.classes.edit', compact('subjects','teachers','courses'));
     }
 
     /**
@@ -92,23 +134,33 @@ class GradeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'class_name'        => 'required|string|max:255|unique:grades,class_name,'.$id,
-            'class_numeric'     => 'required|numeric',
-            'teacher_id'        => 'required|numeric',
-            'class_description' => 'required|string|max:255'
+        // dd($request->all());
+
+        $validatedData = $request->validate([
+            'subject_name'  => 'required',
+            'subject_code'  => 'required',
+            'course_id'     => 'required',
+            'level'         => 'required',
+            'semester'      => 'required',
+            'credit_hours'  => 'required'
         ]);
 
-        $class = Grade::findOrFail($id);
+        // dd($validatedData);
+
+        $class = Subject::findOrFail($id);
+
+        // dd($class);
 
         $class->update([
-            'class_name'        => $request->class_name,
-            'class_numeric'     => $request->class_numeric,
-            'teacher_id'        => $request->teacher_id,
-            'class_description' => $request->class_description
+            'subject_name'  => $validatedData['subject_name'],
+            'subject_code'  => $validatedData['subject_code'],
+            'course_id'     => $validatedData['course_id'],
+            'level'         => $validatedData['level'],
+            'semester'      => $validatedData['semester'],
+            'credit_hours'  => $validatedData['credit_hours']
         ]);
 
-        return redirect()->route('classes.index');
+        return redirect()->back()->with('success', 'Subject details updated successfully!');
     }
 
     /**
@@ -119,12 +171,11 @@ class GradeController extends Controller
      */
     public function destroy($id)
     {
-        $class = Grade::findOrFail($id);
+        $subject = Subject::findOrFail($id);
         
-        $class->subjects()->detach();
-        $class->delete();
+        $subject->delete();
 
-        return back();
+        return redirect()->back()->with('success', 'Subject deleted successfully!');
     }
 
     /*
@@ -154,4 +205,12 @@ class GradeController extends Controller
 
         return redirect()->route('classes.index');
     }
+
+    public function test4() {
+        $classes = Subject::with('course')->paginate(10);
+
+        return $classes;
+    }
+
+    // public function 
 }

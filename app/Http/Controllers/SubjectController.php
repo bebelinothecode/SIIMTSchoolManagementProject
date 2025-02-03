@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Grade;
 use App\Subject;
 use App\Teacher;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Str;
 
+//This controller is for courses
 class SubjectController extends Controller
 {
     /**
@@ -17,9 +19,11 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $subjects = Subject::with('teacher')->latest()->paginate(10);
+        $courses = Grade::with('subjects')->get();
+
+        // dd($courses);
         
-        return view('backend.subjects.index', compact('subjects'));
+        return view('backend.subjects.index', compact('courses'));
     }
 
     /**
@@ -31,7 +35,9 @@ class SubjectController extends Controller
     {
         $teachers = Teacher::latest()->get();
 
-        return view('backend.subjects.create', compact('teachers'));
+        $courses = Grade::all();
+
+        return view('backend.subjects.create', compact('teachers', 'courses'));
     }
 
     /**
@@ -42,22 +48,26 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name'          => 'required|string|max:255|unique:subjects',
-            'subject_code'  => 'required|numeric',
-            'teacher_id'    => 'required|numeric',
-            'description'   => 'required|string|max:255'
+
+        $validatedData = $request->validate([
+            'course_code'          => 'required|string',
+            'course_name'  => 'required|string',
+            'description'    => 'required|string',
+            'currency'   => 'required|string',
+            'fees'   => 'required|string',
         ]);
 
-        Subject::create([
-            'name'          => $request->name,
-            'slug'          => Str::slug($request->name),
-            'subject_code'  => $request->subject_code,
-            'teacher_id'    => $request->teacher_id,
-            'description'   => $request->description
+        // dd($validatedData);
+
+        Grade::create([
+            'course_code'          => $validatedData['course_code'],
+            'course_name'          => $validatedData['course_name'],
+            'course_description'   => $validatedData['description'],
+            'currency'             => $validatedData['currency'],
+            'fees'                 => $validatedData['fees'],
         ]);
 
-        return redirect()->route('subject.index');
+        return redirect()->back()->with('success', 'Course created successfully');
     }
 
     /**
@@ -122,5 +132,14 @@ class SubjectController extends Controller
         $subject->delete();
 
         return back();
+    }
+
+    public function index4()
+    {
+        $courses = Grade::with('grades')::all();
+
+        dd($courses);
+        
+        return view('backend.subjects.index', compact('courses'));
     }
 }

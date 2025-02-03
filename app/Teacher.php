@@ -13,6 +13,7 @@ class Teacher extends Model
         'dateofbirth',
         'current_address',
         'permanent_address',
+        'subject_id'
     ];
 
     public function user()
@@ -22,7 +23,7 @@ class Teacher extends Model
 
     public function subjects()
     {
-        return $this->hasMany(Subject::class);
+        return $this->belongsTo(Subject::class,'subject_id');
     }
 
     public function classes()

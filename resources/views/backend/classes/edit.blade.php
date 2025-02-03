@@ -5,7 +5,7 @@
 
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-gray-700 uppercase font-bold">Edit Class</h2>
+                <h2 class="text-gray-700 uppercase font-bold">Edit Subject</h2>
             </div>
             <div class="flex flex-wrap items-center">
                 <a href="{{ route('classes.index') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
@@ -16,18 +16,18 @@
         </div>
 
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('classes.update',$class->id) }}" method="POST" class="w-full max-w-xl px-6 py-12">
+            <form action="{{ route('classes.update',$subjects->id) }}" method="POST" class="w-full max-w-xl px-6 py-12">
                 @csrf
                 @method('PUT')
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Class Name
+                            Subject Name
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="class_name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ $class->class_name }}">
-                        @error('class_name')
+                        <input name="subject_name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('subject_name', $subjects->subject_name) }}">
+                        @error('subject_name')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -35,12 +35,12 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Class Numeric
+                            Subject Code
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="class_numeric" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ $class->class_numeric }}">
-                        @error('class_numeric')
+                        <input name="subject_code" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('subject_name', $subjects->subject_code) }}">
+                        @error('subject_code')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -48,26 +48,27 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Assign Teacher
+                            Assign Course
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
                         <div class="relative">
-                            <select name="teacher_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                                <option value="">--Select Teacher--</option>
-                                @foreach ($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}"
-                                        {{ ($teacher->id === $class->teacher_id) ? 'selected' : '' }}
-                                    >
-                                        {{ $teacher->user->name }}
+                            <select name="course_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                                <option value="">--Select Course--</option>
+                                @foreach ($courses as $course)
+                                    <option value="{{ $course->id }}" 
+                                        {{ old('course_id', $subjects->course_id) == $course->id ? 'selected' : '' }}>
+                                        {{ $course->course_name }}
                                     </option>
                                 @endforeach
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                                </svg>
                             </div>
                         </div>
-                        @error('teacher_id')
+                        @error('course_id')
                             <p class="text-red-500 text-xs font-normal italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -75,27 +76,104 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Class Description
+                            Level
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="class_description" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ $class->class_description }}">
-                        @error('class_description')
+                        <select name="level" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                            <option value="">--Select Level--</option>
+                            <option value="100" {{ old('level', $subjects->level ?? '') == '100' ? 'selected' : '' }}>100</option>
+                            <option value="200" {{ old('level', $subjects->level ?? '') == '200' ? 'selected' : '' }}>200</option>
+                            <option value="300" {{ old('level', $subjects->level ?? '') == '300' ? 'selected' : '' }}>300</option>
+                            <option value="400" {{ old('level', $subjects->level ?? '') == '400' ? 'selected' : '' }}>400</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                            </svg>
+                        </div>
+                        @error('level')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
-
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Semester
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <select name="semester" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                            <option value="">--Select Semester--</option>
+                            <option value="1" {{ old('semester', $subjects->semester ?? '') == '1' ? 'selected' : '' }}>1</option>
+                            <option value="2" {{ old('semester', $subjects->semester ?? '') == '2' ? 'selected' : '' }}>2</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                        @error('semester')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Credit Hours
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <input name="credit_hours" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ old('credit_hours', $subjects->credit_hours) }}">
+                        @error('credit_hours')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                {{-- <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Assigned Teacher
+                        </label>
+                    </div>
+                    <div class="md:w-2/3 block text-gray-600 font-bold">
+                        <div class="relative">
+                            <select name="teachersname" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="">--Select Teacher--</option>
+                                @foreach ($teachers as $teacher)
+                                    <option value="{{ $teacher->user->name }}" {{ old('teachersname', $teacher->user->name ?? '') == $teacher->user->name ? 'selected' : '' }}>
+                                        {{ $teacher->user->name }}
+                                    </option>
+                                @endforeach
+                                @error('teachersname')
+                                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                 @enderror
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">
                         <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-                            Update Class
+                            Update Subject
                         </button>
                     </div>
                 </div>
-            </form>        
+            </form>   
+            @if (session('success'))
+            <script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+            @endif       
         </div>
-        
     </div>
 @endsection

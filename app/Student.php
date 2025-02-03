@@ -8,19 +8,31 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Student extends Model
 {
     protected $fillable = [
-        'user_id',
-        'parent_id',
-        'class_id',
-        'roll_number',
+        // 'user_id',
+        // 'parent_id',
+        // 'class_id',
+        'level',
         'gender',
         'phone',
         'dateofbirth',
         'current_address',
-        'permanent_address',
-        'index_number',
-        'academicyear',
+        'attendance_time',
+        'dateofbirth',
+        'student_parent',
+        'parent_phonenumber',
+        'student_category',
+        'course_id_prof',
+        'currency_prof',
+        'fees_prof',
+        'duration_prof',
+        'course_id',
+        'currency',
+        'fees',
+        'level',
         'session',
-        'student_type'
+        // 'permanent_address',
+        'index_number',
+        // 'student_type',
     ];
 
     public function user() 
@@ -30,12 +42,17 @@ class Student extends Model
 
     public function parent() 
     {
-        return $this->belongsTo(Parents::class);
+        return $this->belongsTo(Parents::class, 'parent_id');
     }
 
-    public function class() 
+    public function course() 
     {
-        return $this->belongsTo(Grade::class, 'class_id');
+        return $this->belongsTo(Grade::class, 'course_id');
+    }
+
+    public function diploma()
+    {
+        return $this->belongsTo(Diploma::class,'course_id_prof');
     }
 
     public function attendances() 

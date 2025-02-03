@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Subject;
 use App\User;
 use App\Teacher;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        $teachers = Teacher::with('user')->latest()->paginate(10);
+        $teachers = Teacher::with('user')->latest()->paginate(5);
 
         return view('backend.teachers.index', compact('teachers'));
     }
@@ -40,7 +41,7 @@ class TeacherController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+        // dd($request->all());
         $request->validate([
             'name'              => 'required|string|max:255',
             'email'             => 'required|string|email|max:255|unique:users',
@@ -51,6 +52,8 @@ class TeacherController extends Controller
             'current_address'   => 'required|string|max:255',
             'permanent_address' => 'required|string|max:255'
         ]);
+
+        // dd($validatedData);
 
         $user = User::create([
             'name'      => $request->name,
@@ -78,7 +81,7 @@ class TeacherController extends Controller
 
         $user->assignRole('Teacher');
 
-        return redirect()->route('teacher.index');
+        return redirect()->back()->with('success', 'Teacher created successfully!');
     }
 
     /**
@@ -147,7 +150,7 @@ class TeacherController extends Controller
             'permanent_address' => $request->permanent_address
         ]);
 
-        return redirect()->route('teacher.index');
+        return redirect()->back()->with('success', 'Teacher created successfully!');
     }
 
     /**
@@ -174,5 +177,49 @@ class TeacherController extends Controller
         }
 
         return back();
+    }
+
+    public function profile($id) {
+        $teacher = Teacher::with(['user', 'subjects'])->findOrFail($id);
+
+        return view('backend.teachers.profile', compact('teacher'));
+    }
+
+    public function assignSubject($id) {
+        $teacher = Teacher::findOrFail($id);
+
+        $subjects = Subject::all();
+
+        return view('backend.teachers.assignsubject', compact('teacher','subjects'));
+    }
+
+    public function storeAssignedSubject(Request $request, $id) {
+        $validatedData = $request->validate([
+            'subject' => 'required'
+        ]);
+
+        $teacher = Teacher::findOrFail($id);
+
+        $teacher->update([
+            'subject_id' => $validatedData['subject'],
+        ]);
+
+        return redirect()->back()->with('success', 'Subject assigned successfully!');
+    }
+
+    public function profile2() {
+        $teacher = Teacher::with(['user', 'subjects'])->get();
+
+        return $teacher;
+
+        return view('backend.teachers.profile', compact('teacher'));
+    }
+
+    public function deleteTeacher($id) {
+        $teacher = Teacher::findOrFail($id);
+
+        $teacher->delete();
+
+        return redirect()->back()->with('success', 'Teacher deleted successfully.');
     }
 }

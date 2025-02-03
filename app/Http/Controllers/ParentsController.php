@@ -18,7 +18,9 @@ class ParentsController extends Controller
      */
     public function index()
     {
-        $parents = Parents::with(['user','children'])->latest()->paginate(10);
+        $parents = Parents::with(['user'])->latest()->paginate(10);
+
+        // return $parents;
         
         return view('backend.parents.index', compact('parents'));
     }
@@ -76,7 +78,7 @@ class ParentsController extends Controller
 
         $user->assignRole('Parent');
 
-        return redirect()->route('parents.index');
+        return redirect()->back()->with('success', 'Parent created successfully.');
     }
 
     /**

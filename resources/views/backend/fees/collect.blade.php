@@ -50,54 +50,6 @@
                 </div>
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
-                            Start Academic Year
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="start_academic_year" id="start_academic_year" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text"  required>
-                        @error('start_academic_year')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
-                            End Academic Year
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="end_academic_year" id="end_academic_year" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text"  required>
-                        @error('end_academic_year')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Semester
-                        </label>
-                    </div>
-                    <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <div class="relative">
-                            <select name="semester" id="semester" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="semester" required>
-                                <option value="">--Select Semester--</option>
-                                @foreach ($sessions as $session)
-                                    <option value={{ $session->name }}>{{ $session->name }}</option>
-                                @endforeach
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
                             Method of Payment
                         </label>
@@ -196,26 +148,26 @@
                 
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="amount">
                             Amount
                         </label>
                     </div>
                     <div class="md:w-2/3">
                         <input name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number"  required>
-                        @error('start_academic_year')
+                        @error('amount')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="balance">
                             Balance
                         </label>
                     </div>
                     <div class="md:w-2/3">
                         <input name="balance" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
-                        @error('start_academic_year')
+                        @error('balance')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -223,7 +175,7 @@
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">
-                        <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                        <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit" target="_blank">
                             Collect Fees
                         </button>
                     </div>
@@ -252,6 +204,37 @@
                     });
                 </script>
                 <script>
+                    document.addEventListener('DOMContentLoaded',() => {
+                        const amount = document.getElementById('amount');
+                        const balance = document.getElementById('balance');
+                        const indexNumber = document.getElementById('choices-select')
+                        const feesData = @json($details);
+
+                        function calculateBalance() {
+                            const enteredAmount = amount.value;
+                            const selectedIndexNumber = indexNumber.value;
+                            let balance = 0;
+
+                            console.log(selectedIndexNumber);
+
+                            const matchingStudent = feesData.find(fee =>
+                                fee.index_number === selectedIndexNumber
+                            );
+
+                            console.log(matchingStudent)
+
+                            if (matchingStudent) {
+                                const schoolFees = matchingStudent.fees !== null ? matchingStudent.fees : matchingStudent.fees_prof;
+                                balance.value = (schoolFees - enteredAmount);
+                            } else {
+                                balance.value = '0.00';
+                            }
+                        }
+                        indexNumber.addEventListener('change', calculateBalance);
+                        amount.addEventListener('input', calculateBalance);
+                    });
+                </script>
+                <script>
                     $(document).ready(function () {
                         $('#choices-select').on('change', function () {
                             let indexNumber = $(this).val();
@@ -262,64 +245,30 @@
                                     type: 'GET',
                                     data: { index_number: indexNumber },
                                     success: function (response) {
-                                        $('#student_name').val(response.name || 'Not Found');
+                                        if (response.student_category === 'Professional') {
+                                            console.log(response)
+                                            $('#student_name').val(response.name || 'Not Found');
+                                            $('#balance').val(response.fees_prof || 'Not Found');
+
+                                        } else if (response.student_category === 'Academic') {
+                                            $('#student_name').val(response.name || 'Not Found');
+                                            $('#balance').val(response.fees || 'Not Found');
+                                        } else {
+                                            alert('Student not found.');
+                                            $('#balance').val('');
+                                            $('student_name').val('');
+                                        }
                                     },
                                     error: function () {
                                         $('#student_name').val('Not Found');
+                                        $('#balance').val('Not Found');
                                     }
                                 });
                             } else {
                                 $('#student_name').val('');
+                                $('#balance').val('');
                             }
                         });
-                    });
-                </script>
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const startYear = document.getElementById('start_academic_year');
-                        const endYear = document.getElementById('end_academic_year');
-                        const semester = document.getElementById('semester');
-                        const currency = document.getElementById('currency');
-                        const amount = document.getElementById('amount');
-                        const balance = document.getElementById('balance');
-                        const feesData = @json($fees);
-
-                        // console.log(startYear,endYear,semester,currency,amount,balance)
-                
-                        function calculateBalance() {
-                            const selectedStartYear = startYear.value;
-                            const selectedEndYear = endYear.value;
-                            const selectedSemester = semester.value;
-                            const selectedCurrency = currency.value;
-                            const enteredAmount = amount.value;
-                            // const enteredAmount = parseFloat(amount.value) || 0;
-                            console.log(feesData)
-
-                            // console.log(selectedStartYear, selectedEndYear, selectedSemester, selectedCurrency, enteredAmount)
-                
-                            // Find the matching fee data
-                            const matchingFee = feesData.find(fee =>
-                                fee.start_academic_year === selectedStartYear &&
-                                fee.end_academic_year === selectedEndYear &&
-                                fee.session === selectedSemester &&
-                                fee.currency === selectedCurrency
-                            );
-
-                            console.log(matchingFee)
-                
-                            if (matchingFee) {
-                                const schoolFees = matchingFee.school_fees;
-                                balance.value = (schoolFees - enteredAmount);
-                            } else {
-                                balance.value = '0.00';
-                            }
-                        }
-                
-                        startYear.addEventListener('change', calculateBalance);
-                        endYear.addEventListener('change', calculateBalance);
-                        semester.addEventListener('change', calculateBalance);
-                        currency.addEventListener('change', calculateBalance);
-                        amount.addEventListener('input', calculateBalance);
                     });
                 </script>
             </form>        

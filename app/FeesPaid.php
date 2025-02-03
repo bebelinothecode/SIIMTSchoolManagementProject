@@ -11,12 +11,14 @@ class FeesPaid extends Model
 
     protected $table = 'collect_fees';
 
+    //You have to change the tables in production
+
     protected $fillable = [
         'student_index_number',
         'student_name',
-        'start_academic_year',
-        'end_academic_year',
-        'semester',
+        // 'start_academic_year',
+        // 'end_academic_year',
+        // 'semester',
         'method_of_payment',
         'amount',
         'balance',
@@ -25,3 +27,4 @@ class FeesPaid extends Model
         'Momo_number'
     ];
 }
+

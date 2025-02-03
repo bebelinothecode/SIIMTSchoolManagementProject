@@ -11,14 +11,18 @@ class CreateGradesTable extends Migration
      *
      * @return void
      */
+
+    //This is the courses table. 
     public function up()
     {
         Schema::create('grades', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('teacher_id');
-            $table->unsignedBigInteger('class_numeric');
-            $table->string('class_name');
-            $table->string('class_description');
+            // $table->unsignedBigInteger('teacher_id');
+            // $table->unsignedBigInteger('class_numeric');
+            $table->string('course_code');
+            $table->string('course_name');
+            $table->text('course_description')->nullable();
+            $table->string('fees');
             $table->timestamps();
         });
     }
