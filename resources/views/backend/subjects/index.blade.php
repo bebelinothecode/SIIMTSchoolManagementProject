@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+{{-- This is for courses --}}
+
 @section('content')
     <div class="roles-permissions">
         <div class="flex items-center justify-between mb-6">
@@ -18,8 +20,8 @@
                 <div class="w-2/12 px-4 py-3">Course Code</div>
                 <div class="w-2/12 px-4 py-3">Course Name</div>
                 <div class="w-2/12 px-4 py-3">Description</div>
-                <div class="w-2/12 px-4 py-3">Fees</div>
                 <div class="w-2/12 px-4 py-3">Currency</div>
+                <div class="w-2/12 px-4 py-3">Fees</div>
                 <div class="w-2/12 px-4 py-3 text-right">Action</div>
             </div>
             @foreach ($courses as $course)
@@ -27,8 +29,8 @@
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $course->course_code }}</div>
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $course->course_name }}</div>
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $course->course_description }}</div>
-                    <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $course->fees }}</div>
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $course->currency }}</div>
+                    <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $course->fees }}</div>
                     <div class="w-2/12 flex items-center justify-end px-3">
                         <a href="{{ route('subject.edit',$course->id) }}">
                             <svg class="h-6 w-6 fill-current text-gray-600" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="pen-square" class="svg-inline--fa fa-pen-square fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 480H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h352c26.5 0 48 21.5 48 48v352c0 26.5-21.5 48-48 48zM238.1 177.9L102.4 313.6l-6.3 57.1c-.8 7.6 5.6 14.1 13.3 13.3l57.1-6.3L302.2 242c2.3-2.3 2.3-6.1 0-8.5L246.7 178c-2.5-2.4-6.3-2.4-8.6-.1zM345 165.1L314.9 135c-9.4-9.4-24.6-9.4-33.9 0l-23.1 23.1c-2.3 2.3-2.3 6.1 0 8.5l55.5 55.5c2.3 2.3 6.1 2.3 8.5 0L345 199c9.3-9.3 9.3-24.5 0-33.9z"></path></svg>
@@ -44,8 +46,28 @@
                 </div>
             @endforeach
         </div>
-        {{-- <div class="mt-8">
-            {{ $subjects->links() }}
-        </div> --}}
+        <div class="mt-8">
+            {{ $courses->links() }}
+        </div>
+        @if (session('success'))
+            <script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        @endif
+        @if (session('error'))
+            <script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        @endif
     </div>
 @endsection

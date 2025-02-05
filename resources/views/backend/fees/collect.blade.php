@@ -166,7 +166,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="balance" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
+                        <input name="balance" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" readonly>
                         @error('balance')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -211,21 +211,32 @@
                         const feesData = @json($details);
 
                         function calculateBalance() {
-                            const enteredAmount = amount.value;
+                            const enteredAmount = parseFloat(amount.value) || 0;
                             const selectedIndexNumber = indexNumber.value;
-                            let balance = 0;
-
-                            console.log(selectedIndexNumber);
 
                             const matchingStudent = feesData.find(fee =>
                                 fee.index_number === selectedIndexNumber
                             );
 
-                            console.log(matchingStudent)
-
                             if (matchingStudent) {
-                                const schoolFees = matchingStudent.fees !== null ? matchingStudent.fees : matchingStudent.fees_prof;
-                                balance.value = (schoolFees - enteredAmount);
+                                let remainingBalance = parseFloat(matchingStudent.balance);
+
+                                // If balance is not available, fall back to fees or fees_prof
+                                if (isNaN(remainingBalance) || remainingBalance === 0) {
+                                    remainingBalance = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0.0;
+                                }
+
+                                console.log('Remaining Balance:', remainingBalance);
+
+                                let newBalance = remainingBalance - enteredAmount;
+
+
+                                if (newBalance < 0) {
+                                     newBalance = 0;
+                                     alert('Payment exceeds the remaining balance. Balance cannot be negative.');
+                                }
+
+                                balance.value = newBalance.toFixed(2);
                             } else {
                                 balance.value = '0.00';
                             }
@@ -248,11 +259,11 @@
                                         if (response.student_category === 'Professional') {
                                             console.log(response)
                                             $('#student_name').val(response.name || 'Not Found');
-                                            $('#balance').val(response.fees_prof || 'Not Found');
+                                            $('#balance').val(response.balance || response.fees_prof || 'Not Found');
 
                                         } else if (response.student_category === 'Academic') {
                                             $('#student_name').val(response.name || 'Not Found');
-                                            $('#balance').val(response.fees || 'Not Found');
+                                            $('#balance').val(response.balance || response.fees || 'Not Found');
                                         } else {
                                             alert('Student not found.');
                                             $('#balance').val('');

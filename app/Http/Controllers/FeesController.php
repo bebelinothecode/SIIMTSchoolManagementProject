@@ -59,7 +59,10 @@ class  FeesController extends Controller
                 'name'=> $student->user->name,
                 'fees' => $student->fees,
                 'student_category' => $student->student_category,
-                'fees_prof' => $student->fees_prof
+                'fees_prof' => $student->fees_prof,
+                'currency' => $student->currency,
+                'currency_prof' => $student->currency_prof,
+                'balance' => $student->balance,
             ]);
         } else {
             return response()->json(['name'=>null], 404);
@@ -68,6 +71,7 @@ class  FeesController extends Controller
 
     public function collectfees(Request $request) {
         try {
+            // dd($request->all());
             $validatedData = $request->validate([
                 'student_index_number' => 'required|string',
                 'student_name' => 'required | string',
@@ -79,7 +83,14 @@ class  FeesController extends Controller
                 'cheque_number' => 'nullable',
             ]);
 
+            // dd($validatedData);
+
             $student = Student::where('index_number',$validatedData['student_index_number'])->first();
+
+            // $remainingBalance = $student->balance - $validatedData['amount'];
+
+            // $student->balance = $validatedData['balance'];
+            // $student->save();
 
             $feespaid = FeesPaid::create([
                 'student_index_number' => $validatedData['student_index_number'],
@@ -95,7 +106,7 @@ class  FeesController extends Controller
             if($feespaid) {
                 $student->balance = $validatedData['balance'];
                 $student->save();
-                Log::info('Saved successfully');
+                Log::info('Balance saved successfully');
             }
 
             return view('backend.fees.receipt', compact('feespaid'))->with('success', 'School Fees has been collected');

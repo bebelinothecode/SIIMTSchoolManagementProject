@@ -99,7 +99,7 @@ class BookController extends Controller
     $validatedData = $request->validate([
         'year_of_exams' => 'required|integer',
         'course_name' => 'required|string',
-        'exams_paper' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+        'exams_paper' => 'required|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png|max:2048',
     ]);
 
     // Store the uploaded file

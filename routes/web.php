@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/search/index', [DiplomaController::class, 'index'])->name('diploma.searchindex');
     Route::get('/get/diplomas/{id}',[DiplomaController::class,'getProfessional']);
     Route::get('/get/academic/{id}', [DiplomaController::class, 'getAcademic']);
+    Route::put('/update/student/{id}', [StudentController::class, 'updateStudent'])->name('update.student');
 
 
     // Route::post('/student/create',[StudentController2::class, 'store'])->name('student.create.new');
@@ -129,7 +130,7 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
 });
 
 Route::get('/test4',[ParentsController::class,'index']);
-Route::get('/test22', [StudentController::class, 'test22']);
+Route::get('/test22', [StudentController::class, 'all']);
 // Route::get('/fees/get-student-name', [FeesController::class, 'getStudentName']);
 // Route::post('/search/student', [StudentController::class, 'searchStudent']);
 

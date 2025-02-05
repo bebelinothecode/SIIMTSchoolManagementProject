@@ -11,17 +11,13 @@ use App\Enquiry;
 use App\Parents;
 use App\Session;
 use App\Student;
-use App\AcademicYear;
-use ValidationException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
-use Symfony\Contracts\Service\Attribute\Required;
 use Nette\Schema\ValidationException as SchemaValidationException;
-use Illuminate\Validation\ValidationException as ValidationValidationException;
 
 class StudentController extends Controller
 {
@@ -197,11 +193,17 @@ class StudentController extends Controller
      * @param  \App\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function show(Student $student)
+    public function show($id)
     {
-        $class = Grade::with('subjects')->where('id', $student->class_id)->first();
+        $student = Student::with(['course', 'diploma'])
+            ->where('id', $id)
+            ->where(function ($query) {
+                $query->whereNotNull('course_id')
+                    ->orWhereNotNull('course_id_prof');
+            })
+            ->findOrFail($id);
         
-        return view('backend.students.show', compact('class','student'));
+        return view('backend.students.show', compact('student'));
     }
 
     /**
@@ -210,12 +212,21 @@ class StudentController extends Controller
      * @param  \App\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function edit(Student $student)
+    public function edit($id)
     {
-        $classes = Grade::latest()->get();
+        $student = Student::findOrFail($id);
+
+        if ($student->student_category === 'Academic') {
+            $courses = Grade::all();
+        } elseif ($student->student_category === 'Professional') {
+            $courses = Diploma::all();
+        } else {
+            return redirect()->back()->with('error', 'Error loading Courses');    
+        }
+        
         $parents = Parents::with('user')->latest()->get();
 
-        return view('backend.students.edit', compact('classes','parents','student'));
+        return view('backend.students.edit', compact('courses','parents','student'));
     }
 
     /**
@@ -298,9 +309,9 @@ class StudentController extends Controller
     }
 
     public function all() {
-        $students = Student::all();
+        $courses = Grade::all();
 
-        return $students;
+        return $courses;
     }
 
     public function printAdmissionLetter($id) {
@@ -321,7 +332,7 @@ class StudentController extends Controller
     }
 
     public function studentEnquiry() {
-        $enquiries = Enquiry::paginate(5);
+        $enquiries = Enquiry::latest()->paginate(5);
 
         return view('backend.students.enquiry', compact('enquiries'));
     }
@@ -371,33 +382,113 @@ class StudentController extends Controller
         return view("backend.students.migration", compact('levels', 'semesters'));
     }
 
-    public function promoteAll(Request $request) {
+    public function updateStudent(Request $request, $id) {
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'gender' => 'required',
+                'dateofbirth' => 'required|date',
+                'current_address' => 'required',
+                'course_id' => 'required',
+                'parent_id' => 'required' 
+            ]);
 
-        $validatedData = $request->validate([
-            'current_level' => 'required',
-            'current_semester' => 'required',
-            'target_level ' => 'required',
-            'target_semester'=>'required'
-        ]);
 
-        $from = $validatedData['from'];
-        $to = $validatedData['to'];
+            $student = Student::findOrFail($id);
 
-        // Find all students currently at level 100
-        $students = Student::where('level', $from)->get();
+            DB::beginTransaction();
 
-        // dd($students);
+            if ($request->hasFile('profile_picture')) {
+                $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
+                $request->profile_picture->move(public_path('images/profile'), $profile);
+            } else {
+                $profile = $student->user->profile_picture;
+            }
 
-        // Check if any students are found
-        if ($students->isEmpty()) {
-            return redirect()->back()->with('failure', 'No students found');
+            $student->user()->update([
+                'name'              => $validatedData['name'],
+                'email'             => $validatedData['email'],
+                'profile_picture'   => $profile
+            ]);
+
+            if($student->student_category === 'Academic') {
+                $student->update([
+                    'course_id' => $validatedData['course_id'],
+                ]);
+            } else {
+                $student->update([
+                    'course_id_prof' => $validatedData['course_id'],
+                ]);
+            }
+
+            $student->update([
+                'student_parent'    => $validatedData['parent_id'],
+                'gender'            => $validatedData['gender'],
+                'phone'             => $validatedData['phone'],
+                'dateofbirth'       => $validatedData['dateofbirth'],
+                'current_address'   => $validatedData['current_address'],
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Student updated successfully');    
+            // dd($validatedData);
+        } catch (\Exception $e) {
+            //throw $th;
+            DB::rollBack();
+
+            Log::error("Error occured updating student" .$e);
+
+            return redirect()->back()->with('error', 'Error updating Student');    
         }
+    }
 
-        // Update the level for all eligible students
-        Student::where('level', $from)->update(['level' => $to]);
+    public function promoteAll(Request $request) {
+        try {
 
-        // Return a success response
-        return redirect()->back()->with('success', 'Students migrated successfully');
+            $validatedData = $request->validate([
+                'current_level' => 'required',
+                'current_semester' => 'required',
+                'target_level' => 'required',
+                'target_semester'=>'required'
+            ]);
+
+            $fromLevel = $validatedData['current_level'];
+            $fromSemester = $validatedData['current_semester'];
+            $toLevel = $validatedData['target_level'];
+            $toSemester = $validatedData['target_semester'];
+
+            if (($fromSemester === $toSemester) && ($fromLevel === $toLevel)) {
+                return redirect()->back()->with('duplicate', 'Cant migrate to the same semester');
+            }
+
+            // Find all students currently at level 100
+            $students = Student::where('level', $fromLevel)->get();
+
+        
+            // Check if any students are found
+            if ($students->isEmpty()) {
+                return redirect()->back()->with('failure', 'No students found');
+            }
+
+            foreach($students as $student) {
+                $student->level = $toLevel;
+                $student->session = $toSemester;
+                $student->save();
+
+                return redirect()->back()->with('success', 'Students migrated successfully');
+            }
+    
+            // Return a error response
+            return redirect()->back()->with('error', 'Error saving students details');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('An error occurred', [
+                'exception' => $e, // Include the exception in the context array
+            ]);        
+        }
     }
 
     public function test22(Request $request)
@@ -435,20 +526,5 @@ class StudentController extends Controller
     return view('backend.students.index', compact('students'));
 }
 
-    // public function test22() {
-    //     // $results = Student::with('class','user')->get();
-    //     $courseId = Student::whereNotNull('course_id')
-    //                ->orWhereNotNull('course_id_prof')
-    //                ->value('course_id') ?? Student::whereNotNull('course_id_prof')->value('course_id_prof');
 
-    //     if ($courseId) {
-    //         $student = Student::where('course_id', $courseId)
-    //                         ->orWhere('course_id_prof', $courseId)
-    //                         ->first();
-            
-    //         return response()->json($student);
-    //     } else {
-    //         return response()->json(['message' => 'No student found'], 404);
-    //     }
-    // }
 }

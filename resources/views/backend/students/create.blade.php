@@ -488,11 +488,11 @@
 });
 </script>
 
-<script>
+{{-- <script>
     $(function() {       
         $( "#datepicker-sc" ).datepicker({ dateFormat: 'yy-mm-dd' });
     })
-</script>
+</script> --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

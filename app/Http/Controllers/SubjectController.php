@@ -6,7 +6,7 @@ use App\Grade;
 use App\Subject;
 use App\Teacher;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 //This controller is for courses
@@ -19,8 +19,7 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $courses = Grade::with('subjects')->get();
-
+        $courses = Grade::with('subjects')->latest()->paginate(5);
         // dd($courses);
         
         return view('backend.subjects.index', compact('courses'));
@@ -87,11 +86,11 @@ class SubjectController extends Controller
      * @param  \App\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function edit(Subject $subject)
+    public function edit($id)
     {
-        $teachers = Teacher::latest()->get();
+        $courses = Grade::findOrFail($id);
 
-        return view('backend.subjects.edit', compact('subject','teachers'));
+        return view('backend.subjects.edit', compact('courses'));
     }
 
     /**
@@ -101,24 +100,34 @@ class SubjectController extends Controller
      * @param  \App\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Subject $subject)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'name'          => 'required|string|max:255|unique:subjects,name,'.$subject->id,
-            'subject_code'  => 'required|numeric',
-            'teacher_id'    => 'required|numeric',
-            'description'   => 'required|string|max:255'
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'course_code' => 'required',
+                'course_name' => 'required',
+                'description' => 'required',
+                'currency' => 'required',
+                'fees' => 'required'
+            ]);
 
-        $subject->update([
-            'name'          => $request->name,
-            'slug'          => Str::slug($request->name),
-            'subject_code'  => $request->subject_code,
-            'teacher_id'    => $request->teacher_id,
-            'description'   => $request->description
-        ]);
+            $course = Grade::findOrFail($id);
 
-        return redirect()->route('subject.index');
+            $course->update([
+                'course_code' => $validatedData['course_code'],
+                'course_name' => $validatedData['course_name'],
+                'description' => $validatedData['description'],
+                'currency' => $validatedData['currency'],
+                'fees' => $validatedData['fees']
+            ]);
+
+            return redirect()->back()->with('success', 'Details updated successfully');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('Error occured', [
+                'message' => $e
+            ]);
+        }
     }
 
     /**
@@ -127,11 +136,25 @@ class SubjectController extends Controller
      * @param  \App\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Subject $subject)
+    public function destroy($id)
     {
-        $subject->delete();
+        try {
+            //code...
+            $course = Grade::findOrFail($id);
 
-        return back();
+            $course->delete();
+    
+            return redirect()->back()->with('success', 'Course deleted successfully');
+        } catch (\Exception $e) {
+            //throw $th;
+
+            Log::error('Error occured', [
+                'message' => $e
+            ]);
+
+            return redirect()->back()->with('error', 'Problem deleting course');
+        }
+       
     }
 
     public function index4()
