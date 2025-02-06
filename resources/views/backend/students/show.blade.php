@@ -101,7 +101,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <span class="text-gray-600 font-bold">{{ $student->course->course_name ?? $student->diploma->diploma_name ?? '' }}</span>
+                        <span class="text-gray-600 font-bold">{{ $student->course->course_name ?? $student->diploma->name ?? '' }}</span>
                     </div>
                 </div>
                 {{-- <div class="md:flex md:items-center mb-6">

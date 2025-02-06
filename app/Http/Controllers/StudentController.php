@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AcademicYear;
 use App\Fees;
 use App\User;
 use App\Grade;
@@ -26,13 +27,6 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index()
-    // {
-    //     $students = Student::with('class')->latest()->paginate(10);
-
-    //     return view('backend.students.index', compact('students'));
-    // }
-
     public function index(Request $request)
     {
         // Fetch students and handle search
@@ -86,7 +80,7 @@ class StudentController extends Controller
                 'name' => 'required|string',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
-                'phone' => 'required|string|max:15',
+                'phone' => 'required|string|max:20',
                 'gender' => 'required|in:male,female,other',
                 'attendance_time' => 'required|in:weekday,weekend',
                 'dateofbirth' => 'required|date',
@@ -202,7 +196,9 @@ class StudentController extends Controller
                     ->orWhereNotNull('course_id_prof');
             })
             ->findOrFail($id);
-        
+
+        return $student;
+
         return view('backend.students.show', compact('student'));
     }
 
@@ -315,9 +311,19 @@ class StudentController extends Controller
     }
 
     public function printAdmissionLetter($id) {
-        $student = Student::findOrFail($id);
+        // $student = Student::findOrFail($id);
 
-        return view('backend.students.printletter', compact('student'));
+        $student = Student::with('user', 'course', 'diploma')
+            ->where(function ($q) {
+                $q->whereNotNull('course_id')
+                ->orWhereNotNull('course_id_prof');
+            })->findOrFail($id);
+        
+        // return $student;
+
+        $academicyear = AcademicYear::latest()->first();
+
+        return view('backend.students.printletter', compact('student', 'academicyear'));
     }
 
     public function studentSchoolFees() {
@@ -395,7 +401,6 @@ class StudentController extends Controller
                 'parent_id' => 'required' 
             ]);
 
-
             $student = Student::findOrFail($id);
 
             DB::beginTransaction();
@@ -413,13 +418,23 @@ class StudentController extends Controller
                 'profile_picture'   => $profile
             ]);
 
+            $courseChanged = false;
+
             if($student->student_category === 'Academic') {
+                if ($student->course_id != $validatedData['course_id']) {
+                    $courseChanged = true;
+                }
                 $student->update([
                     'course_id' => $validatedData['course_id'],
+                    'balance'   => $courseChanged ? 0 : $student->balance
                 ]);
             } else {
+                if ($student->course_id_prof != $validatedData['course_id']) {
+                    $courseChanged = true;
+                }
                 $student->update([
                     'course_id_prof' => $validatedData['course_id'],
+                    'balance'        => $courseChanged ? 0 : $student->balance
                 ]);
             }
 
@@ -429,6 +444,7 @@ class StudentController extends Controller
                 'phone'             => $validatedData['phone'],
                 'dateofbirth'       => $validatedData['dateofbirth'],
                 'current_address'   => $validatedData['current_address'],
+                // 'balance'           => 0
             ]);
 
             DB::commit();

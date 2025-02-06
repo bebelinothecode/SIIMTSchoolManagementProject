@@ -189,7 +189,36 @@ class  FeesController extends Controller
             'records' => $records,
             'sessions' => Session::all(), // Pass sessions for the dropdown
         ]);
+    }
 
+    public function transactionsForm() {
+        return view('backend.fees.transactions');
+    }
+
+    public function getTransactions(Request $request) {
+        try {
+            //code...
+            $request->all([
+                'start_date' => 'required|date',
+                'end_date' => 'required|date'
+            ]);
+            
+            $query = FeesPaid::query();
+            
+            if ($request->has('start_date') && $request->has('end_date')) {
+                $query->whereBetween('created_at', [
+                    $request->start_date,
+                    $request->end_date
+                ]);
+            }
+
+            $transactions = $query->paginate(10);
+
+            return view('backend.fees.transactions', compact('transactions'));
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error("Error executing query",["Error exceuting code"=>$e->getMessage()]);
+        }
     }
 
     public function test(Request $request) {

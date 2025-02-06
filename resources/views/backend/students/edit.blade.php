@@ -7,12 +7,12 @@
             <div>
                 <h2 class="text-gray-700 uppercase font-bold">Edit Student</h2>
             </div>
-            <div class="flex flex-wrap items-center">
-                <a href="{{ route('student.index') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
-                    <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="long-arrow-alt-left" class="svg-inline--fa fa-long-arrow-alt-left fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path></svg>
-                    <span class="ml-2 text-xs font-semibold">Back</span>
-                </a>
-            </div>
+            <a href="{{ route('student.index') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded hover:bg-gray-300 transition duration-300">
+                <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="long-arrow-alt-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path fill="currentColor" d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path>
+                </svg>
+                <span class="ml-2 text-xs font-semibold">Back</span>
+            </a>
         </div>
 
         <div class="table w-full mt-8 bg-white rounded">
@@ -128,21 +128,21 @@
                             <select name="course_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                                 <option value="">--Select Course--</option>
                                 @if($student->student_category === 'Academic')
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}"
-                                        {{ $course->id == old('course_id', $course->id) ? 'selected' : '' }}
-                                    >
-                                        {{ $course->course_name }}
-                                    </option>
-                                @endforeach
+                                    @foreach ($courses as $course)
+                                        <option value="{{ $course->id }}"
+                                            {{ $course->id == $student->course_id ? 'selected' : '' }}
+                                        >
+                                            {{ $course->course_name }}
+                                        </option>
+                                    @endforeach
                                 @else
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}"
-                                        {{ $course->id == old('course_id', $course->id) ? 'selected' : '' }}
-                                    >
-                                        {{ $course->name }}
-                                    </option>
-                                @endforeach
+                                    @foreach ($courses as $course)
+                                        <option value="{{ $course->id }}"
+                                            {{ $course->id == $student->course_id_prof ? 'selected' : '' }}
+                                        >
+                                            {{ $course->name }}
+                                        </option>
+                                    @endforeach
                                 @endif
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -208,9 +208,9 @@
             @if (session('error'))
             <script>
                 Swal.fire({
-                    title: 'Success!',
+                    title: 'Error!',
                     text: '{{ session('error') }}',
-                    icon: 'Error',
+                    icon: 'error',
                     confirmButtonText: 'OK'
                 });
             </script>

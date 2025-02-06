@@ -95,6 +95,8 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/get/diplomas/{id}',[DiplomaController::class,'getProfessional']);
     Route::get('/get/academic/{id}', [DiplomaController::class, 'getAcademic']);
     Route::put('/update/student/{id}', [StudentController::class, 'updateStudent'])->name('update.student');
+    Route::get('/transactions/form', [FeesController::class, 'transactionsForm'])->name('transactions.form');
+    Route::get('/get/transactions', [FeesController::class, 'getTransactions'])->name('get.transactions');
 
 
     // Route::post('/student/create',[StudentController2::class, 'store'])->name('student.create.new');
