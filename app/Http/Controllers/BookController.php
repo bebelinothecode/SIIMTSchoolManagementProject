@@ -7,8 +7,10 @@ use App\PastQuestions;
 use App\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+
 
 class BookController extends Controller
 {
@@ -19,22 +21,34 @@ class BookController extends Controller
     }
 
     public function uploadBook(Request $request) {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,doc,docx',
-        ]);
+        try {
+            //code...
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'file' => 'required|file|mimes:pdf,doc,docx,txt',
+            ]);
+    
+            $filePath = $request->file('file')->store('books', 'public');
+    
+            Book::create([
+                'title' => $request->title,
+                'author' => $request->author,
+                'publisher' => $request->publisher,
+                'isbn_number' => $request->isbn_number,
+                'file_path' => $filePath,
+            ]);
+    
+            return redirect()->back()->with('success', 'Book uploaded successfully!');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error("Error occured uploading book".$e);
 
-        $filePath = $request->file('file')->store('books', 'public');
+            // Log::error("Error occured updating student" .$e);
 
-        Book::create([
-            'title' => $request->title,
-            'author' => $request->author,
-            'publisher' => $request->publisher,
-            'isbn_number' => $request->isbn_number,
-            'file_path' => $filePath,
-        ]);
 
-        return redirect()->back()->with('success', 'Book uploaded successfully!');
+            return redirect()->back()->with('error', 'Book uploaded unsuccessful!');
+        }
+        
     }
 
     public function displayBooks() {
