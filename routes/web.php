@@ -6,6 +6,7 @@ use App\Http\Controllers\DiplomaController;
 use App\Http\Controllers\FeesController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\ParentsController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -95,8 +96,16 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/get/diplomas/{id}',[DiplomaController::class,'getProfessional']);
     Route::get('/get/academic/{id}', [DiplomaController::class, 'getAcademic']);
     Route::put('/update/student/{id}', [StudentController::class, 'updateStudent'])->name('update.student');
-    Route::get('/transactions/form', [FeesController::class, 'transactionsForm'])->name('transactions.form');
+    // Route::get('/transactions/form', [FeesController::class, 'transactionsForm'])->name('transactions.form');
     Route::get('/get/transactions', [FeesController::class, 'getTransactions'])->name('get.transactions');
+    Route::get('/reports/form',[ReportsController::class, 'getReportsForm'])->name('reports.form');
+    Route::get('/reports/form/academic',[ReportsController::class, 'getAcademicReportsForm'])->name('academic.reportsform');
+    Route::get('/report/academmic',[ReportsController::class, 'generateAcademicReport'])->name('getacademic.reports');
+    Route::get('/teacher/form', [ReportsController::class, 'teachersForm'])->name('teacherreport.form');
+    Route::get('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
+    Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
+    Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
+    Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
 
 
     // Route::post('/student/create',[StudentController2::class, 'store'])->name('student.create.new');
@@ -131,7 +140,7 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::post('/query/books', [BookController::class,'searchBooks'])->name('query.books');
 });
 
-Route::get('/test4',[ParentsController::class,'index']);
+Route::get('/test4',[ReportsController::class,'example']);
 Route::get('/test22', [StudentController::class, 'all']);
 // Route::get('/fees/get-student-name', [FeesController::class, 'getStudentName']);
 // Route::post('/search/student', [StudentController::class, 'searchStudent']);
