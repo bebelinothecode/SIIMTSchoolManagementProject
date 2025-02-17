@@ -8,6 +8,7 @@ use App\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class TeacherController extends Controller
 {
@@ -18,7 +19,9 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        $teachers = Teacher::with('user')->latest()->paginate(5);
+        $teachers = Teacher::with('user','subjects')->latest()->paginate(5);
+
+        // return $teachers;
 
         return view('backend.teachers.index', compact('teachers'));
     }
@@ -194,17 +197,30 @@ class TeacherController extends Controller
     }
 
     public function storeAssignedSubject(Request $request, $id) {
-        $validatedData = $request->validate([
-            'subject' => 'required'
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'subject' => 'required'
+            ]);
 
-        $teacher = Teacher::findOrFail($id);
+            // dd($validatedData['subject']);
+    
+            $teacher = Teacher::findOrFail($id);
 
-        $teacher->update([
-            'subject_id' => $validatedData['subject'],
-        ]);
+            $teacher->subjects()->sync($validatedData['subject']);
+    
+            // $teacher->update([
+            //     'subject_id' => $validatedData['subject'],
+            // ]);
+    
+            return redirect()->back()->with('success', 'Subject(s) assigned successfully!');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error("Error occured",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 
-        return redirect()->back()->with('success', 'Subject assigned successfully!');
+            return redirect()->back()->with('error', 'Error assigning subject!');
+
+        }
+       
     }
 
     public function profile2() {

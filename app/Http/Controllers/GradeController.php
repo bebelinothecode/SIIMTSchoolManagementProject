@@ -48,7 +48,6 @@ class GradeController extends Controller
                 $filters[trim($key)] = trim($value);
             }
         }
-
         return $filters;
     }
 
@@ -139,7 +138,7 @@ class GradeController extends Controller
         $validatedData = $request->validate([
             'subject_name'  => 'required',
             'subject_code'  => 'required',
-            'course_id'     => 'required',
+            'course_id'     => 'nullable',
             'level'         => 'required',
             'semester'      => 'required',
             'credit_hours'  => 'required'

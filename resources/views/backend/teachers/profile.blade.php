@@ -60,33 +60,39 @@
             <!-- Subject Details -->
             <div class="p-6 border-t border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Subject Details</h2>
-                @if($teacher->subjects)
+                @if($teacher->subjects->count() > 0)
                     <div class="bg-gray-50 p-4 rounded-lg">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Subject Name</label>
-                                <p class="mt-1 text-lg font-semibold text-gray-900">{{ $teacher->subjects->subject_name }}</p>
+                        @foreach($teacher->subjects as $subject)
+                            <div class="mb-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500">Subject Name</label>
+                                        <p class="mt-1 text-lg font-semibold text-gray-900">{{ $subject->subject_name ?? 'No subject name' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500">Subject Code</label>
+                                        <p class="mt-1 text-lg font-semibold text-gray-900">{{ $subject->subject_code ?? 'No subject code' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500">Semester</label>
+                                        <p class="mt-1 text-lg font-semibold text-gray-900">{{ $subject->semester ?? 'No semester' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500">Level</label>
+                                        <p class="mt-1 text-lg font-semibold text-gray-900">{{ $subject->level ?? 'No level' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500">Credit Hours</label>
+                                        <p class="mt-1 text-lg font-semibold text-gray-900">{{ $subject->credit_hours ?? 'No credit hours' }}</p>
+                                    </div>
+                                </div>
+                                <!-- Divider between subjects -->
+                                <hr class="my-4 border-gray-300">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Subject Code</label>
-                                <p class="mt-1 text-lg font-semibold text-gray-900">{{ $teacher->subjects->subject_code }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Semester</label>
-                                <p class="mt-1 text-lg font-semibold text-gray-900">{{ $teacher->subjects->semester }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Level</label>
-                                <p class="mt-1 text-lg font-semibold text-gray-900">{{ $teacher->subjects->level }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Credit Hours</label>
-                                <p class="mt-1 text-lg font-semibold text-gray-900">{{ $teacher->subjects->credit_hours }}</p>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 @else
-                    <p class="text-gray-600">No subject assigned to this teacher.</p>
+                    <p class="text-gray-600">No subjects assigned to this teacher.</p>
                 @endif
             </div>
         </div>
