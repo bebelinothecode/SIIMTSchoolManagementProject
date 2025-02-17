@@ -30,6 +30,7 @@ class Student extends Model
         'fees',
         'level',
         'session',
+        'academicyear',
         // 'permanent_address',
         'index_number',
         // 'student_type',

@@ -186,10 +186,6 @@
             <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-cog" class="svg-inline--fa fa-user-cog fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm201.2 226.5c-2.3-1.2-4.6-2.6-6.8-3.9l-7.9 4.6c-6 3.4-12.8 5.3-19.6 5.3-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-5.5-17.7 1.9-36.4 17.9-45.7l7.9-4.6c-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-16-9.2-23.4-28-17.9-45.7.9-2.9 2.2-5.8 3.2-8.7-3.8-.3-7.5-1.2-11.4-1.2h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c10.1 0 19.5-3.2 27.2-8.5-1.2-3.8-2-7.7-2-11.8v-9.2z"></path></svg>
             <span class="ml-2 text-sm font-semibold">Transactions</span>
         </a>
-        {{-- <a href="{{ route('librarybooks') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-            <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-cog" class="svg-inline--fa fa-user-cog fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm201.2 226.5c-2.3-1.2-4.6-2.6-6.8-3.9l-7.9 4.6c-6 3.4-12.8 5.3-19.6 5.3-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-5.5-17.7 1.9-36.4 17.9-45.7l7.9-4.6c-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-16-9.2-23.4-28-17.9-45.7.9-2.9 2.2-5.8 3.2-8.7-3.8-.3-7.5-1.2-11.4-1.2h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c10.1 0 19.5-3.2 27.2-8.5-1.2-3.8-2-7.7-2-11.8v-9.2z"></path></svg>
-            <span class="ml-2 text-sm font-semibold">Library &amp Books</span>
-        </a>   --}}
         <!-- Fees -->
         <div>
             <a href="#"
@@ -209,26 +205,6 @@
                 <a href="{{route('fees.defaulters')}}" class="block px-2 py-1 text-gray-600 hover:bg-gray-200 rounded">Defaulters</a>
             </div>
         </div>
-        {{-- <div class="sidebar-item" >
-            <a href="#"
-                class="flex items-center text-gray-600 py-2 hover:text-blue-700"
-                onclick="toggleSubmenu('librarySubmenu', 'libraryIcon'); return false;">
-                <svg class="h-4 w-4 fill-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                    <path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6..."></path>
-                </svg>
-                <span class="ml-2">Library & Books</span>
-                <svg class="ml-auto h-4 w-4 transform transition-transform duration-300" id="libraryIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </a>
-            <div id="librarySubmenu" class="hidden pl-6 mt-2">
-                <a href="{{ route('librarybooks') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                    <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-cog" class="svg-inline--fa fa-user-cog fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm201.2 226.5c-2.3-1.2-4.6-2.6-6.8-3.9l-7.9 4.6c-6 3.4-12.8 5.3-19.6 5.3-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-5.5-17.7 1.9-36.4 17.9-45.7l7.9-4.6c-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-16-9.2-23.4-28-17.9-45.7.9-2.9 2.2-5.8 3.2-8.7-3.8-.3-7.5-1.2-11.4-1.2h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c10.1 0 19.5-3.2 27.2-8.5-1.2-3.8-2-7.7-2-11.8v-9.2z"></path></svg>
-                    <span class="ml-2 text-sm font-semibold">Library &amp Books</span>
-                </a>                    
-                <a href="{{route('fees.collect')}}" class="block px-2 py-1 text-gray-600 hover:bg-gray-200 rounded">Past Questions</a>
-            </div>
-        </div> --}}
         <div>
             <a href="#"
                class="flex items-center text-gray-600 py-2 hover:text-blue-700"
@@ -250,6 +226,127 @@
                 </a>
             </div>
         </div>
+        {{-- <div>
+            <a href="#"
+               class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+               onclick="toggleSubMenu3('librarySubmenu4','libraryIcon4')">
+                <svg id="libraryIcon4" class="h-4 w-4 fill-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                    <path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6..."></path>
+                </svg>
+                <span class="ml-2">Reports</span>
+                <svg id="libraryIcon2" class="ml-auto h-4 w-4 transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            <div id="librarySubmenu4" class="hidden pl-6 mt-2">
+                <a href="{{ route('librarybooks') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <span class="ml-2 text-sm font-semibold">Student Reports</span>
+                </a>
+                <a href="{{ route('past.questions') }}" class="block px-2 py-1 text-gray-600 hover:bg-gray-200 rounded">
+                    <span class="ml-2 text-sm font-semibold">Payement Reports</span>
+                </a>
+            </div>
+        </div>
+        <script>
+            // Function to toggle the dropdown
+            function toggleSubMenu3(menuId, iconId) {
+                const submenu = document.getElementById(menuId);
+                const icon = document.getElementById(iconId);
+                const isHidden = submenu.classList.contains('hidden');
+                
+                // Toggle visibility
+                submenu.classList.toggle('hidden');
+                submenu.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+        
+                // Rotate icon
+                icon.classList.toggle('rotate-180');
+        
+                // Update ARIA-expanded
+                const trigger = document.querySelector(`[aria-controls="${menuId}"]`);
+                trigger.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            }
+        
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (event) => {
+                const submenu = document.getElementById('librarySubmenu4');
+                const icon = document.getElementById('libraryIcon2');
+                const trigger = document.querySelector('[aria-controls="librarySubmenu2"]');
+        
+                if (!submenu.contains(event.target) && !trigger.contains(event.target)) {
+                    if (!submenu.classList.contains('hidden')) {
+                        submenu.classList.add('hidden');
+                        submenu.setAttribute('aria-hidden', 'true');
+                        icon.classList.remove('rotate-180');
+                        trigger.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        </script> --}}
+
+        <div>
+            <a href="#"
+               class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+               onclick="toggleSubMenu3('librarySubmenu4','libraryIcon4')"
+               aria-controls="librarySubmenu4"
+               aria-expanded="false">
+                <svg id="libraryIcon4" class="h-4 w-4 fill-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                    <path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6..."></path>
+                </svg>
+                <span class="ml-2">Reports</span>
+                <svg id="libraryIcon4" class="ml-auto h-4 w-4 transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            <div id="librarySubmenu4" class="hidden pl-6 mt-2" aria-hidden="true">
+                <a href="{{ route('reports.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <span class="ml-2 text-sm font-semibold">Student Reports(Professional)</span>
+                </a>
+                <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <span class="ml-2 text-sm font-semibold">Student Reports(Academic)</span>
+                </a>
+                <a href="{{ route('teacherreport.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <span class="ml-2 text-sm font-semibold">Teacher Reports</span>
+                </a>
+                <a href="{{ route('payments.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <span class="ml-2 text-sm font-semibold">Payments Reports</span>
+                </a>
+            </div>
+        </div>
+        <script>
+            // Function to toggle the dropdown
+            function toggleSubMenu3(menuId, iconId) {
+                const submenu = document.getElementById(menuId);
+                const icon = document.getElementById(iconId);
+                const isHidden = submenu.classList.contains('hidden');
+                
+                // Toggle visibility
+                submenu.classList.toggle('hidden');
+                submenu.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+            
+                // Rotate icon
+                icon.classList.toggle('rotate-180');
+            
+                // Update ARIA-expanded
+                const trigger = document.querySelector(`[aria-controls="${menuId}"]`);
+                trigger.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (event) => {
+                const submenu = document.getElementById('librarySubmenu4');
+                const icon = document.getElementById('libraryIcon4');
+                const trigger = document.querySelector('[aria-controls="librarySubmenu4"]');
+            
+                if (!submenu.contains(event.target) && !trigger.contains(event.target)) {
+                    if (!submenu.classList.contains('hidden')) {
+                        submenu.classList.add('hidden');
+                        submenu.setAttribute('aria-hidden', 'true');
+                        icon.classList.remove('rotate-180');
+                        trigger.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        </script>
         
         <a href="{{ route('settings.set') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
             <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-cog" class="svg-inline--fa fa-user-cog fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm201.2 226.5c-2.3-1.2-4.6-2.6-6.8-3.9l-7.9 4.6c-6 3.4-12.8 5.3-19.6 5.3-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-5.5-17.7 1.9-36.4 17.9-45.7l7.9-4.6c-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-16-9.2-23.4-28-17.9-45.7.9-2.9 2.2-5.8 3.2-8.7-3.8-.3-7.5-1.2-11.4-1.2h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c10.1 0 19.5-3.2 27.2-8.5-1.2-3.8-2-7.7-2-11.8v-9.2z"></path></svg>

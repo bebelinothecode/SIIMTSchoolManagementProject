@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Parents;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 

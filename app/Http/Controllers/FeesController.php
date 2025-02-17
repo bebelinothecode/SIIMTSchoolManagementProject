@@ -212,7 +212,7 @@ class  FeesController extends Controller
                 ]);
             }
 
-            $transactions = $query->paginate(10);
+            $transactions = $query->latest()->paginate(10);
 
             return view('backend.fees.transactions', compact('transactions'));
         } catch (\Exception $e) {

@@ -60,10 +60,10 @@ class StudentController extends Controller
         $parents = Parents::with('user')->latest()->get();
         $diplomas = Diploma::all();
         // $sessions = Session::all();
-        // $years = AcademicYear::all();
+        $years = AcademicYear::all();
         // $levels = Level::all();
         
-        return view('backend.students.create', compact('courses','parents', 'diplomas'));
+        return view('backend.students.create', compact('courses','parents', 'diplomas','years'));
     }
 
      /**
@@ -103,11 +103,11 @@ class StudentController extends Controller
                 $rules['fees'] = 'required|numeric';
                 $rules['level'] = 'required|in:100,200,300,400';
                 $rules['session'] = 'required|in:1,2';
+                $rules['academicyear'] = 'required';
             }
 
             $validatedData = $request->validate($rules);
 
-            // dd($validatedData);
             DB::beginTransaction();
 
             $user = User::create([
@@ -158,8 +158,8 @@ class StudentController extends Controller
                     'fees' => $validatedData['fees'],
                     'level' => $validatedData['level'],
                     'session' => $validatedData['session'],
+                    'academicyear' => $validatedData['academicyear']
                 ]);
-
             }  
 
         $user->assignRole('Student');
@@ -232,54 +232,54 @@ class StudentController extends Controller
      * @param  \App\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Student $student)
-    {
-        $request->validate([
-            'name'              => 'required|string|max:255',
-            'email'             => 'required|string|email|max:255|unique:users,email,'.$student->user_id,
-            'parent_id'         => 'required|numeric',
-            'class_id'          => 'required|numeric',
-            'roll_number'       => [
-                'required',
-                'numeric',
-                Rule::unique('students')->ignore($student->id)->where(function ($query) use ($request) {
-                    return $query->where('class_id', $request->class_id);
-                })
-            ],
-            'gender'            => 'required|string',
-            'phone'             => 'required|string|max:255',
-            'dateofbirth'       => 'required|date',
-            'current_address'   => 'required|string|max:255',
-            'permanent_address' => 'required|string|max:255'
-            // 'academicyear'      => 'required|numeric',
-        ]);
+    // public function update(Request $request, Student $student)
+    // {
+    //     $request->validate([
+    //         'name'              => 'required|string|max:255',
+    //         'email'             => 'required|string|email|max:255|unique:users,email,'.$student->user_id,
+    //         'parent_id'         => 'required|numeric',
+    //         'class_id'          => 'required|numeric',
+    //         'roll_number'       => [
+    //             'required',
+    //             'numeric',
+    //             Rule::unique('students')->ignore($student->id)->where(function ($query) use ($request) {
+    //                 return $query->where('class_id', $request->class_id);
+    //             })
+    //         ],
+    //         'gender'            => 'required|string',
+    //         'phone'             => 'required|string|max:255',
+    //         'dateofbirth'       => 'required|date',
+    //         'current_address'   => 'required|string|max:255',
+    //         'permanent_address' => 'required|string|max:255'
+    //         // 'academicyear'      => 'required|numeric',
+    //     ]);
 
-        if ($request->hasFile('profile_picture')) {
-            $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
-            $request->profile_picture->move(public_path('images/profile'), $profile);
-        } else {
-            $profile = $student->user->profile_picture;
-        }
+    //     if ($request->hasFile('profile_picture')) {
+    //         $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
+    //         $request->profile_picture->move(public_path('images/profile'), $profile);
+    //     } else {
+    //         $profile = $student->user->profile_picture;
+    //     }
 
-        $student->user()->update([
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'profile_picture'   => $profile
-        ]);
+    //     $student->user()->update([
+    //         'name'              => $request->name,
+    //         'email'             => $request->email,
+    //         'profile_picture'   => $profile
+    //     ]);
 
-        $student->update([
-            'parent_id'         => $request->parent_id,
-            'class_id'          => $request->class_id,
-            'roll_number'       => $request->roll_number,
-            'gender'            => $request->gender,
-            'phone'             => $request->phone,
-            'dateofbirth'       => $request->dateofbirth,
-            'current_address'   => $request->current_address,
-            'permanent_address' => $request->permanent_address
-        ]);
+    //     $student->update([
+    //         'parent_id'         => $request->parent_id,
+    //         'class_id'          => $request->class_id,
+    //         'roll_number'       => $request->roll_number,
+    //         'gender'            => $request->gender,
+    //         'phone'             => $request->phone,
+    //         'dateofbirth'       => $request->dateofbirth,
+    //         'current_address'   => $request->current_address,
+    //         'permanent_address' => $request->permanent_address
+    //     ]);
 
-        return redirect()->route('student.index');
-    }
+    //     return redirect()->route('student.index');
+    // }
 
     /**
      * Remove the specified resource from storage.
@@ -403,6 +403,11 @@ class StudentController extends Controller
 
             $student = Student::findOrFail($id);
 
+            $course = Grade::where('id', $validatedData['course_id'])->first();
+            $diploma = Diploma::where('id', $validatedData['course_id'])->first();
+
+            $item = $course ?? $diploma;
+
             DB::beginTransaction();
 
             if ($request->hasFile('profile_picture')) {
@@ -426,7 +431,10 @@ class StudentController extends Controller
                 }
                 $student->update([
                     'course_id' => $validatedData['course_id'],
-                    'balance'   => $courseChanged ? 0 : $student->balance
+                    'balance'   => $courseChanged ? '0.0' : $student->balance,
+                    'fees' => $item->fees,
+                    'currency' => $item->currency
+                    // 'fees' => ,
                 ]);
             } else {
                 if ($student->course_id_prof != $validatedData['course_id']) {
@@ -434,7 +442,10 @@ class StudentController extends Controller
                 }
                 $student->update([
                     'course_id_prof' => $validatedData['course_id'],
-                    'balance'        => $courseChanged ? 0 : $student->balance
+                    // 'balance' => "0.0",
+                    'fees' => $item->fees,
+                    'currency_prof' => $item->currency,
+                    'balance' => $courseChanged ? '0.0' : $student->balance
                 ]);
             }
 
