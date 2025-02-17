@@ -23,7 +23,7 @@ class Teacher extends Model
 
     public function subjects()
     {
-        return $this->belongsTo(Subject::class,'subject_id');
+        return $this->belongsToMany(Subject::class,'teacher_subject');
     }
 
     public function classes()

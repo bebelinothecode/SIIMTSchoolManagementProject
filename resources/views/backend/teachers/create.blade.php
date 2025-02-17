@@ -97,18 +97,34 @@
                     </div>
                 </div>
                 <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Date of Birth
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="dateofbirth" id="datepicker-tc" autocomplete="off" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('dateofbirth') }}">
-                        @error('dateofbirth')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                        Date of Birth
+                    </label>
                 </div>
+                <div class="md:w-2/3">
+                    <input name="dateofbirth" id="datepicker-tc" autocomplete="off" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('dateofbirth') }}">
+                    @error('dateofbirth')
+                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var date = new Date();
+                    date.setFullYear(date.getFullYear() - 25); // Subtract 25 years from the current date
+
+                    var day = String(date.getDate()).padStart(2, '0');
+                    var month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+                    var year = date.getFullYear();
+
+                    var formattedDate = year + '-' + month + '-' + day; // Format as YYYY-MM-DD
+
+                    document.getElementById('datepicker-tc').value = formattedDate; // Set the default value
+                });
+            </script>
+
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">

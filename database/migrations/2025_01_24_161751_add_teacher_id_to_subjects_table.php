@@ -20,6 +20,7 @@ class AddTeacherIdToSubjectsTable extends Migration
         });
     }
 
+
     /**
      * Reverse the migrations.
      *

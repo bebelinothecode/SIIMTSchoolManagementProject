@@ -50,7 +50,7 @@
                     </div>
                     <div class="md:w-2/3">
                         <input name="isbn_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ old('email') }}">
-                        @error('author')
+                        @error('isbn_numbethor')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="md:w-2/3">
                         <input name="publisher" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('email') }}">
-                        @error('author')
+                        @error('publisher')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -94,7 +94,17 @@
                         confirmButtonText: 'OK'
                     });
                 </script>
-            @endif        
+            @endif   
+            @if (session('error'))
+                <script>
+                    Swal.fire({
+                        title: 'Oops!',
+                        text: '{{ session('error') }}',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            @endif      
         </div>
     </div>
 @endsection

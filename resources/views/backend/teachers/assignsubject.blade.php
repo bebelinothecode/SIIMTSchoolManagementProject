@@ -62,6 +62,17 @@
                     confirmButtonText: 'OK'
                 });
             </script>
+            @endif
+
+            @if (session('error'))
+            <script>
+                Swal.fire({
+                    title: 'Oops!',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            </script>
             @endif       
         </div>
     </div>

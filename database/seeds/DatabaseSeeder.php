@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'phone'             => '0123456789',
                 'dateofbirth'       => '1993-04-11',
                 'current_address'   => 'Dhaka-1215',
-                // 'permanent_address' => 'Dhaka-1215',
+                'permanent_address' => 'Dhaka-1215',
                 'created_at'        => date("Y-m-d H:i:s")
             ]
         ]);

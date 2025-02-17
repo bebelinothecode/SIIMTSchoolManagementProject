@@ -207,7 +207,7 @@ class StudentController extends Controller
             })
             ->findOrFail($id);
 
-        return $student;
+        // return $student;
 
         return view('backend.students.show', compact('student'));
     }
