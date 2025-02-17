@@ -22,6 +22,11 @@
             left: 0;
             top: 0;
             width: 100%;
+            text-align: center;
+        }
+
+        .print-section .logo-title {
+            margin-bottom: 20px;
         }
         
         /* Hide the print button when printing */
@@ -71,13 +76,15 @@
             <p><strong>Current Date:</strong> {{ $currentDate ?? 'N/A' }}</p>
             <p><strong>Start Date:</strong> {{ $startDate ?? 'N/A' }}</p>
             <p><strong>End Date:</strong> {{ $endDate ?? 'N/A' }}</p>
-            {{-- <p><strong>Subject:</strong> </p> --}}
-            {{-- <p><strong>Student Category:</strong> {{ $student_category ?? 'N/A' }}</p> --}}
         </div>
     </div>
 
     <!-- Students Table -->
     <div class="print-section mt-6 bg-white rounded-lg shadow overflow-x-auto">
+        <div class="logo-title">
+            <img src="public/logo/SIIMT-logo.png" alt="Logo" style="max-height: 100px;">
+            <h2 class="text-2xl font-bold">School Payments Report</h2>
+        </div>
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
@@ -90,8 +97,6 @@
                     <th class="py-3 px-6 text-left">Currency</th>
                     <th class="py-3 px-6 text-left">Cheque Number</th>
                     <th class="py-3 px-6 text-left">Momo Number</th>
-
-
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
@@ -106,11 +111,10 @@
                         <td class="py-3 px-6 text-left">{{ $payment->currency }}</td>
                         <td class="py-3 px-6 text-left">{{ $payment->cheque_number ?? "N/A" }}</td>
                         <td class="py-3 px-6 text-left">{{ $payment->Momo_number ?? "N/A" }}</td>
-                        {{-- <td class="py-3 px-6 text-left">{{ $teacher->subjects->subject_code }}-{{$teacher->subjects->subject_name}}</td> --}}
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="py-6 px-6 text-center text-gray-500">
+                        <td colspan="9" class="py-6 px-6 text-center text-gray-500">
                             <div class="flex flex-col items-center justify-center space-y-2">
                                 <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>

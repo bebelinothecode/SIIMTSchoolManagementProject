@@ -14,25 +14,6 @@
                 </a>
             </div>
         </div>
-
-        {{-- Search Form --}}
-
-        {{-- <form action="{{ route('classes.index')}}" method="GET" class="flex items-center mt-4 space-x-4">
-            <input 
-                type="text" 
-                name="search" 
-                placeholder="Search Subject by Example: semester=1 or subject_name=Twi and subject_code=CPEN112" 
-                value="{{ request('search') }}"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-            <button 
-                type="submit" 
-                class="px-4 py-2 m-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-            >
-                Search
-            </button>
-        </form> --}}
-
         <div class="table w-full mt-8 bg-white rounded">
             <form action="{{ route('store.enquiry') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
                 @csrf

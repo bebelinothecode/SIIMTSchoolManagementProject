@@ -108,6 +108,64 @@
                 <!-- Include Course, Currency, Amount, and Duration Fields -->
             </div>
 
+            <div class="md:flex md:items-center mb-6">
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                        Scholarship
+                    </label>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="flex flex-row items-center">
+                        <label class="block text-gray-500 font-bold">
+                            <input name="scholarship" id="scholarship_yes" class="mr-2 leading-tight" type="radio" value="Yes">
+                            <span class="text-sm">Yes</span>
+                        </label>
+                        <label class="ml-4 block text-gray-500 font-bold">
+                            <input name="scholarship" id="scholarship_no" class="mr-2 leading-tight" type="radio" value="No">
+                            <span class="text-sm">No</span>
+                        </label>
+                    </div>
+                    @error('scholarship')
+                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            
+            <!-- Conditional Scholarship Amount Field -->
+            <div class="md:flex md:items-center mb-6" id="scholarship_amount_field" style="display: none;">
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                        Scholarship Amount
+                    </label>
+                </div>
+                <div class="md:w-2/3">
+                    <input name="scholarship_amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" type="number" placeholder="Enter amount">
+                    @error('scholarship_amount')
+                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        // Show/hide scholarship amount field based on radio button selection
+                        $('input[name="scholarship"]').change(function() {
+                            if ($('#scholarship_yes').is(':checked')) {
+                                $('#scholarship_amount_field').show();
+                            } else {
+                                $('#scholarship_amount_field').hide();
+                            }
+                        });
+                
+                        // Trigger change event on page load to set initial state
+                        $('input[name="scholarship"]').trigger('change');
+                    });
+                </script>
+
+            </div>
+
             <!-- Conditional Fields for Academic -->
             <div id="conditionalFieldsAcademic" class="hidden">
                 {{-- Course --}}

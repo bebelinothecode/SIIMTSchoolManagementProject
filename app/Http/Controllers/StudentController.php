@@ -89,6 +89,8 @@ class StudentController extends Controller
                 'student_parent' => 'required|string|max:255',
                 'parent_phonenumber' => 'required|string|max:15',
                 'student_category' => 'required|in:Professional,Academic',
+                'scholarship' => 'required|in:Yes,No',
+                'scholarship_amount' => 'nullable|numeric|required_if:scholarship,Yes'
             ];
 
              // Conditional validation based on student category
@@ -106,7 +108,11 @@ class StudentController extends Controller
                 $rules['academicyear'] = 'required';
             }
 
+            // dd($validatedData);
+
             $validatedData = $request->validate($rules);
+
+            // dd($validatedData);
 
             DB::beginTransaction();
 
@@ -140,7 +146,9 @@ class StudentController extends Controller
                     'course_id_prof' => $validatedData['course_id_prof'],
                     'currency_prof' => $validatedData['currency_prof'],
                     'fees_prof' => $validatedData['fees_prof'],
-                    'duration_prof' => $validatedData['duration_prof']
+                    'duration_prof' => $validatedData['duration_prof'],
+                    'Scholarship' => $validatedData['scholarship'],
+                    'Scholarship_amount' => $validatedData['scholarship_amount']
                 ]);
             }  elseif ($request->student_category === 'Academic') {
                 $user->student()->create([
@@ -158,7 +166,9 @@ class StudentController extends Controller
                     'fees' => $validatedData['fees'],
                     'level' => $validatedData['level'],
                     'session' => $validatedData['session'],
-                    'academicyear' => $validatedData['academicyear']
+                    'academicyear' => $validatedData['academicyear'],
+                    'Scholarship' => $validatedData['scholarship'],
+                    'Scholarship_amount' => $validatedData['scholarship_amount']
                 ]);
             }  
 

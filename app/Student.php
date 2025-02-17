@@ -31,6 +31,8 @@ class Student extends Model
         'level',
         'session',
         'academicyear',
+        'Scholarship',
+        'Scholarship_amount',
         // 'permanent_address',
         'index_number',
         // 'student_type',
