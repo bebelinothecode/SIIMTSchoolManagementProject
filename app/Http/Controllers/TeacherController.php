@@ -197,17 +197,10 @@ class TeacherController extends Controller
     }
 
     public function storeAssignedSubject(Request $request, $id) {
-<<<<<<< HEAD
         try {
             $validatedData = $request->validate([
                 'subject' => 'required'
             ]);
-=======
-        // dd($request->all());
-        $validatedData = $request->validate([
-            'subject' => 'required'
-        ]);
->>>>>>> 1f65db2b5d145829c035a6cd746a6b6206eb0f22
 
             // dd($validatedData['subject']);
     
