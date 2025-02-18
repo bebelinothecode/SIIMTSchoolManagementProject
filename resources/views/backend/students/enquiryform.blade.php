@@ -37,7 +37,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="telephone_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="string" value="{{ old('email') }}">
+                        <input name="telephone_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ old('email') }}">
                         @error('telephone_number')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -51,15 +51,23 @@
                     </div>
                     <div class="md:w-2/3">
                         <div class="md:w-2/3">
-                            <select name="course" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                                <option value="">--Select Course--</option>
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->course_name }}">{{ $course->course_name }}</option>
+                            <select name="course" class="form-select select2-dropdown" id="choices-select">
+                                <option value="">-- Select Program --</option>
+                                @foreach($dropdownItems as $item)
+                                    <option value="{{ $item['name'] }}">{{ $item['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        
                     </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const choices = new Choices('#choices-select', {
+                                removeItemButton: true,
+                                searchEnabled: true,
+                                searchPlaceholderValue: 'Search for a course...'
+                            });
+                        });
+                    </script>
                 </div>
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -92,7 +100,7 @@
                     confirmButtonText: 'OK'
                 });
             </script>
-        @endif      
+        @endif   
         </div>
     </div>
 @endsection

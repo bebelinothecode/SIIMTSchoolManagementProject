@@ -18,278 +18,54 @@ class GradeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index(Request $request)
-    // {
-    //     $query = Subject::with('course');
-
-    //     if ($request->has('search')) {
-    //         $searchTerm = $request->input('search');
-    
-    //         // Parse the search term into key-value pairs
-    //         $filters = $this->parseSearchTerm($searchTerm);
-    
-    //         // Apply filters based on the parsed key-value pairs
-    //         foreach ($filters as $key => $value) {
-    //             $query->where($key, 'like', '%' . $value . '%');
-    //         }
-    //     }
-
-    //     $classes = $query->latest()->paginate(10);
-
-    //     return view('backend.classes.index', compact('classes'));
-    // }
-
-
-    // private function parseSearchTerm($searchTerm)
-    // {
-    //     $filters = [];
-    //     $terms = explode(' and ', $searchTerm);
-
-    //     foreach ($terms as $term) {
-    //         if (str_contains($term, '=')) {
-    //             list($key, $value) = explode('=', $term, 2);
-    //             $filters[trim($key)] = trim($value);
-    //         }
-    //     }
-
-    //     return $filters;
-    // }
-
-    // ------
-
-    // public function index(Request $request)
-    // {
-    //     $query = Subject::with('course');
-
-    //     if ($request->filled('search')) {
-    //         $searchTerm = $request->input('search');
-            
-    //         try {
-    //             $filters = $this->parseSearchTerm($searchTerm);
-    //             $this->applyFilters($query, $filters);
-    //         } catch (\Exception $e) {
-    //             Log::error('Search parsing error: ' . $e->getMessage());
-    //             // Optionally, notify the user of the error
-    //         }
-    //     }
-
-    //     $classes = $query->latest()->paginate(3);
-
-    //     return view('backend.classes.index', compact('classes'))
-    //         ->with('search', $request->input('search'));
-    // }
-
-    // private function parseSearchTerm($searchTerm)
-    // {
-    //     $filters = [];
-        
-    //     if (empty($searchTerm)) {
-    //         return $filters;
-    //     }
-
-    //     $terms = explode(' and ', strtolower($searchTerm));
-
-    //     foreach ($terms as $term) {
-    //         if (str_contains($term, '=')) {
-    //             list($key, $value) = array_map('trim', explode('=', $term, 2));
-                
-    //             // Basic sanitization
-    //             $key = preg_replace('/[^a-z_]/', '', $key);
-    //             $value = strip_tags($value);
-                
-    //             if (!empty($key) && !empty($value)) {
-    //                 $filters[$key] = $value;
-    //             }
-    //         }
-    //     }
-
-    //     return $filters;
-    // }
-
-    // private function applyFilters($query, $filters)
-    // {
-    // $validColumns = ['id', 'subject_name', 'subject_code', 'semester', 'level', 'credit_hours'];
-
-    // $query->where(function($q) use ($filters, $validColumns) {
-    //     foreach ($filters as $key => $value) {
-    //         if (in_array($key, $validColumns)) {
-    //             // For numeric columns, use exact match
-    //             if (in_array($key, ['id', 'semester', 'level', 'credit_hours'])) {
-    //                 $q->orWhere($key, '=', $value);
-    //             } else {
-    //                 // For text columns, use partial match
-    //                 $q->orWhere($key, 'like', '%' . $value . '%');
-    //             }
-    //         }
-
-    //         // Search in related course table (if applicable)
-    //         if ($key === 'course_name') {
-    //             $q->orWhereHas('course', function($courseQuery) use ($value) {
-    //                 $courseQuery->where('course_name', 'like', '%' . $value . '%');
-    //             });
-    //         }
-    //     }
-    // });
-    // }
-
-    // -------
-
-//     public function index(Request $request)
-// {
-//     // Start a fresh query for each request
-//     $query = Subject::with('course');
-
-//     if ($request->filled('search')) {
-//         $searchTerm = $request->input('search');
-        
-//         try {
-//             $filters = $this->parseSearchTerm($searchTerm);
-//             $this->applyFilters($query, $filters);
-//         } catch (\Exception $e) {
-//             Log::error('Search parsing error: ' . $e->getMessage());
-//             // Optionally, notify the user of the error
-//         }
-//     }
-
-//     $classes = $query->latest()->paginate(10);
-
-//     return view('backend.classes.index', compact('classes'))
-//         ->with('search', $request->input('search'));
-// }
-
-// private function parseSearchTerm($searchTerm)
-// {
-//     $filters = [];
-    
-//     if (empty($searchTerm)) {
-//         return $filters;
-//     }
-
-//     $terms = explode(' and ', strtolower($searchTerm));
-
-//     foreach ($terms as $term) {
-//         if (str_contains($term, '=')) {
-//             list($key, $value) = array_map('trim', explode('=', $term, 2));
-            
-//             // Basic sanitization
-//             $key = preg_replace('/[^a-z_]/', '', $key);
-//             $value = strip_tags($value);
-            
-//             if (!empty($key) && !empty($value)) {
-//                 $filters[$key] = $value;
-//             }
-//         }
-//     }
-
-//     return $filters;
-// }
-
-// private function applyFilters($query, $filters)
-// {
-//     $validColumns = ['id', 'subject_name', 'subject_code', 'semester', 'level', 'credit_hours'];
-
-//     // Use `where` instead of `orWhere` to ensure strict filtering
-//     $query->where(function($q) use ($filters, $validColumns) {
-//         foreach ($filters as $key => $value) {
-//             if (in_array($key, $validColumns)) {
-//                 // For numeric columns, use exact match
-//                 if (in_array($key, ['id', 'semester', 'level', 'credit_hours'])) {
-//                     $q->where($key, '=', $value);
-//                 } else {
-//                     // For text columns, use partial match
-//                     $q->where($key, 'like', '%' . $value . '%');
-//                 }
-//             }
-
-//             // Search in related course table (if applicable)
-//             if ($key === 'course_name') {
-//                 $q->whereHas('course', function($courseQuery) use ($value) {
-//                     $courseQuery->where('course_name', 'like', '%' . $value . '%');
-//                 });
-//             }
-//         }
-//     });
-// }
-
-// -----
-
     public function index(Request $request)
     {
-        // Start a fresh query for each request
-        $query = Subject::with('course');
+        try {
+            $query = Subject::with('course');
 
-        if ($request->filled('search')) {
-            $searchTerm = $request->input('search');
-            
-            try {
-                $filters = $this->parseSearchTerm($searchTerm);
-                $this->applyFilters($query, $filters);
-            } catch (\Exception $e) {
-                Log::error('Search parsing error: ' . $e->getMessage());
-                // Optionally, notify the user of the error
-            }
-        }
-
-        $classes = $query->latest()->paginate(10);
-
-        return view('backend.classes.index', compact('classes'))
-            ->with('search', $request->input('search'));
-    }
-
-    private function parseSearchTerm($searchTerm)
-    {
-        $filters = [];
-        
-        if (empty($searchTerm)) {
-            return $filters;
-        }
-
-        $terms = explode(' and ', strtolower($searchTerm));
-
-        foreach ($terms as $term) {
-            if (str_contains($term, '=')) {
-                list($key, $value) = array_map('trim', explode('=', $term, 2));
+            if ($request->filled('search')) {
+                $searchTerm = trim($request->input('search'));
                 
-                // Basic sanitization
-                $key = preg_replace('/[^a-z_]/', '', $key);
-                $value = strip_tags($value);
-                
-                if (!empty($key) && !empty($value)) {
-                    $filters[$key] = $value;
-                }
-            }
-        }
-        return $filters;
-    }
+                $query->where(function($q) use ($searchTerm) {
+                    // Search in Subject model fields
+                    $q->where('subject_name', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('subject_code', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('semester', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('level', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('credit_hours', 'like', '%' . $searchTerm . '%');
 
-    private function applyFilters($query, $filters)
-    {
-    $validColumns = ['id', 'subject_name', 'subject_code', 'semester', 'level', 'credit_hours'];
+                    // Search in related Course model with correct relationship
+                    // $q->orWhereHas('course', function($courseQuery) use ($searchTerm) {
+                    //     $courseQuery->where('name', 'like', '%' . $searchTerm . '%')
+                    //               ->orWhere('code', 'like', '%' . $searchTerm . '%');
+                    // });
 
-    // Use `where` instead of `orWhere` to ensure strict filtering
-    $query->where(function($q) use ($filters, $validColumns) {
-        foreach ($filters as $key => $value) {
-            if (in_array($key, $validColumns)) {
-                // For numeric columns, use exact match
-                if (in_array($key, ['id', 'semester', 'level', 'credit_hours'])) {
-                    $q->where($key, '=', $value);
-                } else {
-                    // For text columns, use partial match
-                    $q->where($key, 'like', '%' . $value . '%');
-                }
-            }
-
-            // Search in related course table (if applicable)
-            if ($key === 'course_name') {
-                $q->whereHas('course', function($courseQuery) use ($value) {
-                    $courseQuery->where('course_name', 'like', '%' . $value . '%');
+                    // If search term is numeric, also search by ID
+                    if (is_numeric($searchTerm)) {
+                        $q->orWhere('id', $searchTerm);
+                    }
                 });
             }
+
+            $classes = $query->latest()->paginate(10);
+
+            return view('backend.classes.index', [
+                'classes' => $classes,
+                'search' => $request->input('search')
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Search error: ' . $e->getMessage(), [
+                'search_term' => $request->input('search'),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()
+                ->withError('An error occurred while processing your search.')
+                ->withInput();
         }
-    });
     }
-
-
+   
     /**
      * Show the form for creating a new resource.
      *

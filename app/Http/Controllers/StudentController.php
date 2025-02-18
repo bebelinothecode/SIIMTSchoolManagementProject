@@ -354,12 +354,21 @@ class StudentController extends Controller
     }
 
     public function saveStudentEnquiry() {
-        $courses = Grade::all(['course_name']);
+        $courses = Grade::all();
 
-        return view('backend.students.enquiryform', compact('courses'));
+        $diplomas = Diploma::all();
+
+        $dropdownItems = $courses->map(function ($course) {
+            return ['id' => $course->id, 'name' => $course->course_name];
+        })->merge($diplomas->map(function ($diploma) {
+            return ['id' => $diploma->id, 'name' => $diploma->name];
+        }));
+
+        return view('backend.students.enquiryform', compact('dropdownItems'));
     }
 
     public function storeEnquiry(Request $request) {
+        try {
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -375,20 +384,14 @@ class StudentController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Enquiry created successfully');
-    }
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('Error creating student: ' . $e);
 
-    public function test3()
-    {
-        // $parents = Parents::with(['user','children'])->get();
-        // $parents = Parents::with(['user','children'])->latest()->paginate(10);
-        // $parents = Parents::with('user')->latest()->get();
-        $parents = Grade::all();
+            return redirect()->back()->with('error', 'Error saving Enquiry');
+        }
+        // dd($request->all());
 
-
-
-        return $parents;
-        
-        // return view('backend.parents.index', compact('parents'));
     }
 
     public function migration() {
@@ -485,6 +488,8 @@ class StudentController extends Controller
     public function promoteAll(Request $request) {
         try {
 
+            // dd($request->all());
+
             $validatedData = $request->validate([
                 'current_level' => 'required',
                 'current_semester' => 'required',
@@ -498,16 +503,20 @@ class StudentController extends Controller
             $toSemester = $validatedData['target_semester'];
 
             if (($fromSemester === $toSemester) && ($fromLevel === $toLevel)) {
-                return redirect()->back()->with('duplicate', 'Cant migrate to the same semester');
+                return redirect()->back()->with('duplicate', 'Cant migrate to the same semester or level');
             }
 
             // Find all students currently at level 100
-            $students = Student::where('level', $fromLevel)->get();
+            $students = Student::where('level', $fromLevel)
+                                    ->where('session', $fromSemester)
+                                    ->get();
+
+            // return $students;
 
         
             // Check if any students are found
             if ($students->isEmpty()) {
-                return redirect()->back()->with('failure', 'No students found');
+                return redirect()->back()->with('error', 'No students found');
             }
 
             foreach($students as $student) {

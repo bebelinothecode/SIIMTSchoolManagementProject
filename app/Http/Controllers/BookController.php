@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Book;
-use App\PastQuestions;
+use App\Grade;
+use App\Diploma;
 use App\Student;
+use App\PastQuestions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -101,11 +103,32 @@ class BookController extends Controller
     }
 
     public function pastQuestions() {
-        return view('backend.librarybooks.pastquestions');
+        $courses = Grade::all();
+
+        $diplomas = Diploma::all();
+        
+        $dropdownItems = $courses->map(function ($course) {
+            return ['id' => $course->id, 'name' => $course->course_name];
+        })->merge($diplomas->map(function ($diploma) {
+            return ['id' => $diploma->id, 'name' => $diploma->name];
+        }));
+
+        return view('backend.librarybooks.pastquestions', compact('dropdownItems'));
     }
 
     public function uploadPastQuestions() {
-        return view('backend.librarybooks.uploadpastquestions');
+
+        $courses = Grade::all();
+
+        $diplomas = Diploma::all();
+        
+        $dropdownItems = $courses->map(function ($course) {
+            return ['id' => $course->id, 'name' => $course->course_name];
+        })->merge($diplomas->map(function ($diploma) {
+            return ['id' => $diploma->id, 'name' => $diploma->name];
+        }));
+
+        return view('backend.librarybooks.uploadpastquestions', compact('dropdownItems'));
     }
 
     public function uploadExamsQuestions(Request $request) {

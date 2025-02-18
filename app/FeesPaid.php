@@ -24,7 +24,9 @@ class FeesPaid extends Model
         'balance',
         'currency',
         'cheque_number',
-        'Momo_number'
+        'Momo_number',
+        // 'Fees',
+        'remarks'
     ];
 }
 

@@ -81,6 +81,7 @@ class  FeesController extends Controller
                 'currency' => 'required',
                 'Momo_number' => 'nullable',
                 'cheque_number' => 'nullable',
+                'remarks'  => 'nullable|string',
             ]);
 
             // dd($validatedData);
@@ -100,12 +101,13 @@ class  FeesController extends Controller
                 'balance' => $validatedData['balance'],
                 'currency' => $validatedData['currency'],
                 'Momo_number' => $validatedData['Momo_number'],
-                'cheque_number' => $validatedData['cheque_number']
+                'cheque_number' => $validatedData['cheque_number'],
+                'remarks' => $validatedData['remarks']
             ]);
 
             if($feespaid) {
                 $student->balance = $validatedData['balance'];
-                $student->save();
+                $student->save();                                                              
                 Log::info('Balance saved successfully');
             }
 
