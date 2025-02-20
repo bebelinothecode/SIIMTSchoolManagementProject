@@ -9,6 +9,7 @@ use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Teacher;
 use FontLib\Table\Type\name;
@@ -106,6 +107,9 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
     Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
     Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
+    Route::get('/delete/assigned/subject/{id}',[SubjectController::class,'getDeleteForm'])->name('deleteassigned.subject');
+    Route::delete('delete/assigned/subject/{id}',[SubjectController::class,'deleteAssignedSubject'])->name('delete.assigned');
+    Route::delete('/delete/diploma/{id}',[SubjectController::class,'deleteDiploma'])->name('delete.diploma');
 
 
     // Route::post('/student/create',[StudentController2::class, 'store'])->name('student.create.new');

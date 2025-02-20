@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Grade;
 use App\Subject;
 use App\Teacher;
+use App\Diploma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -164,5 +165,50 @@ class SubjectController extends Controller
         dd($courses);
         
         return view('backend.subjects.index', compact('courses'));
+    }
+
+    public function getDeleteForm($id) {
+        try {
+            //code...
+            $teacher = Teacher::findOrFail($id);
+
+            $diplomas = Diploma::all();
+
+            $subjects = Subject::all();
+
+        $dropdownitems = $subjects->map(function($subject){
+            return ['id' => $subject->id, 'name' => $subject->subject_name];
+        })->merge($diplomas->map(function($diploma) {
+            return ['id'=> $diploma->id,'name'=> $diploma->name];
+        }));
+            return view('backend.teachers.deleteassigned',compact("dropdownitems", "teacher"));
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error("Error deleting assigned subject", [$e->getMessage()]);
+        }
+    }
+
+    public function deleteAssignedSubject(Request $request, $id) {
+        try {  
+            $teacher = Teacher::findOrFail($id);
+             
+            $subjectIds = $request->input('subject');
+
+            // dd($subjectIds);
+
+            if (is_array($subjectIds) && count($subjectIds) > 0) {
+                // Detach multiple subjects from the teacher
+                $teacher->subjects()->detach($subjectIds);
+                
+                // Optionally, return with a success message
+                return redirect()->back()->with('success', 'Subjects removed successfully.');
+            }
+
+            return redirect()->back()->with('error', 'No subjects selected to remove.');
+    }catch (\Exception $e) {    
+        Log::error("Error deleting subjects:", [$e->getMessage()]);
+
+        return redirect()->back()->with('error', 'An error occurred while deleting subjects.');
+       }
     }
 }

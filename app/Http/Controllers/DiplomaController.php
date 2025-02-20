@@ -131,4 +131,18 @@ class DiplomaController extends Controller
             'currency' => $details->currency,
         ]);
     }
+
+    public function deleteDiploma($id) {
+        try {
+            //code...
+            $diploma = Diploma::findOrFail($id);
+
+            $diploma->delete();
+
+            return redirect()->back()->with('success','Diploma Course deleted successfully');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('Error deleting diploma',$e->getMessage());
+        }
+    }
 }

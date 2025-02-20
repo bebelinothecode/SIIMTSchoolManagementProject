@@ -40,6 +40,7 @@
                         <td class="py-3 px-6 text-center">
                             <a href="{{ route('teacher.profile', $teacher->id) }}" class="text-blue-600 hover:underline">Profile</a>
                             <a href="{{ route('assign.subject', $teacher->id) }}" class="ml-4 text-green-600 hover:underline">Assign Subject</a>
+                            <a href="{{ route('deleteassigned.subject', $teacher->id) }}" class="ml-4 text-blue-600 hover:underline">Delete Assigned Subject(s)</a>
                             <form action="{{route('teacher.delete', $teacher->id)}}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')

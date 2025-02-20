@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Diploma;
 use App\Subject;
 use App\User;
 use App\Teacher;
@@ -192,6 +193,20 @@ class TeacherController extends Controller
         $teacher = Teacher::findOrFail($id);
 
         $subjects = Subject::all();
+
+        // $diplomas = Diploma::all();
+
+        // // 'subject_name',
+        // // 'subject_code',
+        // // 'semester',
+        // // 'level',
+        // // 'credit_hours',
+
+        // $dropdownitems = $subjects->map(function($subject){
+        //     return ['id' => $subject->id, 'name' => $subject->subject_name];
+        // })->merge($diplomas->map(function($diploma) {
+        //     return ['id'=> $diploma->id,'name'=> $diploma->name];
+        // }));
 
         return view('backend.teachers.assignsubject', compact('teacher','subjects'));
     }
