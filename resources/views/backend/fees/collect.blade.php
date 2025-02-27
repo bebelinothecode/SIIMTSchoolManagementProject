@@ -42,7 +42,12 @@
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <input name="student_name" id="student_name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text"  required>
+                        <select id="choices-select2" name="student_name">
+                            <option value="">--Type Student Name--</option>
+                                @foreach ($details as $detail)
+                                    <option value={{ $detail->user->name }}>{{ $detail->user->name }}</option>
+                                @endforeach
+                        </select>                        
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                         </div>
@@ -203,6 +208,13 @@
                         });
                     });
                 </script>
+                 <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const choices = new Choices('#choices-select2', {
+                            removeItemButton: true,
+                        });
+                    });
+                </script>
                 <script>
                     document.addEventListener('DOMContentLoaded',() => {
                         const amount = document.getElementById('amount');
@@ -245,9 +257,9 @@
                         amount.addEventListener('input', calculateBalance);
                     });
                 </script>
-                <script>
+                {{-- <script>
                     $(document).ready(function () {
-                        $('#choices-select').on('change', function () {
+                        $('#choices-select2').on('change', function () {
                             let indexNumber = $(this).val();
                 
                             if (indexNumber) {
@@ -258,27 +270,91 @@
                                     success: function (response) {
                                         if (response.student_category === 'Professional') {
                                             console.log(response)
-                                            $('#student_name').val(response.name || 'Not Found');
+                                            $('#choices-select2').val(response.name || 'Not Found');
                                             $('#balance').val(response.balance || response.fees_prof || 'Not Found');
 
                                         } else if (response.student_category === 'Academic') {
-                                            $('#student_name').val(response.name || 'Not Found');
+                                            $('#choices-select2').val(response.name || 'Not Found');
                                             $('#balance').val(response.balance || response.fees || 'Not Found');
                                         } else {
                                             alert('Student not found.');
                                             $('#balance').val('');
-                                            $('student_name').val('');
+                                            $('choices-select2').val('');
                                         }
                                     },
                                     error: function () {
-                                        $('#student_name').val('Not Found');
+                                        $('#choices-select2').val('Not Found');
                                         $('#balance').val('Not Found');
                                     }
                                 });
                             } else {
-                                $('#student_name').val('');
+                                $('#choices-select2').val('');
                                 $('#balance').val('');
                             }
+                        });
+                    });
+                </script> --}}
+                <script>
+                    $(document).ready(function () {
+                        // Function to fetch student data
+                        function fetchStudentData(input, isIndexNumber) {
+                            if (input) {
+                                $.ajax({
+                                    url: '{{ route("fees.get-student-name") }}', // Route to fetch student data
+                                    type: 'GET',
+                                    data: isIndexNumber ? { index_number: input } : { student_name: input },
+                                    success: function (response) {
+                                        console.log(response)
+                                        if (response) {
+                                            if (isIndexNumber) {
+                                                // If input is index number, populate student name
+                                                $('#choices-select2').val(response.name || 'Not Found');
+                                            } else {
+                                                // If input is student name, populate index number
+                                                $('#choices-select').val(response.index_number || 'Not Found');
+                                            }
+                
+                                            // Populate balance based on student category
+                                            if (response.student_category === 'Professional') {
+                                                $('#balance').val(response.balance || response.fees_prof || 'Not Found');
+                                            } else if (response.student_category === 'Academic') {
+                                                $('#balance').val(response.balance || response.fees || 'Not Found');
+                                            } else {
+                                                alert('Student not found.');
+                                                $('#balance').val('');
+                                            }
+                                        } else {
+                                            alert('Student not found.');
+                                            $('#choices-select2').val('');
+                                            $('#choices-select').val('');
+                                            $('#balance').val('');
+                                        }
+                                    },
+                                    error: function () {
+                                        alert('An error occurred. Please try again.');
+                                        $('#choices-select2').val('Not Found');
+                                        $('#choices-select').val('Not Found');
+                                        $('#balance').val('Not Found');
+                                    }
+                                });
+                            } else {
+                                // Clear fields if input is empty
+                                $('#choices-select2').val('');
+                                $('#choices-select').val('');
+                                $('#balance').val('');
+                            }
+                        }
+                
+                        // Event listener for index number input
+                        $('#choices-select').on('input', function () {
+                            let indexNumber = $(this).val();
+                            fetchStudentData(indexNumber, true);
+                        });
+                
+                        // Event listener for student name input
+                        $('#choices-select2').on('input', function () {
+                            let studentName = $(this).val();
+                            fetchStudentData(studentName, false);
                         });
                     });
                 </script>

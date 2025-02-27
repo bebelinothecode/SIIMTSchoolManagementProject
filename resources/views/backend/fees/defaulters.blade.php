@@ -21,9 +21,12 @@
                 <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                     <tr>
                         <th class="py-3 px-6 text-left">Name</th>
-                        <th class="py-3 px-6 text-left">Email</th>
+                        {{-- <th class="py-3 px-6 text-left">Email</th> --}}
                         <th class="py-3 px-6 text-left">Phone Number</th>
                         <th class="py-3 px-6 text-left">Index Number</th>
+                        <th class="py-3 px-6 text-left">Level</th>
+                        <th class="py-3 px-6 text-left">Current Semester</th>
+                        <th class="py-3 px-6 text-left">Course</th>
                         <th class="py-3 px-6 text-center">Student Category</th>
                         <th class="py-3 px-6 text-center">Currency</th>
                         <th class="py-3 px-6 text-center">Balance</th>
@@ -33,9 +36,12 @@
                     @forelse ($defaulters as $defaulter)
                         <tr class="border-b border-gray-200 hover:bg-gray-100">
                             <td class="py-3 px-6 text-left whitespace-nowrap">{{ $defaulter->user->name }}</td>
-                            <td class="py-3 px-6 text-left">{{ $defaulter->user->email }}</td>
+                            {{-- <td class="py-3 px-6 text-left">{{ $defaulter->user->email }}</td> --}}
                             <td class="py-3 px-6 text-left">{{ $defaulter->phone }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->index_number }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->level }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->session }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->course->course_name ?? $defaulter->diploma->name }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->student_category }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->currency ?? $defaulter->currency_prof  }}</td>
                             <td class="py-3 px-6 text-left">{{ number_format($defaulter->balance, 2) }}</td>

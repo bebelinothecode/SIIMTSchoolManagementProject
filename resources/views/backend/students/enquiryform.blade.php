@@ -46,6 +46,25 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                            Type of Course
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <div class="md:w-2/3">
+                            <select name="type_of_course" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="type_of_course" required>
+                                <option value="">-- Select type of course --</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Professional">Professional</option>
+                            </select>
+                        </div>
+                        @error('type_of_course')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
                             Interested Course
                         </label>
                     </div>

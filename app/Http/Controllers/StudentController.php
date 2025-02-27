@@ -14,7 +14,7 @@ use App\Session;
 use App\Student;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+// use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -347,8 +347,52 @@ class StudentController extends Controller
         return $students;
     }
 
-    public function studentEnquiry() {
-        $enquiries = Enquiry::latest()->paginate(5);
+
+    // $sort = $request->query('sort');
+
+    // $enquiries = Enquiry::when($sort, function ($query, $sort) {
+    //     return $query->where('type_of_course', $sort);
+    // })->paginate(5);
+
+    // return view('enquiries.index', compact('enquiries'));
+
+    // public function studentEnquiry() {
+    //     $enquiries = Enquiry::latest()->paginate(5);
+
+    //     return view('backend.students.enquiry', compact('enquiries'));
+    // }
+
+    public function studentEnquiry(Request $request)
+    {
+        // Get the sorting parameter from the request
+        $sort = $request->query('sort');
+
+        // Query the enquiries
+        $enquiries = Enquiry::when($sort, function ($query, $sort) {
+            // Filter by type_of_course if a sort value is provided
+            return $query->where('type_of_course', $sort);
+        })
+        ->latest() // Sort by the latest entries
+        ->paginate(5); // Paginate the results
+
+        // Return the view with the enquiries data
+        return view('backend.students.enquiry', compact('enquiries'));
+    }
+
+    public function index22(Request $request)
+    {
+        // Fetch enquiries with sorting
+        $sort = $request->input('sort'); // Get sorting filter
+
+        $enquiries = Enquiry::query();
+
+        // Apply sorting filter (Academic or Professional)
+        if ($sort === 'Academic' || $sort === 'Professional') {
+            $enquiries->where('type_of_course', $sort);
+        }
+
+        // Paginate results
+        $enquiries = $enquiries->orderBy('created_at', 'desc')->paginate(10);
 
         return view('backend.students.enquiry', compact('enquiries'));
     }
@@ -373,14 +417,18 @@ class StudentController extends Controller
             'name' => 'required|string',
             'telephone_number' => 'required|string',
             'course' => 'required|string',
-            'expected_start_date' => 'required'
+            'expected_start_date' => 'required',
+            'type_of_course' => 'required'
         ]);
+
+        // dd($validatedData);
 
         Enquiry::create([
             'name' => $validatedData['name'],
             'telephone_number' => $validatedData['telephone_number'],
             'interested_course' => $validatedData['course'],
-            'expected_start_date' => $validatedData['expected_start_date']
+            'expected_start_date' => $validatedData['expected_start_date'],
+            'type_of_course' => $validatedData['type_of_course']
         ]);
 
         return redirect()->back()->with('success', 'Enquiry created successfully');
@@ -571,6 +619,8 @@ class StudentController extends Controller
 
     return view('backend.students.index', compact('students'));
 }
+
+    // public function 
 
 
 }

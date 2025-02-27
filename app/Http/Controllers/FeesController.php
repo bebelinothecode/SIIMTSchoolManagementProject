@@ -122,44 +122,16 @@ class  FeesController extends Controller
         }
     }
 
-    public function selectdefaulters() {
-        // $sessions = Session::all();
-
-        $defaulters = Student::with('user')
+    public function  selectdefaulters() {
+        $defaulters = Student::with('user','course','diploma')
         ->where('balance', '>', 0)
         ->orderBy('balance', 'desc')
         ->paginate(10);
 
+        // return $defaulters;
+
         return view('backend.fees.defaulters', compact('defaulters'));
     }
-
-    // public function getdefaulters() {
-    //     // $start_academic_year = $request->start_academic_year;
-    //     // $end_academic_year = $request->end_academic_year;
-    //     // $semester = $request->semester;
-
-    //     // $defaulters = FeesPaid::select('student_index_number', 'student_name','balance','currency')
-    //     // ->where('start_academic_year', $start_academic_year)
-    //     // ->where('end_academic_year', $end_academic_year)
-    //     // ->where('semester', $semester)
-    //     // ->where('balance', '>', 0)
-    //     // ->groupBy('student_index_number', 'student_name','balance','currency')
-    //     // ->get();
-
-    //     $defaulters = Student::with('user')
-    //                  ->where('balance', '>', 0)
-    //                  ->orderBy('balance', 'desc')
-    //                  ->paginate(10);
-        
-    //     return view('backend.fees.defaulters', compact('defaulters'));
-    
-    //     // return $defaulters;
-
-    //     // return view('backend.fees.defaulters', [
-    //     //     'defaulters' => $defaulters,
-    //     //     'sessions' => Session::all(), // Pass sessions for the dropdown
-    //     // ]);
-    // }
 
     public function studentFees(Request $request) {
         $request = $request->all();

@@ -53,11 +53,32 @@
                     <td class="py-3 px-6 text-left">{{ $diploma->fees }}</td>
                     <td class="py-3 px-6 text-center">
                         <a href="{{ route('edit.diploma',$diploma->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a>
-                        <form action=" " method="POST" class="inline">
+                        <form action="{{route('delete.diploma', $diploma->id)}} " method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
                         </form>
+                        @if (session('success'))
+                            <script>
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                            </script>
+                         @endif
+
+                        @if (session('error'))
+                        <script>
+                            Swal.fire({
+                                title: 'Oops!',
+                                text: '{{ session('error') }}',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>
+                        @endif  
                     </td>
                 </tr>
                 @empty

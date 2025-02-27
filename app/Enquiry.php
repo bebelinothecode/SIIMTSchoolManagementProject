@@ -13,6 +13,7 @@ class Enquiry extends Model
         'name',
         'telephone_number',
         'interested_course',
+        'type_of_course',
         'expected_start_date',
     ];
 

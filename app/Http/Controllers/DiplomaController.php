@@ -137,12 +137,17 @@ class DiplomaController extends Controller
             //code...
             $diploma = Diploma::findOrFail($id);
 
+            // dd($diploma);
+
             $diploma->delete();
 
             return redirect()->back()->with('success','Diploma Course deleted successfully');
         } catch (\Exception $e) {
             //throw $th;
-            Log::error('Error deleting diploma',$e->getMessage());
+            Log::error('Error deleting diploma',[$e->getMessage()]);
+
+            return redirect()->back()->with('error','Error deleting Diploma course');
+
         }
     }
 }
