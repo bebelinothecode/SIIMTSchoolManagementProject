@@ -120,6 +120,8 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/get/expenses/report', [ExpensesController::class, 'generateExpensesReport'])->name('generate.expensesreport');
     Route::get('/get/collections/academic',[CollectionsController::class, 'getAcademicCollectionsForm'])->name('collections.academicform');
     Route::get('/get/collections/professional',[CollectionsController::class, 'getProfessionalCollectionsForm'])->name('collections.professionalform');
+    Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
+    Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance');
 
     // Route::get('/enquiries/index',[StudentController::class,''])->name('enquiries.index');
 

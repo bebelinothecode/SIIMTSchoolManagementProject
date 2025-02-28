@@ -347,21 +347,6 @@ class StudentController extends Controller
         return $students;
     }
 
-
-    // $sort = $request->query('sort');
-
-    // $enquiries = Enquiry::when($sort, function ($query, $sort) {
-    //     return $query->where('type_of_course', $sort);
-    // })->paginate(5);
-
-    // return view('enquiries.index', compact('enquiries'));
-
-    // public function studentEnquiry() {
-    //     $enquiries = Enquiry::latest()->paginate(5);
-
-    //     return view('backend.students.enquiry', compact('enquiries'));
-    // }
-
     public function studentEnquiry(Request $request)
     {
         // Get the sorting parameter from the request

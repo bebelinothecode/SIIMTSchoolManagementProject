@@ -204,6 +204,9 @@
                 <a href="{{ route('form.expenses') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                     <span class="ml-2 text-sm font-semibold">Expenses Reports</span>
                 </a>
+                <a href="{{ route('get.balanceform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <span class="ml-2 text-sm font-semibold">Balance Reports</span>
+                </a>
             </div>
         </div>
         <div>
