@@ -206,7 +206,7 @@
                 </a>
             </div>
         </div>
-        <div>
+        <!-- <div>
             <a href="#"
                class="flex items-center text-gray-600 py-2 hover:text-blue-700"
                onclick="toggleSubMenu5('librarySubmenu5','libraryIcon5')"
@@ -228,7 +228,7 @@
                     <span class="ml-2 text-sm font-semibold">Professional</span>
                 </a>
             </div>
-        </div>
+        </div> -->
         <script>
             // Function to toggle the dropdown
             function toggleSubMenu3(menuId, iconId) {

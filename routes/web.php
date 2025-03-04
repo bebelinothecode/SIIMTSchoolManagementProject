@@ -33,7 +33,7 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Auth::routes();
+Auth::routes(); 
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/profile', 'HomeController@profile')->name('profile');

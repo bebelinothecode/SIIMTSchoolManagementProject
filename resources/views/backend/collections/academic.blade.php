@@ -81,7 +81,6 @@
     <h1 class="text-2xl font-bold text-gray-700">Academic Collections Report</h1>
 
     @php
-    // $json = '{"GHS": 7500}';
     $data = json_decode($totals_by_category_and_currency, true); // Convert to an associative array
 
     $key = array_keys($data)[0]; // Get the first key
