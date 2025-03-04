@@ -17,13 +17,69 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesAndPermissionsSeeder::class);
 
-        $user = User::create([
+        $user1 = User::create([
             'name'          => 'Admin',
             'email'         => 'admin@demo.com',
             'password'      => bcrypt('12345678'),
             'created_at'    => date("Y-m-d H:i:s")
         ]);
-        $user->assignRole('Admin');
+        $user1->assignRole('Admin');
+
+        $user9 = User::create([
+            'name'          => 'Assistant-Accountant',
+            'email'         => 'asstaccount@demo.com',
+            'password'      => bcrypt('12345678'),
+            'created_at'    => date("Y-m-d H:i:s")
+        ]);
+        $user9->assignRole('AsstAccount');
+
+        $user10 = User::create([
+            'name'          => 'Student-Coordinator',
+            'email'         => 'studcoordinator@demo.com',
+            'password'      => bcrypt('12345678'),
+            'created_at'    => date("Y-m-d H:i:s")
+        ]);
+        $user10->assignRole('StudCoordinator');
+
+        $user11 = User::create([
+            'name'          => 'Front-desk',
+            'email'         => 'frontdesk@demo.com',
+            'password'      => bcrypt('12345678'),
+            'created_at'    => date("Y-m-d H:i:s")
+        ]);
+        $user11->assignRole('frontdesk');
+
+        $user6 = User::create([
+            'name'          => 'Rector',
+            'email'         => 'rector@demo.com',
+            'password'      => bcrypt('12345678'),
+            'created_at'    => date("Y-m-d H:i:s")
+        ]);
+        $user6->assignRole('rector');
+
+        // DB::table('rector')->insert([
+        //     [
+        //         'user_id'           => $user6->id,
+        //         'phone_number'      => '0123456789',
+        //         'created_at'        => date("Y-m-d H:i:s")
+        //     ]
+        // ]);
+
+        $user7 = User::create([
+            'name'          => 'HR',
+            'email'         => 'hr@demo.com',
+            'password'      => bcrypt('12345678'),
+            'created_at'    => date("Y-m-d H:i:s")
+        ]);
+        $user7->assignRole('HR');
+
+        $user8 = User::create([
+            'name'          => 'Registrar',
+            'email'         => 'registrar@demo.com',
+            'password'      => bcrypt('12345678'),
+            'created_at'    => date("Y-m-d H:i:s")
+        ]);
+        $user8->assignRole('registrar');
 
         $user2 = User::create([
             'name'          => 'Teacher',
@@ -68,7 +124,7 @@ class DatabaseSeeder extends Seeder
                 'gender'            => 'male',
                 'phone'             => '0123456789',
                 'current_address'   => 'Dhaka-1215',
-                // 'permanent_address' => 'Dhaka-1215',
+                'permanent_address' => 'Dhaka-1215',
                 'created_at'        => date("Y-m-d H:i:s")
             ]
         ]);
@@ -84,8 +140,8 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id'           => $user4->id,
                 'parent_id'         => 1,
-                'class_id'          => 1,
-                'roll_number'       => 1,
+                // 'class_id'          => 1,
+                // 'roll_number'       => 1,
                 'gender'            => 'male',
                 'phone'             => '0123456789',
                 'dateofbirth'       => '1993-04-11',

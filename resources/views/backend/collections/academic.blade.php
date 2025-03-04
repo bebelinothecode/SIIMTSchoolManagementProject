@@ -102,12 +102,14 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
-                    <th class="py-3 px-6 text-left">Source of Expense</th>
-                    <th class="py-3 px-6 text-left">Description of Expense</th>
-                    <th class="py-3 px-6 text-left">Category</th>
-                    <th class="py-3 px-6 text-left">Currency</th>
+                    <th class="py-3 px-6 text-left">Student Index Number</th>
+                    <th class="py-3 px-6 text-left">Student name</th>
+                    <th class="py-3 px-6 text-left">Method of Payment</th>
                     <th class="py-3 px-6 text-left">Amount</th>
-                    <th class="py-3 px-6 text-left">Mode of Payment</th>
+                    <th class="py-3 px-6 text-left">Balance</th>
+                    <th class="py-3 px-6 text-left">Currency</th>
+                    <th class="py-3 px-6 text-left">Cheque Number</th>
+                    <th class="py-3 px-6 text-left">Momo Number</th>
                     <th class="py-3 px-6 text-left">Created on</th>
                     {{-- <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Amount</th>
@@ -115,16 +117,19 @@
 
                 </tr>
             </thead>
-            {{-- <tbody class="text-gray-600 text-sm font-light">
-                @forelse ($expenses as $expense)
+            <tbody class="text-gray-600 text-sm font-light">
+                @forelse ($transactionsByCategoryAndCurrencys['GHS'] as $transactionsByCategoryAndCurrency)
                     <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->source_of_expense }}</td>
-                        <td class="py-3 px-6 text-left">{{ $expense->description_of_expense }}</td>
-                        <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
-                        <td class="py-3 px-6 text-left">{{ $expense->currency }}</td>
-                        <td class="py-3 px-6 text-left">{{ $expense->amount }}</td>
-                        <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
-                        <td class="py-3 px-6 text-left">{{ $expense->created_at }}</td>
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $transactionsByCategoryAndCurrency->student_index_number }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->student_name }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->method_of_payment }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->amount }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->balance }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->currency }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->cheque_number ?? "N/A" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->Momo_number ?? "N/A" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->created_at }}</td>
+                        {{-- <td class="py-3 px-6 text-left">{{ $transactionsByCategoryAndCurrency->cheque_number }}</td> --}}
                     </tr>
                 @empty
                     <tr>
@@ -138,7 +143,7 @@
                         </td>
                     </tr>
                 @endforelse
-            </tbody> --}}
+            </tbody>
         </table>
     </div>
 

@@ -17,12 +17,12 @@ class CollectionsController extends Controller
             $this->data = $this->calculationsForCollections();
         }
 
-        $transactionsByCategoryAndCurrency = $this->data['transactions_by_category_and_currency']['academic'];
+        $transactionsByCategoryAndCurrencys = $this->data['transactions_by_category_and_currency']['academic'];
         $totals_by_category_and_currency =  collect($this->data['totals_by_category_and_currency']['academic']);
 
-        // return collect($transactionsByCategoryAndCurrency);
+        // return collect($transactionsByCategoryAndCurrencys);
 
-        return view('backend.collections.academic',compact('transactionsByCategoryAndCurrency','totals_by_category_and_currency'));
+        return view('backend.collections.academic',compact('transactionsByCategoryAndCurrencys','totals_by_category_and_currency'));
     }
 
     public function getProfessionalCollectionsForm() {
@@ -78,8 +78,6 @@ class CollectionsController extends Controller
             'totals_by_category_and_currency' => $totalsByCategoryAndCurrency
         ];
 
-        // Return the response as JSON
-        // return response()->json($response);
         return $response;
     }
 

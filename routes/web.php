@@ -42,19 +42,17 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin']], function () 
+Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']], function () 
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');
     Route::post('/role-store', 'RolePermissionController@storeRole')->name('role.store');
     Route::get('/role-edit/{id}', 'RolePermissionController@editRole')->name('role.edit');
     Route::put('/role-update/{id}', 'RolePermissionController@updateRole')->name('role.update');
-
     Route::get('/permission-create', 'RolePermissionController@createPermission')->name('permission.create');
     Route::post('/permission-store', 'RolePermissionController@storePermission')->name('permission.store');
     Route::get('/permission-edit/{id}', 'RolePermissionController@editPermission')->name('permission.edit');
     Route::put('/permission-update/{id}', 'RolePermissionController@updatePermission')->name('permission.update');
-
     Route::get('assign-subject-to-class/{id}', 'GradeController@assignSubject')->name('class.assign.subject');
     Route::post('assign-subject-to-class/{id}', 'GradeController@storeAssignedSubject')->name('store.class.assign.subject');
     Route::get('/librarybooks', [BookController::class, 'displayBooks'])->name('librarybooks');
@@ -99,7 +97,6 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/get/diplomas/{id}',[DiplomaController::class,'getProfessional']);
     Route::get('/get/academic/{id}', [DiplomaController::class, 'getAcademic']);
     Route::put('/update/student/{id}', [StudentController::class, 'updateStudent'])->name('update.student');
-    // Route::get('/transactions/form', [FeesController::class, 'transactionsForm'])->name('transactions.form');
     Route::get('/get/transactions', [FeesController::class, 'getTransactions'])->name('get.transactions');
     Route::get('/reports/form',[ReportsController::class, 'getReportsForm'])->name('reports.form');
     Route::get('/reports/form/academic',[ReportsController::class, 'getAcademicReportsForm'])->name('academic.reportsform');
@@ -120,12 +117,8 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::get('/get/expenses/report', [ExpensesController::class, 'generateExpensesReport'])->name('generate.expensesreport');
     Route::get('/get/collections/academic',[CollectionsController::class, 'getAcademicCollectionsForm'])->name('collections.academicform');
     Route::get('/get/collections/professional',[CollectionsController::class, 'getProfessionalCollectionsForm'])->name('collections.professionalform');
-
-    // Route::get('/enquiries/index',[StudentController::class,''])->name('enquiries.index');
-
-
-    // Route::post('/student/create',[StudentController2::class, 'store'])->name('student.create.new');
-    // Route::post('/student/create/bro', [StudentController::class, 'store'])->name('student.save');
+    Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
+    Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance');
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');
@@ -133,7 +126,31 @@ Route::group(['middleware' => ['auth','role:Admin']], function ()
     Route::resource('parents', 'ParentsController');
     Route::resource('student', 'StudentController');
     Route::get('attendance', 'AttendanceController@index')->name('attendance.index');
+});
 
+
+Route::group(['middleware' => ['auth','role:AsstAccount']], function () {
+    // Route::get('/get/transactions', [FeesController::class, 'getTransactions'])->name('get.transactions');
+    // Route::get("/collectfees", [FeesController::class, 'showcollectfees'])->name("fees.collect");
+    // Route::post('/feescollected',[FeesController::class, 'collectfees'])->name('fees.collected');
+    // // Route::get('fees/defaulters', [FeesController::class, 'selectdefaulters'])->name('fees.defaulters');
+    // // Route::post('/fees/defaulters', [FeesController::class, 'getdefaulters'])->name('defaulters.show');
+    // Route::get('/expenses/table', [ExpensesController::class, 'indexTable'])->name('expenses.table');
+    // Route::get('/expenses',[ExpensesController::class, 'getExpensesForm'])->name('get.expensesForm');
+    // Route::post('/save/expense',[ExpensesController::class, 'storeExpenses'])->name('save.expense');
+    // Route::get('/reports/form',[ReportsController::class, 'getReportsForm'])->name('reports.form');
+    // Route::get('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
+    // Route::get('/reports/form/academic',[ReportsController::class, 'getAcademicReportsForm'])->name('academic.reportsform');
+    // Route::get('/report/academmic',[ReportsController::class, 'generateAcademicReport'])->name('getacademic.reports');
+    // Route::get('/teacher/form', [ReportsController::class, 'teachersForm'])->name('teacherreport.form');
+    // Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
+    // Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
+    // Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
+    // // Route::resource('student', 'StudentController');
+    // Route::get('/expenses/reports/form',[ExpensesController::class, 'getExpensesReportsForm'])->name('form.expenses');
+    // Route::get('/get/expenses/report', [ExpensesController::class, 'generateExpensesReport'])->name('generate.expensesreport');
+    // Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
+    // Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance'); 
 });
 
 Route::group(['middleware' => ['auth','role:Teacher']], function () 
@@ -156,9 +173,13 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::post('/query/books', [BookController::class,'searchBooks'])->name('query.books');
 });
 
+Route::group(['middleware' => ['auth','role:frontdesk']], function () {
+    // Route::resource('classes', 'GradeController');
+    // Route::resource('subject', 'SubjectController');
+    // Route::get('/diploma', [DiplomaController::class, 'index'])->name('diploma.index');
+
+});
+
 Route::get('/test4',[ReportsController::class,'example']);
 Route::get('/test22', [StudentController::class, 'all']);
-// Route::get('/fees/get-student-name', [FeesController::class, 'getStudentName']);
-// Route::post('/search/student', [StudentController::class, 'searchStudent']);
 
-// SQLSTATE[22P02]: Invalid text representation: 7 ERROR: invalid input syntax for type bigint: "librarybooks" CONTEXT: unnamed portal parameter $1 = '...' (SQL: select * from "students" where "id" = librarybooks limit 1)

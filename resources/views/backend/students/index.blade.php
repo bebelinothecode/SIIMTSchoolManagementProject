@@ -49,17 +49,30 @@
                     <td class="py-3 px-6 text-left">{{ $student->index_number }}</td>
                     <td class="py-3 px-6 text-center">
                         <a href="{{ route('student.show', $student->id) }}" class="text-blue-600 hover:underline">View</a>
-                        <a href="{{ route('student.edit', $student->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a>
-                        <form action="{{ route('student.destroy', $student->id) }}" method="POST" class="inline">
+                        @hasrole('Admin|rector')
+                             <a href="{{ route('student.edit', $student->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a>
+                             <form action="{{ route('student.destroy', $student->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want ton delete {{$student->user->name}}?')">Delete</button>
+                            </form>
+                            <a href="{{route('student.print', $student->id)}}" 
+                                target="_blank"
+                                class="ml-4 text-green-600 hover:underline">
+                                Print Admission Letter
+                            </a>
+                        @endrole
+                        {{-- <a href="{{ route('student.edit', $student->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a> --}}
+                        {{-- <form action="{{ route('student.destroy', $student->id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want ton delete {{$student->user->name}}?')">Delete</button>
-                        </form>
-                        <a href="{{route('student.print', $student->id)}}" 
+                        </form> --}}
+                        {{-- <a href="{{route('student.print', $student->id)}}" 
                             target="_blank"
                             class="ml-4 text-green-600 hover:underline">
                             Print Admission Letter
-                        </a>
+                        </a> --}}
                     </td>
                 </tr>
                 @empty

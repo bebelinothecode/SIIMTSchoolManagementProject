@@ -81,7 +81,7 @@ class  FeesController extends Controller
                 'currency' => 'required',
                 'Momo_number' => 'nullable',
                 'cheque_number' => 'nullable',
-                'remarks'  => 'nullable|string',
+                // 'remarks'  => 'nullable|string',
             ]);
 
             // dd($validatedData);
@@ -102,7 +102,7 @@ class  FeesController extends Controller
                 'currency' => $validatedData['currency'],
                 'Momo_number' => $validatedData['Momo_number'],
                 'cheque_number' => $validatedData['cheque_number'],
-                'remarks' => $validatedData['remarks']
+                // 'remarks' => $validatedData['remarks']
             ]);
 
             if($feespaid) {
@@ -116,9 +116,9 @@ class  FeesController extends Controller
             //throw $th;
             Log::info('Request Data', $request->all());
 
-            Log::error('Error creating student: ' . $e);
+            Log::error('Error collecting fees: ' . $e);
 
-            return back()->withInput()->withErrors(['error' => 'An error occurred while creating the student. Please try again.']);
+            return back()->withInput()->withErrors(['error' => 'An error occurred while collecting the students fees. Please try again.']);
         }
     }
 

@@ -12,6 +12,7 @@ use App\Enquiry;
 use App\Parents;
 use App\Session;
 use App\Student;
+use App\Teacher;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 // use Illuminate\Validation\Rule;
@@ -315,7 +316,7 @@ class StudentController extends Controller
     }
 
     public function all() {
-        $courses = Grade::all();
+        $courses = Teacher::with('user')->get();
 
         return $courses;
     }
@@ -346,21 +347,6 @@ class StudentController extends Controller
         $students = Student::with(['class','parent'])->get(); // Eager load the 'class' relationship
         return $students;
     }
-
-
-    // $sort = $request->query('sort');
-
-    // $enquiries = Enquiry::when($sort, function ($query, $sort) {
-    //     return $query->where('type_of_course', $sort);
-    // })->paginate(5);
-
-    // return view('enquiries.index', compact('enquiries'));
-
-    // public function studentEnquiry() {
-    //     $enquiries = Enquiry::latest()->paginate(5);
-
-    //     return view('backend.students.enquiry', compact('enquiries'));
-    // }
 
     public function studentEnquiry(Request $request)
     {
