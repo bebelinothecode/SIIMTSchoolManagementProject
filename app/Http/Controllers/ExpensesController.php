@@ -88,7 +88,7 @@ class ExpensesController extends Controller
 
             // return $expenses;
 
-            return view('backend.reports.expensesreport', compact('expenses','category','','startDate','currentDate'));
+            return view('backend.reports.expensesreport', compact('expenses','category','endDate','startDate','currentDate'));
 
             // return redirect()->back()->with('success', 'E generating expenses report');    
         } catch (\Exception $e) {

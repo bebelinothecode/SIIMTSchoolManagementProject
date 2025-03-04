@@ -21,7 +21,12 @@
                         <th class="py-2 px-4 text-left">Email</th>
                         <th class="py-3 px-6 text-left">Phone</th>
                         <th class="py-3 px-6 text-left">Subjects</th>
+                        @hasanyrole('Admin|rector')
                         <th class="py-3 px-6 text-center">Actions</th>
+                        @endhasanyrole
+                        @hasrole('frontdesk')
+                        <th class="py-3 px-6 text-center">Profile</th>
+                        @endhasrole
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
@@ -39,6 +44,7 @@
                         </td>
                         <td class="py-3 px-6 text-center">
                             <a href="{{ route('teacher.profile', $teacher->id) }}" class="text-blue-600 hover:underline">Profile</a>
+                            @hasanyrole('Admin|rector')
                             <a href="{{ route('assign.subject', $teacher->id) }}" class="ml-4 text-green-600 hover:underline">Assign Subject</a>
                             <a href="{{ route('deleteassigned.subject', $teacher->id) }}" class="ml-4 text-blue-600 hover:underline">Delete Assigned Subject(s)</a>
                             <form action="{{route('teacher.delete', $teacher->id)}}" method="POST" class="inline">
@@ -46,6 +52,7 @@
                                 @method('DELETE')
                                 <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
                             </form>
+                            @endhasanyrole
                             @if (session('success'))
                                 <script>
                                     Swal.fire({

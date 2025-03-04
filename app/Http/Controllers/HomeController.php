@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Expenses;
+use App\FeesPaid;
 use App\Grade;
 use App\Parents;
 use App\Student;
@@ -34,14 +36,16 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->hasRole('Admin')) {
+        if ($user->hasRole('Admin') || $user->hasRole('rector') || $user->hasRole('AsstAccount') || $user->hasRole('frontdesk')) {
 
             $parents = Parents::latest()->get();
             $teachers = Teacher::latest()->get();
             $students = Student::latest()->get();
             $books = DB::table('books')->count();
+            $totalFeesCollected = FeesPaid::sum('amount');
+            $totalExpensesMade = Expenses::sum('amount');
 
-            return view('home', compact('parents','teachers','students','books'));
+            return view('home', compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade'));
 
         } elseif ($user->hasRole('Teacher')) {
 

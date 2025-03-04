@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
 // use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -46,6 +47,11 @@ class ReportsController extends Controller
 
         return $teachers;
     }
+    // public function example() {
+    //     $teachers = Role::all();
+
+    //     return $teachers;
+    // }
 
     public function getPaymentReportForm() {
         return view('backend.reports.paymentform');

@@ -11,6 +11,8 @@
     <div class="container mt-5">
         <h1 class="mb-4">Payment Report</h1>
 
+        <h1 class="mb-4"><strong>Current Date/Time</strong>:{{ \Carbon\Carbon::now()->format('Y-m-d') }}</h1>
+
         <!-- Display Filters Applied -->
         <div class="mb-4">
             <h4>Filters Applied:</h4>

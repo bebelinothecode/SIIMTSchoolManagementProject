@@ -10,24 +10,6 @@
     <form action="{{route('teacher.report')}} " method="GET" class="space-y-4">
         <!-- Date Range -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {{-- <div>
-                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
-                <input 
-                    type="date" 
-                    name="start_date" 
-                    id="start_date" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                >
-            </div> --}}
-            {{-- <div>
-                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
-                <input 
-                    type="date" 
-                    name="end_date" 
-                    id="end_date" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                >
-            </div> --}}
         </div>
 
         <!-- Level and Semester -->
@@ -53,11 +35,11 @@
                     id="semester" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 >
-                                <option value="">Select Semester</option>
-                                <option value="1">Semester 1</option>
-                                <option value="2">Semester 2</option>
-                            </select>
-                    </div>
+                    <option value="">Select Semester</option>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                </select>
+                </div>
             <div>
                 <label for="subjects" class="block text-sm font-medium text-gray-700">Subjects</label>
                 <select 

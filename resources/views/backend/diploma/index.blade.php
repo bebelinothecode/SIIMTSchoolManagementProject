@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@hasrole('Admin|rector|frontdesk')
 <div class="container mx-auto mt-6">
     <h1 class="text-2xl font-bold text-gray-700">Professional/Diploma</h1>
 
@@ -39,7 +40,9 @@
                     <th class="py-3 px-6 text-left">Duration</th>
                     <th class="py-3 px-6 text-center">Currency</th>
                     <th class="py-3 px-6 text-center">Fees</3th>
-                    <th class="py-3 px-6 text-center">Action</th>
+                        @hasrole('Admin|rector')
+                        <th class="py-3 px-6 text-center">Action</th>
+                        @endhasrole
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
@@ -51,6 +54,7 @@
                     <td class="py-3 px-6 text-left">{{ $diploma->duration }}</td>
                     <td class="py-3 px-6 text-left">{{ $diploma->currency }}</td>
                     <td class="py-3 px-6 text-left">{{ $diploma->fees }}</td>
+                    @hasrole('Admin|rector')
                     <td class="py-3 px-6 text-center">
                         <a href="{{ route('edit.diploma',$diploma->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a>
                         <form action="{{route('delete.diploma', $diploma->id)}} " method="POST" class="inline">
@@ -80,6 +84,36 @@
                         </script>
                         @endif  
                     </td>
+                    @endrole
+                    {{-- <td class="py-3 px-6 text-center">
+                        <a href="{{ route('edit.diploma',$diploma->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a>
+                        <form action="{{route('delete.diploma', $diploma->id)}} " method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
+                        </form>
+                        @if (session('success'))
+                            <script>
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                            </script>
+                         @endif
+
+                        @if (session('error'))
+                        <script>
+                            Swal.fire({
+                                title: 'Oops!',
+                                text: '{{ session('error') }}',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>
+                        @endif  
+                    </td> --}}
                 </tr>
                 @empty
                 <tr>
@@ -98,4 +132,5 @@
         {{-- {{ $classes->links() }} --}}
     </div>
 </div>
+@endhasrole
 @endsection

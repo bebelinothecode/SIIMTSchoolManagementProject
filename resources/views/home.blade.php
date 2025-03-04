@@ -15,9 +15,12 @@
         </div>
     </div>
 
-    @role('Admin')
+    {{-- @role('Admin')
         @include('dashboard.admin')
-    @endrole
+    @endrole --}}
+    @hasrole('Admin|rector|AsstAccount|frontdesk')
+        @include('dashboard.admin')
+    @endhasrole
 
     @role('Parent')
         @include('dashboard.parents')

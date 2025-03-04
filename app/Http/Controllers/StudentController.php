@@ -12,6 +12,7 @@ use App\Enquiry;
 use App\Parents;
 use App\Session;
 use App\Student;
+use App\Teacher;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 // use Illuminate\Validation\Rule;
@@ -315,7 +316,7 @@ class StudentController extends Controller
     }
 
     public function all() {
-        $courses = Grade::all();
+        $courses = Teacher::with('user')->get();
 
         return $courses;
     }

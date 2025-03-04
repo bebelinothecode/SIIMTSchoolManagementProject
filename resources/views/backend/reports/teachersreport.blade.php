@@ -95,7 +95,7 @@
                         <td class="py-3 px-6 text-left">{{ $teacher->user->email }}</td>
                         <td class="py-3 px-6 text-left">{{ $teacher->phone }}</td>
                         <td class="py-3 px-6 text-left">{{ $teacher->index_number }}</td>
-                        <td class="py-3 px-6 text-left">{{ $teacher->subjects->subject_code }}-{{$teacher->subjects->subject_name}}</td>
+                        <td class="py-3 px-6 text-left">{{$teacher->subjects->subject_name ?? "N/A"}}</td>
                     </tr>
                 @empty
                     <tr>
