@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('fees.collected') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
+            <form action="{{ route('fees.collected') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -66,14 +66,6 @@
                                 <option value="Cheque">Cheque</option>
                                 <option value="Momo">Momo</option>
                             </select>
-                            <script text="text/javascript">
-                                // In your Javascript (external .js resource or <script> tag)
-                                $(document).ready(function() {
-                                    $('.js-example-basic-single').select2({
-                                        placeholder: 'Select an option',
-                                    });
-                                });
-                            </script>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                             </div>
@@ -109,7 +101,7 @@
                         </div>
                         <div class="md:w-2/3">
                             <input name="cheque_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
-                            @error('end_academic_year')
+                            @error('cheque_number')
                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>
                             @enderror
                         </div>
@@ -124,7 +116,7 @@
                         </div>
                         <div class="md:w-2/3">
                             <input name="Momo_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
-                            @error('end_academic_year')
+                            @error('Momo_numbe')
                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>
                             @enderror
                         </div>
@@ -136,7 +128,6 @@
                         const selectedMethod = this.value;
                 
                         // Hide all fields initially
-                        // document.getElementById('cash_fields').classList.add('hidden');
                         document.getElementById('cheque_fields').classList.add('hidden');
                         document.getElementById('momo_fields').classList.add('hidden');
                 
@@ -180,7 +171,7 @@
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">
-                        <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit" target="_blank">
+                        <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit" >
                             Collect Fees
                         </button>
                     </div>
@@ -195,169 +186,316 @@
                         });
                     </script>
                 @endif
-                <script>
-                    new TomSelect("#select-beast-empty",{
-                        allowEmptyOption: true,
-                        create: true
-                    });
-                </script>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const choices = new Choices('#choices-select', {
-                            removeItemButton: true,
-                        });
-                    });
-                </script>
-                 <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const choices = new Choices('#choices-select2', {
-                            removeItemButton: true,
-                        });
-                    });
-                </script>
-                <script>
-                    document.addEventListener('DOMContentLoaded',() => {
+                {{-- <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Assuming Choices.js is already initialized
                         const amount = document.getElementById('amount');
                         const balance = document.getElementById('balance');
-                        const indexNumber = document.getElementById('choices-select')
+                        const indexNumberSelect = document.getElementById('choices-select');
+                        const studentNameSelect = document.getElementById('choices-select2');
                         const feesData = @json($details);
-
+                    
+                        // Function to find matching student
+                        function findMatchingStudent(indexNumber, studentName) {
+                            return feesData.find(fee => 
+                                fee.index_number === indexNumber || fee.user.name === studentName
+                            );
+                        }
+                    
+                        // Function to calculate and update balance
                         function calculateBalance() {
                             const enteredAmount = parseFloat(amount.value) || 0;
-                            const selectedIndexNumber = indexNumber.value;
+                            const selectedIndexNumber = indexNumberSelect.value;
+                            const selectedStudentName = studentNameSelect.value;
 
-                            const matchingStudent = feesData.find(fee =>
-                                fee.index_number === selectedIndexNumber
-                            );
+                            const matchingStudent = findMatchingStudent(selectedIndexNumber, selectedStudentName);
 
                             if (matchingStudent) {
-                                let remainingBalance = parseFloat(matchingStudent.balance);
+                                // Determine total fees, with fallback options
+                                let totalFees = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0;
 
-                                // If balance is not available, fall back to fees or fees_prof
-                                if (isNaN(remainingBalance) || remainingBalance === 0) {
-                                    remainingBalance = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0.0;
+                                // Deduct scholarship amount if available
+                                let scholarshipAmount = parseFloat(matchingStudent.Scholarship_amount) || 0;
+                                if (matchingStudent.Scholarship === "Yes" && !isNaN(scholarshipAmount)) {
+                                    totalFees -= scholarshipAmount;
                                 }
 
-                                console.log('Remaining Balance:', remainingBalance);
+                                // Determine remaining balance, with fallback options
+                                let remainingBalance = parseFloat(matchingStudent.balance);
+                                if (isNaN(remainingBalance)) {
+                                    // If no specific balance, use adjusted total fees
+                                    remainingBalance = totalFees;
+                                }
 
+                                // Calculate new balance after deducting the entered amount
                                 let newBalance = remainingBalance - enteredAmount;
 
-
+                                // Prevent negative balance
                                 if (newBalance < 0) {
-                                     newBalance = 0;
-                                     alert('Payment exceeds the remaining balance. Balance cannot be negative.');
+                                    newBalance = 0;
+                                    alert('Payment exceeds the remaining balance. Balance cannot be negative.');
                                 }
 
+                                // Update the balance field
                                 balance.value = newBalance.toFixed(2);
+
+                                // Synchronize both selects if they're not already matched
+                                if (selectedIndexNumber !== matchingStudent.index_number) {
+                                    indexNumberSelect.value = matchingStudent.index_number;
+                                    // If using Choices.js, update the selected value
+                                    if (window.indexNumberChoices) {
+                                        window.indexNumberChoices.setChoiceByValue(matchingStudent.index_number);
+                                    }
+                                }
+
+                                if (selectedStudentName !== matchingStudent.user.name) {
+                                    studentNameSelect.value = matchingStudent.user.name;
+                                    // If using Choices.js, update the selected value
+                                    if (window.studentNameChoices) {
+                                        window.studentNameChoices.setChoiceByValue(matchingStudent.user.name);
+                                    }
+                                }
                             } else {
                                 balance.value = '0.00';
                             }
                         }
-                        indexNumber.addEventListener('change', calculateBalance);
+                    
+                        // Event listeners for both selects and amount input
+                        indexNumberSelect.addEventListener('change', calculateBalance);
+                        studentNameSelect.addEventListener('change', calculateBalance);
                         amount.addEventListener('input', calculateBalance);
-                    });
-                </script>
-                {{-- <script>
-                    $(document).ready(function () {
-                        $('#choices-select2').on('change', function () {
-                            let indexNumber = $(this).val();
-                
-                            if (indexNumber) {
-                                $.ajax({
-                                    url: '{{ route("fees.get-student-name") }}', // Route to fetch student name
-                                    type: 'GET',
-                                    data: { index_number: indexNumber },
-                                    success: function (response) {
-                                        if (response.student_category === 'Professional') {
-                                            console.log(response)
-                                            $('#choices-select2').val(response.name || 'Not Found');
-                                            $('#balance').val(response.balance || response.fees_prof || 'Not Found');
-
-                                        } else if (response.student_category === 'Academic') {
-                                            $('#choices-select2').val(response.name || 'Not Found');
-                                            $('#balance').val(response.balance || response.fees || 'Not Found');
-                                        } else {
-                                            alert('Student not found.');
-                                            $('#balance').val('');
-                                            $('choices-select2').val('');
-                                        }
-                                    },
-                                    error: function () {
-                                        $('#choices-select2').val('Not Found');
-                                        $('#balance').val('Not Found');
-                                    }
-                                });
-                            } else {
-                                $('#choices-select2').val('');
-                                $('#balance').val('');
-                            }
+                    
+                        // Initial setup for Choices.js dropdowns
+                        const indexNumberChoices = new Choices(indexNumberSelect, {
+                            searchEnabled: true,
+                            placeholder: true,
+                            placeholderValue: 'Select Index Number',
+                            removeItemButton: true
                         });
+                    
+                        const studentNameChoices = new Choices(studentNameSelect, {
+                            searchEnabled: true,
+                            placeholder: true,
+                            placeholderValue: 'Select Student Name',
+                            removeItemButton: true
+                        });
+                    
+                        // Store choices in window to access globally
+                        window.indexNumberChoices = indexNumberChoices;
+                        window.studentNameChoices = studentNameChoices;
+                    
+                        // Populate dropdown options
+                        const indexNumberOptions = feesData.map(student => ({
+                            value: student.index_number,
+                            label: student.index_number
+                        }));
+                    
+                        const studentNameOptions = feesData.map(student => ({
+                            value: student.user.name,
+                            label: student.user.name
+                        }));
+                    
+                        indexNumberChoices.setChoices(indexNumberOptions, 'value', 'label', true);
+                        studentNameChoices.setChoices(studentNameOptions, 'value', 'label', true);
                     });
                 </script> --}}
-                <script>
-                    $(document).ready(function () {
-                        // Function to fetch student data
-                        function fetchStudentData(input, isIndexNumber) {
-                            if (input) {
-                                $.ajax({
-                                    url: '{{ route("fees.get-student-name") }}', // Route to fetch student data
-                                    type: 'GET',
-                                    data: isIndexNumber ? { index_number: input } : { student_name: input },
-                                    success: function (response) {
-                                        console.log(response)
-                                        if (response) {
-                                            if (isIndexNumber) {
-                                                // If input is index number, populate student name
-                                                $('#choices-select2').val(response.name || 'Not Found');
-                                            } else {
-                                                // If input is student name, populate index number
-                                                $('#choices-select').val(response.index_number || 'Not Found');
-                                            }
-                
-                                            // Populate balance based on student category
-                                            if (response.student_category === 'Professional') {
-                                                $('#balance').val(response.balance || response.fees_prof || 'Not Found');
-                                            } else if (response.student_category === 'Academic') {
-                                                $('#balance').val(response.balance || response.fees || 'Not Found');
-                                            } else {
-                                                alert('Student not found.');
-                                                $('#balance').val('');
-                                            }
-                                        } else {
-                                            alert('Student not found.');
-                                            $('#choices-select2').val('');
-                                            $('#choices-select').val('');
-                                            $('#balance').val('');
-                                        }
-                                    },
-                                    error: function () {
-                                        alert('An error occurred. Please try again.');
-                                        $('#choices-select2').val('Not Found');
-                                        $('#choices-select').val('Not Found');
-                                        $('#balance').val('Not Found');
-                                    }
-                                });
+                {{-- <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Get DOM elements
+                        const amount = document.getElementById('amount');
+                        const balance = document.getElementById('balance');
+                        const indexNumberSelect = document.getElementById('choices-select');
+                        const studentNameSelect = document.getElementById('choices-select2');
+                        const feesData = @json($details);
+                    
+                        // Initialize Choices.js dropdowns
+                        const indexNumberChoices = new Choices(indexNumberSelect, {
+                            searchEnabled: true,
+                            placeholder: true,
+                            placeholderValue: 'Select Index Number',
+                            removeItemButton: true
+                        });
+                    
+                        const studentNameChoices = new Choices(studentNameSelect, {
+                            searchEnabled: true,
+                            placeholder: true,
+                            placeholderValue: 'Select Student Name',
+                            removeItemButton: true
+                        });
+                    
+                        // Populate dropdowns
+                        indexNumberChoices.setChoices(feesData.map(student => ({
+                            value: student.index_number,
+                            label: student.index_number
+                        })), 'value', 'label', true);
+                    
+                        studentNameChoices.setChoices(feesData.map(student => ({
+                            value: student.user?.name || '',
+                            label: student.user?.name || 'Unknown'
+                        })).filter(option => option.value), 'value', 'label', true); // Filter out empty names
+                    
+                        // Function to find matching student
+                        function findMatchingStudent(indexNumber, studentName) {
+                            return feesData.find(fee =>
+                                (indexNumber && fee.index_number === indexNumber) ||
+                                (studentName && fee.user?.name === studentName)
+                            );
+                        }
+                    
+                        // Function to calculate and update balance
+                        function calculateBalance() {
+                            const enteredAmount = parseFloat(amount.value) || 0;
+                            const selectedIndexNumber = indexNumberSelect.value || '';
+                            const selectedStudentName = studentNameSelect.value || '';
+                    
+                            if (!selectedIndexNumber && !selectedStudentName) {
+                                balance.value = '';
+                                return;
+                            }
+                    
+                            const matchingStudent = findMatchingStudent(selectedIndexNumber, selectedStudentName);
+                    
+                            if (matchingStudent) {
+                                let totalFees = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0;
+                                let scholarshipAmount = (matchingStudent.Scholarship === "Yes") ? (parseFloat(matchingStudent.Scholarship_amount) || 0) : 0;
+                                totalFees -= scholarshipAmount;
+                    
+                                let remainingBalance = parseFloat(matchingStudent.balance) || totalFees;
+                                let newBalance = Math.max(remainingBalance - enteredAmount, 0); // Prevent negative balance
+                    
+                                balance.value = newBalance.toFixed(2);
+                    
+                                // Synchronize selections without triggering another change event
+                                if (matchingStudent.index_number && selectedIndexNumber !== matchingStudent.index_number) {
+                                    indexNumberChoices.setChoiceByValue(matchingStudent.index_number);
+                                }
+                    
+                                if (matchingStudent.user?.name && selectedStudentName !== matchingStudent.user.name) {
+                                    studentNameChoices.setChoiceByValue(matchingStudent.user.name);
+                                }
                             } else {
-                                // Clear fields if input is empty
-                                $('#choices-select2').val('');
-                                $('#choices-select').val('');
-                                $('#balance').val('');
+                                balance.value = '';
                             }
                         }
-                
-                        // Event listener for index number input
-                        $('#choices-select').on('input', function () {
-                            let indexNumber = $(this).val();
-                            fetchStudentData(indexNumber, true);
+                    
+                        // Event listeners
+                        indexNumberSelect.addEventListener('change', calculateBalance);
+                        studentNameSelect.addEventListener('change', calculateBalance);
+                        amount.addEventListener('input', calculateBalance);
+                    
+                        // Handle clearing selections
+                        indexNumberSelect.addEventListener('removeItem', () => {
+                            if (!indexNumberSelect.value) calculateBalance();
                         });
-                
-                        // Event listener for student name input
-                        $('#choices-select2').on('input', function () {
-                            let studentName = $(this).val();
-                            fetchStudentData(studentName, false);
+                    
+                        studentNameSelect.addEventListener('removeItem', () => {
+                            if (!studentNameSelect.value) calculateBalance();
                         });
                     });
-                </script>
+                </script>--}}
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Get DOM elements
+                        const amount = document.getElementById('amount');
+                        const balance = document.getElementById('balance');
+                        const indexNumberSelect = document.getElementById('choices-select');
+                        const studentNameSelect = document.getElementById('choices-select2');
+                        const feesData = @json($details);
+                    
+                        // Initialize Choices.js dropdowns
+                        const indexNumberChoices = new Choices(indexNumberSelect, {
+                            searchEnabled: true,
+                            placeholder: true,
+                            placeholderValue: 'Select Index Number',
+                            removeItemButton: true
+                        });
+                    
+                        const studentNameChoices = new Choices(studentNameSelect, {
+                            searchEnabled: true,
+                            placeholder: true,
+                            placeholderValue: 'Select Student Name',
+                            removeItemButton: true
+                        });
+                    
+                        // Populate dropdowns
+                        indexNumberChoices.setChoices(feesData.map(student => ({
+                            value: student.index_number,
+                            label: student.index_number
+                        })), 'value', 'label', true);
+                    
+                        studentNameChoices.setChoices(feesData.map(student => ({
+                            value: student.user?.name || '',
+                            label: student.user?.name || 'Unknown'
+                        })).filter(option => option.value), 'value', 'label', true); // Filter out empty names
+                    
+                        // Function to find matching student
+                        function findMatchingStudent(indexNumber, studentName) {
+                            return feesData.find(fee =>
+                                (indexNumber && fee.index_number === indexNumber) ||
+                                (studentName && fee.user?.name === studentName)
+                            );
+                        }
+                    
+                        // Function to reset balance when selections are cleared
+                        function resetBalanceIfCleared() {
+                            if (!indexNumberSelect.value && !studentNameSelect.value) {
+                                balance.value = ''; // Reset balance if both fields are cleared
+                            }
+                        }
+                    
+                        // Function to calculate and update balance
+                        function calculateBalance() {
+                            const enteredAmount = parseFloat(amount.value) || 0;
+                            const selectedIndexNumber = indexNumberSelect.value || '';
+                            const selectedStudentName = studentNameSelect.value || '';
+                    
+                            if (!selectedIndexNumber && !selectedStudentName) {
+                                balance.value = '';
+                                return;
+                            }
+                    
+                            const matchingStudent = findMatchingStudent(selectedIndexNumber, selectedStudentName);
+                    
+                            if (matchingStudent) {
+                                let totalFees = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0;
+                                let scholarshipAmount = (matchingStudent.Scholarship === "Yes") ? (parseFloat(matchingStudent.Scholarship_amount) || 0) : 0;
+                                totalFees -= scholarshipAmount;
+                    
+                                let remainingBalance = parseFloat(matchingStudent.balance) || totalFees;
+                                let newBalance = Math.max(remainingBalance - enteredAmount, 0); // Prevent negative balance
+                    
+                                balance.value = newBalance.toFixed(2);
+                    
+                                // Synchronize selections without triggering another change event
+                                if (matchingStudent.index_number && selectedIndexNumber !== matchingStudent.index_number) {
+                                    indexNumberChoices.setChoiceByValue(matchingStudent.index_number);
+                                }
+                    
+                                if (matchingStudent.user?.name && selectedStudentName !== matchingStudent.user.name) {
+                                    studentNameChoices.setChoiceByValue(matchingStudent.user.name);
+                                }
+                            } else {
+                                balance.value = '';
+                            }
+                        }
+                    
+                        // Event listeners
+                        indexNumberSelect.addEventListener('change', calculateBalance);
+                        studentNameSelect.addEventListener('change', calculateBalance);
+                        amount.addEventListener('input', calculateBalance);
+                    
+                        // Handle clearing selections
+                        indexNumberSelect.addEventListener('removeItem', () => {
+                            calculateBalance();
+                            resetBalanceIfCleared();
+                        });
+                    
+                        studentNameSelect.addEventListener('removeItem', () => {
+                            calculateBalance();
+                            resetBalanceIfCleared();
+                        });
+                    });
+                </script> 
             </form>        
         </div>
     </div>

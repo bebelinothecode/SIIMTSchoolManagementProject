@@ -84,14 +84,7 @@ class  FeesController extends Controller
                 // 'remarks'  => 'nullable|string',
             ]);
 
-            // dd($validatedData);
-
             $student = Student::where('index_number',$validatedData['student_index_number'])->first();
-
-            // $remainingBalance = $student->balance - $validatedData['amount'];
-
-            // $student->balance = $validatedData['balance'];
-            // $student->save();
 
             $feespaid = FeesPaid::create([
                 'student_index_number' => $validatedData['student_index_number'],

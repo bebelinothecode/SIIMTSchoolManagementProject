@@ -68,28 +68,28 @@ class Student extends Model
         return $this->hasMany(Book::class);
     }
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::creating(function ($model) {
-            if (!$model->index_number) {
-                $model->index_number = static::generateCustomId();
-            }
-        });
-    }
+    //     static::creating(function ($model) {
+    //         if (!$model->index_number) {
+    //             $model->index_number = static::generateCustomId();
+    //         }
+    //     });
+    // }
 
-    protected static function generateCustomId()
-    {
-        $prefix = 'STUD-';
-        $number = str_pad(mt_rand(1, 999999), 8, '0', STR_PAD_LEFT);
+    // protected static function generateCustomId()
+    // {
+    //     $prefix = 'STUD-';
+    //     $number = str_pad(mt_rand(1, 999999), 8, '0', STR_PAD_LEFT);
 
-        // Ensure uniqueness
-        $indexnumber = $prefix . $number;
-        while (self::where('index_number', $indexnumber)->exists()) {
-            $number = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
-            $indexnumber = $prefix . $number;
-        }
-        return $indexnumber;
-    }
+    //     // Ensure uniqueness
+    //     $indexnumber = $prefix . $number;
+    //     while (self::where('index_number', $indexnumber)->exists()) {
+    //         $number = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+    //         $indexnumber = $prefix . $number;
+    //     }
+    //     return $indexnumber;
+    // }
 }

@@ -62,6 +62,9 @@
                                 Print Admission Letter
                             </a>
                         @endrole
+                        @hasrole('AsstAccount')
+                             <a href="{{ route('student.edit', $student->id) }}" class="ml-4 text-green-600 hover:underline">Pay Fees</a>
+                        @endhasrole
                         {{-- <a href="{{ route('student.edit', $student->id) }}" class="ml-4 text-green-600 hover:underline">Edit</a> --}}
                         {{-- <form action="{{ route('student.destroy', $student->id) }}" method="POST" class="inline">
                             @csrf

@@ -58,7 +58,7 @@
             <h3 class="text-gray-500 uppercase font-bold">Students</h3>
             <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", count($students)) }}</span>
         </div>
-
+        @hasrole('Admin|rector|AsstAccount')
         {{-- Books Card --}} 
         <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
             <h3 class="text-gray-500 uppercase font-bold">Total Fees Collected: </h3>
@@ -70,6 +70,7 @@
             <h3 class="text-gray-500 uppercase font-bold">Total Fees Collected: </h3>
             <span class="text-5xl font-bold text-red-600">GHS{{ number_format($totalExpensesMade, 2) }}</span>
         </div>
+        @endhasrole
 
         {{-- Extra Sections (Can be used for stats or reports) --}}
         <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300 col-span-1 sm:col-span-2">
