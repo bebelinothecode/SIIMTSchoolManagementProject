@@ -173,12 +173,12 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::post('/query/books', [BookController::class,'searchBooks'])->name('query.books');
 });
 
-Route::group(['middleware' => ['auth','role:frontdesk']], function () {
-    // Route::resource('classes', 'GradeController');
-    // Route::resource('subject', 'SubjectController');
-    // Route::get('/diploma', [DiplomaController::class, 'index'])->name('diploma.index');
+// Route::group(['middleware' => ['auth','role:frontdesk']], function () {
+//     // Route::resource('classes', 'GradeController');
+//     // Route::resource('subject', 'SubjectController');
+//     // Route::get('/diploma', [DiplomaController::class, 'index'])->name('diploma.index');
 
-});
+// });
 
 Route::get('/test4',[ReportsController::class,'example']);
 Route::get('/test22', [StudentController::class, 'all']);
