@@ -5,9 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admission Letter</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for printing */
+        @media print {
+            /* Remove URLs and page numbers */
+            @page {
+                margin: 0; /* Remove default margins */
+                size: auto; /* Use auto to avoid scaling issues */
+            }
+
+            body {
+                margin: 1.5cm; /* Add custom margins for better readability */
+            }
+
+            /* Hide unnecessary elements */
+            .no-print {
+                display: none;
+            }
+
+            /* Ensure the content fits well on the page */
+            .print-content {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Prevent page breaks inside important sections */
+            .avoid-break {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 py-10">
-    <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8">
+    <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8 print-content">
         <!-- Institution Logo -->
         <div class="text-center mb-8">
             <img src="{{ asset('logo/SIIMT-logo.png') }}" alt="SIIMT University College Logo" class="mx-auto h-24">
