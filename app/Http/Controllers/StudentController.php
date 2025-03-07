@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\AcademicYear;
 use App\Fees;
 use App\User;
 use App\Grade;
@@ -13,9 +12,11 @@ use App\Parents;
 use App\Session;
 use App\Student;
 use App\Teacher;
+use Carbon\Carbon;
+use App\AcademicYear;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 // use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -115,6 +116,16 @@ class StudentController extends Controller
 
             // dd($validatedData);
 
+            // if ($request->student_category === 'Professional') {
+            //     $courseID = $validatedData['course_id_prof'];
+            //     $query = Diploma::findOrFail($courseID);
+            //     $studentCount = Student::whereNotNull('id')->count();
+            //     $formattedCount = sprintf('%03d', $studentCount);
+            //     $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
+            //     $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+            //     return $studentIndexNumber;
+            // }
+
             DB::beginTransaction();
 
             $user = User::create([
@@ -134,13 +145,20 @@ class StudentController extends Controller
                 ]);
 
             if ($request->student_category === 'Professional') {
+                $courseID = $validatedData['course_id_prof'];
+                $query = Diploma::findOrFail($courseID);
+                $studentCount = Student::where('course_id_prof', $query['id'])->count();
+                $formattedCount = sprintf('%03d', $studentCount + 1);
+                $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
+                $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+                // return $studentIndexNumber;
                 $user->student()->create([
                     'phone' => $validatedData['phone'],
                     'gender' => $validatedData['gender'],
                     'attendance_time' => $validatedData['attendance_time'],
                     'dateofbirth' => $validatedData['dateofbirth'],
                     'current_address' => $validatedData['current_address'],
-                    'index_number' => $request->index_number,
+                    'index_number' => $studentIndexNumber,
                     'student_parent' => $validatedData['student_parent'],
                     'parent_phonenumber' => $validatedData['parent_phonenumber'],
                     'student_category' => $validatedData['student_category'],
@@ -152,13 +170,20 @@ class StudentController extends Controller
                     'Scholarship_amount' => $validatedData['scholarship_amount']
                 ]);
             }  elseif ($request->student_category === 'Academic') {
+                $courseID = $validatedData['course_id'];
+                $query = Grade::findOrFail($courseID);
+                $studentCount = Student::where('course_id', $query['id'])->count();
+                $formattedCount = sprintf('%03d', $studentCount + 1);
+                $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
+                $studentIndexNumber = $query['course_code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+                // return $studentIndexNumber;
                 $user->student()->create([
                     'phone' => $validatedData['phone'],
                     'gender' => $validatedData['gender'],
                     'attendance_time' => $validatedData['attendance_time'],
                     'dateofbirth' => $validatedData['dateofbirth'],
                     'current_address' => $validatedData['current_address'],
-                    'index_number' => $request->index_number,
+                    'index_number' => $studentIndexNumber,
                     'student_parent' => $validatedData['student_parent'],
                     'parent_phonenumber' => $validatedData['parent_phonenumber'],
                     'student_category' => $validatedData['student_category'],
@@ -316,7 +341,7 @@ class StudentController extends Controller
     }
 
     public function all() {
-        $courses = Teacher::with('user')->get();
+        $courses = Student::with('user')->get();
 
         return $courses;
     }

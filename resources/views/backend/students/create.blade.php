@@ -58,11 +58,10 @@
                             <option value="">--Select Course--</option>
                             @foreach ($diplomas as $diploma)
                                 <option value="{{ $diploma->id }}" data-currency="{{ $diploma->currency }}" data-amount="{{ $diploma->fees }}" data-duration="{{ $diploma->duration }}">
-                                    {{ $diploma->name }}
+                                    {{$diploma->code}}-{{ $diploma->name }}
                                 </option>
                             @endforeach
                         </select>
-                        {{-- {{$diploma->fees}} --}}
                     </div>
                 </div>
 
@@ -74,7 +73,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input id="currency" name="currency_prof" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text">
+                        <input id="currency" name="currency_prof" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" readonly>
                     </div>
                 </div>
 
@@ -180,7 +179,7 @@
                             <option value="">--Select Course--</option>
                             @foreach ($courses as $course)
                                 <option value="{{ $course->id }}" data-currency="{{ $course->currency }}" data-amount="{{ $course->fees }}">
-                                    {{ $course->course_name }}
+                                   {{$course->course_code}} - {{ $course->course_name }}
                                 </option>
                             @endforeach
                         </select>
@@ -194,7 +193,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input id="fees" name="fees" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
+                        <input id="fees" name="fees" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" readonly>
                     </div>
                 </div>
 

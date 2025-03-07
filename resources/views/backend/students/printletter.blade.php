@@ -8,6 +8,11 @@
 </head>
 <body class="bg-gray-100 py-10">
     <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8">
+        <!-- Institution Logo -->
+        <div class="text-center mb-8">
+            <img src="{{ asset('logo/SIIMT-logo.png') }}" alt="SIIMT University College Logo" class="mx-auto h-24">
+        </div>
+
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold text-blue-700">SIIMT University College, Ghana</h1>
