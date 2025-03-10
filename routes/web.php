@@ -108,7 +108,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
     Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
     Route::get('/delete/assigned/subject/{id}',[SubjectController::class,'getDeleteForm'])->name('deleteassigned.subject');
-    Route::delete('delete/assigned/subject/{id}',[SubjectController::class,'deleteAssignedSubject'])->name('delete.assigned');
+    Route::delete('/delete/assigned/subject/{id}',[SubjectController::class,'deleteAssignedSubject'])->name('delete.assigned');
     Route::delete('/delete/diploma/{id}',[DiplomaController::class,'deleteDiploma'])->name('delete.diploma');
     Route::get("/enquiries/index", [StudentController::class, 'index22'])->name("enquiries.index");
     Route::get('/expenses',[ExpensesController::class, 'getExpensesForm'])->name('get.expensesForm');
@@ -120,6 +120,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::get('/get/collections/professional',[CollectionsController::class, 'getProfessionalCollectionsForm'])->name('collections.professionalform');
     Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
     Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance');
+    Route::get('/pay/fees/{id}',[StudentController::class, 'payStudentFeesForm'])->name('pay.feesform');
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');

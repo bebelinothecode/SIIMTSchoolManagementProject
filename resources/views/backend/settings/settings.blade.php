@@ -7,12 +7,6 @@
             <div>
                 <h2 class="text-gray-700 uppercase font-bold">Settings</h2>
             </div>
-            {{-- <div class="flex flex-wrap items-center">
-                <a href="{{ route('parents.index') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
-                    <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="long-arrow-alt-left" class="svg-inline--fa fa-long-arrow-alt-left fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path></svg>
-                    <span class="ml-2 text-xs font-semibold">Back</span>
-                </a>
-            </div> --}}
         </div>
 
         <div class="table w-full mt-8 bg-white rounded">
@@ -26,9 +20,6 @@
                     </div>
                     <div class="md:w-2/3">
                         <input name="startyear" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
-                        {{-- @error('school_fees')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror --}}
                     </div>
                 </div>
                 <div class="md:flex md:items-center mb-6">
@@ -39,9 +30,6 @@
                     </div>
                     <div class="md:w-2/3">
                         <input name="endyear" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
-                        {{-- @error('school_fees')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror --}}
                     </div>
                 </div>
                 <div class="md:flex md:items-center mb-6">
@@ -52,9 +40,16 @@
                     </div>
                     <div class="md:w-2/3">
                         <input name="name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text">
-                        {{-- @error('school_fees')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                         @enderror --}}
+                    </div>
+                </div>
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                            Expense Category
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <input name="expense_category" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text">
                     </div>
                 </div>
                 <div class="md:flex md:items-center">
@@ -75,22 +70,16 @@
                         });
                     </script>
                 @endif
+                @if (session('error'))
                 <script>
-                    document.getElementById('student_type').addEventListener('change', function() {
-                        const studentType = this.value;
-                        const currencyDropdown = document.getElementById('currency');
-                        
-                        // Reset the currency dropdown
-                        currencyDropdown.value = "";
-                
-                        // Set the currency based on the student type
-                        if (studentType === "Foreign") {
-                            currencyDropdown.value = "$"; // Dollar for foreign students
-                        } else if (studentType === "Local") {
-                            currencyDropdown.value = "GHS"; // Ghana Cedi for local students
-                        }
+                    Swal.fire({
+                        title: 'Opps!',
+                        text: '{{ session('error') }}',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
                 </script>
+            @endif
             </form>        
         </div>
     </div>

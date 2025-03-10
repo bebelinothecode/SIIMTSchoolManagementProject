@@ -64,9 +64,9 @@
                             Print Admission Letter
                         </a>
                         @endhasanyrole
-                        @hasrole('AsstAccount')
-                             <a href="{{ route('student.edit', $student->id) }}" class="ml-4 text-green-600 hover:underline">Pay Fees</a>
-                        @endhasrole
+                        @hasanyrole('Admin|rector|AsstAccount')
+                             <a href="{{ route('pay.feesform', $student->id) }}" class="ml-4 text-green-600 hover:underline">Pay Fees</a>
+                        @endhasanyrole
                     </td>
                 </tr>
                 @empty

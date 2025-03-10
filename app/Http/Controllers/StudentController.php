@@ -544,6 +544,15 @@ class StudentController extends Controller
         }
     }
 
+    public function payStudentFeesForm($id) {
+        $student = Student::with('user')->findOrFail($id);
+        $studentName = $student->user->name;
+        $studentIndexNumber = $student->index_number;
+        $student_balance = $student->balance;
+        // return $student;
+        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance'));
+    }
+
     public function promoteAll(Request $request) {
         try {
 

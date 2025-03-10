@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ExpenseCategory;
 use App\Expenses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -9,15 +10,18 @@ use Illuminate\Support\Facades\Log;
 class ExpensesController extends Controller
 {
     public function getExpensesForm() {
-        return view('backend.expenses.expensesForm');
+        $categories = ExpenseCategory::all();
+
+        return view('backend.expenses.expensesForm', compact('categories'));
     }
 
     public function storeExpenses(Request $request) {
         try {
+            // dd($request->all());
             $validatedData = $request->validate([
                 "source_of_expense" => 'required|string',
                 "description" => 'required|string|max:300',
-                "category" => 'required|string',
+                "expense_category" => 'required|string',
                 "currency" => "required|string|in:Ghana Cedi,Dollar",
                 "mode_of_payment" => 'required|string',
                 'cheque_number' => 'nullable|string',
@@ -27,10 +31,12 @@ class ExpensesController extends Controller
                 "bank_details" => 'nullable|string'
             ]);
 
+            // dd($validatedData);
+
             Expenses::create([
                 'source_of_expense'=> $validatedData['source_of_expense'],
                 'description_of_expense' => $validatedData['description'],
-                'category' => $validatedData['category'],
+                'category' => $validatedData['expense_category'],
                 'currency' => $validatedData['currency'],
                 'amount' => $validatedData['amount'],
                 'mode_of_payment' => $validatedData['mode_of_payment'],
@@ -44,7 +50,7 @@ class ExpensesController extends Controller
         } catch (\Exception $e) {
             Log::error('Error creating student: ' . $e);
 
-            return redirect()->back()->with('error', 'Error creating exxpense');
+            return redirect()->back()->with('error', 'Error creating expense');
         }
     }
 
@@ -55,7 +61,9 @@ class ExpensesController extends Controller
     }
 
     public function getExpensesReportsForm() {
-        return view('backend.reports.expensesreportform');
+        $categorys = ExpenseCategory::all();
+
+        return view('backend.reports.expensesreportform', compact('categorys'));
     }
 
     public function generateExpensesReport(Request $request) {
