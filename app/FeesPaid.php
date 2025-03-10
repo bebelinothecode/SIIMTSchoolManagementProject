@@ -26,7 +26,8 @@ class FeesPaid extends Model
         'cheque_number',
         'Momo_number',
         // 'Fees',
-        // 'remarks'
+        'remarks',
+        'receipt_number'
     ];
 }
 

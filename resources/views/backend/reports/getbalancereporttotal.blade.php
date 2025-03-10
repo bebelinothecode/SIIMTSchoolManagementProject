@@ -1,20 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Balance Generated Report')
+@section('title', 'Total Balance Generated Report')
 
 @section('content')
 <style>
     @media print {
-        /* Hide everything except the table, logo, and report parameters */
+        /* Hide everything except the table and logo */
         body * {
             visibility: hidden;
         }
         
-        /* Show only the table, logo, report parameters, and their contents */
+        /* Show only the table, logo, and their contents */
         .print-section,
         .print-section *,
-        .print-logo,
-        .print-parameters {
+        .print-logo {
             visibility: visible;
         }
         
@@ -28,19 +27,11 @@
             margin-bottom: 20px; /* Add space below the logo */
         }
         
-        /* Position the report parameters below the logo */
-        .print-parameters {
-            position: absolute;
-            top: 100px; /* Adjust based on logo height */
-            left: 0;
-            width: 100%;
-        }
-        
-        /* Position the table below the report parameters */
+        /* Position the table below the logo */
         .print-section {
             position: absolute;
-            top: 200px; /* Adjust based on logo and parameters height */
             left: 0;
+            top: 100px; /* Adjust based on logo height */
             width: 100%;
         }
         
@@ -88,18 +79,14 @@
         <img src="{{ asset('logo/SIIMT-logo.png') }}" alt="Company Logo" class="w-full h-auto">
     </div>
 
-    <!-- Report Parameters (Visible only during printing) -->
-    <div class="print-parameters hidden">
-        <h1 class="text-2xl font-bold text-gray-700">Balance Generated Report</h1>
-        <div class="mt-4 p-6 bg-white rounded-lg shadow">
-            <h2 class="text-lg font-semibold text-gray-700">Report Parameters</h2>
-            <div class="mt-2 text-sm text-gray-600">
-                <p><strong>Selected Category:</strong> {{ $selectedCategory ?? 'N/A' }}</p>
-                <p><strong>Report Date:</strong> {{ now()->format('Y-m-d H:i:s') }}</p>
-                <p><strong>Start Date:</strong> {{ $startDate ?? 'N/A' }}</p>
-                <p><strong>End Date:</strong> {{ $endDate ?? 'N/A' }}</p>
-                <p><strong>Current Month:</strong> {{ $currentMonth ?? 'N/A' }}</p>
-            </div>
+    <h1 class="text-2xl font-bold text-gray-700">Combined Balance Report (Academic + Professional)</h1>
+
+    <!-- Report Parameters -->
+    <div class="mt-4 p-6 bg-white rounded-lg shadow">
+        <h2 class="text-lg font-semibold text-gray-700">Report Parameters</h2>
+        <div class="mt-2 text-sm text-gray-600">
+            <p><strong>Selected Category:</strong> {{ $selectedCategory ?? 'N/A' }}</p>
+            <p><strong>Report Date:</strong> {{ now()->format('Y-m-d H:i:s') }}</p>
         </div>
     </div>
 
@@ -108,19 +95,19 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
-                    <th class="py-3 px-6 text-left">Currency</th>
-                    <th class="py-3 px-6 text-left">Total Professional Collections</th>
-                    <th class="py-3 px-6 text-left">Total Professional Expenses</th>
-                    <th class="py-3 px-6 text-left">Balance</th>
+                    <th class="py-3 px-6 text-left">Category</th>
+                    <th class="py-3 px-6 text-left">Total Collections</th>
+                    <th class="py-3 px-6 text-left">Total Expenses</th>
+                    <th class="py-3 px-6 text-left">Total Balance</th>
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
                 {{-- @forelse($balances as $balance) --}}
                     <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">GHS</td>
-                        <td class="py-3 px-6 text-left">{{ number_format($totalCollectionsProfessional, 2) }}</td>
-                        <td class="py-3 px-6 text-left">{{ number_format($expensesProfessionalTotal, 2) }}</td>
-                        <td class="py-3 px-6 text-left">{{ number_format($totalProfessionalBalance, 2) }}</td>
+                        <td class="py-3 px-6 text-left whitespace-nowrap">Combined (Academic + Professional)</td>
+                        <td class="py-3 px-6 text-left">{{ number_format($totalCombinedCollections, 2) }}</td>
+                        <td class="py-3 px-6 text-left">{{ number_format($totalCombinedExpenses, 2) }}</td>
+                        <td class="py-3 px-6 text-left">{{ number_format($totalCombinedBalance, 2) }}</td>
                     </tr>
             </tbody>
         </table>

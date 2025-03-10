@@ -53,8 +53,8 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::post('/permission-store', 'RolePermissionController@storePermission')->name('permission.store');
     Route::get('/permission-edit/{id}', 'RolePermissionController@editPermission')->name('permission.edit');
     Route::put('/permission-update/{id}', 'RolePermissionController@updatePermission')->name('permission.update');
-    Route::get('assign-subject-to-class/{id}', 'GradeController@assignSubject')->name('class.assign.subject');
-    Route::post('assign-subject-to-class/{id}', 'GradeController@storeAssignedSubject')->name('store.class.assign.subject');
+    Route::get('/assign-subject-to-class/{id}', 'GradeController@assignSubject')->name('class.assign.subject');
+    Route::post('/assign-subject-to-class/{id}', 'GradeController@storeAssignedSubject')->name('store.class.assign.subject');
     Route::get('/librarybooks', [BookController::class, 'displayBooks'])->name('librarybooks');
     Route::get('/editbook/{id}', [BookController::class, 'edit'])->name('editbook');
     Route::put('/updatebook/{book}', [BookController::class, 'updateBook'])->name('updatebook');
@@ -92,7 +92,8 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::delete('/delete/teacher/{id}',[TeacherController::class, 'deleteTeacher'])->name('teacher.delete');
     Route::get('/diploma/form', [DiplomaController::class, 'diplomaForm'])->name('diploma.form');
     Route::post('/store/diploma', [DiplomaController::class, 'storeDiplomaForm'])->name('store.diploma');
-    Route::get('/edit/diploma/{id}', [DiplomaController::class, 'editDiploma'])->name('edit.diploma');
+    Route::get('/edit/diploma/{id}', [DiplomaController::class, 'editDiplomaForm'])->name('edit.diploma');
+    Route::post('/update/diploma/{id}', [DiplomaController::class, 'updateDiploma'])->name('update.diploma');
     Route::get('/search/index', [DiplomaController::class, 'index'])->name('diploma.searchindex');
     Route::get('/get/diplomas/{id}',[DiplomaController::class,'getProfessional']);
     Route::get('/get/academic/{id}', [DiplomaController::class, 'getAcademic']);

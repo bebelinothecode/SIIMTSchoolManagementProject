@@ -209,29 +209,6 @@
                 </a>
             </div>
         </div>
-        <!-- <div>
-            <a href="#"
-               class="flex items-center text-gray-600 py-2 hover:text-blue-700"
-               onclick="toggleSubMenu5('librarySubmenu5','libraryIcon5')"
-               aria-controls="librarySubmenu5"
-               aria-expanded="false">
-                <svg id="libraryIcon5" class="h-4 w-4 fill-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                    <path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6..."></path>
-                </svg>
-                <span class="ml-2">Collections</span>
-                <svg id="libraryIcon5" class="ml-auto h-4 w-4 transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </a>
-            <div id="librarySubmenu5" class="hidden pl-6 mt-2" aria-hidden="true">
-                <a href="{{ route('collections.academicform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                    <span class="ml-2 text-sm font-semibold">Academic</span>
-                </a>
-                <a href="{{ route('collections.professionalform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                    <span class="ml-2 text-sm font-semibold">Professional</span>
-                </a>
-            </div>
-        </div> -->
         <script>
             // Function to toggle the dropdown
             function toggleSubMenu3(menuId, iconId) {
@@ -424,9 +401,9 @@
                     <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <span class="ml-2 text-sm font-semibold">Student Reports(Academic)</span>
                     </a>
-                    <a href="{{ route('teacherreport.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    {{-- <a href="{{ route('teacherreport.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <span class="ml-2 text-sm font-semibold">Teacher Reports</span>
-                    </a>
+                    </a> --}}
                     <a href="{{ route('payments.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <span class="ml-2 text-sm font-semibold">Payments Reports</span>
                     </a>

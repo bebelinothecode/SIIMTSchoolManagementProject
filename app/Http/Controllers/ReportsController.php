@@ -330,146 +330,11 @@ class ReportsController extends Controller
         return view('backend.reports.getbalanceform');
     }
 
-    // public function calculateBalanceTotal(Request $request) {
-    //     try {
-    //         // dd($request->all());
-    //         $validatedData = $request->validate([
-    //             'category' => 'required|string',
-    //             'current_month' => 'nullable|date_format:Y-m',
-    //             'start_date' => 'nullable|date',
-    //             'end_date' => 'nullable|date'
-    //         ]);
-
-    //         $selectedCategory = $validatedData['category'];
-    //         $currentMonth = $validatedData['current_month'];
-    //         $startDate = $validatedData['start_date'];
-    //         $endDate = $validatedData['end_date'];
-
-    //         $expensesAcademicTotal = DB::table('expenses')
-    //                 ->where('source_of_expense', 'Academic')
-    //                 ->sum('amount');
-            
-    //         $expensesProfessionalTotal = DB::table('expenses')
-    //         ->where('source_of_expense', 'Professional')
-    //         ->sum('amount');
-
-    //         $totals = DB::table('collect_fees')
-    //         ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
-    //         ->select('students.student_category', DB::raw('SUM(collect_fees.amount) as total'))
-    //         ->whereIn('students.student_category', ['Academic','Professional'])
-    //         ->groupBy('students.student_category')
-    //         ->get();
-
-    //         $totals = $totals->pluck('total', 'student_category');
-
-    //         $totalCollectionsAcademic = $totals['Academic'] ?? 0;
-
-    //         $totalCollectionsProfessional = $totals['Professional'] ?? 0;
-
-
-    //         // return $totals['Academic'] ?? 0;
-
-    //         // return [
-    //         //     'academic_total' => $totals['Academic'] ?? 0,
-    //         //     'professional_total' => $totals['Professional'] ?? 0,
-    //         // ];
-
-    //         if ($selectedCategory === "Academic" || $selectedCategory === 'Professional') {
-    //             if ($selectedCategory === 'Academic') {
-    //                 $totalAcademicBalance = $totalCollectionsAcademic - $expensesAcademicTotal;
-    //                 return view('backend.reports.getbalancereportacademic', compact('totalAcademicBalance','totalCollectionsAcademic','expensesAcademicTotal','selectedCategory'));
-    //             } elseif ($selectedCategory === 'Professional') {
-    //                 $totalProfessionalBalance = $totalCollectionsProfessional - $expensesProfessionalTotal;
-
-    //                 return view('backend.reports.getbalancereportprofessional',compact('selectedCategory','totalProfessionalBalance','totalCollectionsProfessional','expensesProfessionalTotal'));
-    //             }
-    //         }
-
-    //     } catch (\Exception $e) {
-    //         //throw $th;
-    //         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-    //     }
-
-    // }
-
-    // public function calculateBalanceTotal(Request $request) {
-    //     try {
-    //         // Validate the request data
-    //         $validatedData = $request->validate([
-    //             'category' => 'nullable|string',
-    //             'current_month' => 'nullable|date_format:Y-m',
-    //             'start_date' => 'nullable|date',
-    //             'end_date' => 'nullable|date'
-    //         ]);
-    
-    //         $selectedCategory = $validatedData['category'];
-    //         $currentMonth = $validatedData['current_month'];
-    //         $startDate = $validatedData['start_date'];
-    //         $endDate = $validatedData['end_date'];
-    
-    //         // Calculate expenses totals
-    //         $expensesAcademicTotal = DB::table('expenses')
-    //             ->where('source_of_expense', 'Academic')
-    //             ->sum('amount');
-    
-    //         $expensesProfessionalTotal = DB::table('expenses')
-    //             ->where('source_of_expense', 'Professional')
-    //             ->sum('amount');
-    
-    //         // Query for fee collections with date filters
-    //         $feeCollectionsQuery = DB::table('collect_fees')
-    //             ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
-    //             ->select('students.student_category', DB::raw('SUM(collect_fees.amount) as total'))
-    //             ->whereIn('students.student_category', ['Academic', 'Professional']);
-    
-    //         // Apply current month filter
-    //         if ($currentMonth) {
-    //             $feeCollectionsQuery->whereYear('collect_fees.created_at', '=', date('Y', strtotime($currentMonth)))
-    //                                 ->whereMonth('collect_fees.created_at', '=', date('m', strtotime($currentMonth)));
-    //         }
-    
-    //         // Apply date range filter
-    //         if ($startDate && $endDate) {
-    //             $feeCollectionsQuery->whereBetween('collect_fees.created_at', [$startDate, $endDate]);
-    //         } elseif ($startDate) {
-    //             $feeCollectionsQuery->where('collect_fees.created_at', '>=', $startDate);
-    //         } elseif ($endDate) {
-    //             $feeCollectionsQuery->where('collect_fees.created_at', '<=', $endDate);
-    //         }
-    
-    //         // Group by category and get totals
-    //         $totals = $feeCollectionsQuery->groupBy('students.student_category')->get();
-    
-    //         // Convert the result to an associative array for easier access
-    //         $totals = $totals->pluck('total', 'student_category');
-    
-    //         $totalCollectionsAcademic = $totals['Academic'] ?? 0;
-    //         $totalCollectionsProfessional = $totals['Professional'] ?? 0;
-    
-    //         // Calculate balance based on selected category
-    //         if ($selectedCategory) {
-    //             if ($selectedCategory === 'Academic') {
-    //                 $totalAcademicBalance = $totalCollectionsAcademic - $expensesAcademicTotal;
-    //                 return view('backend.reports.getbalancereportacademic', compact('totalAcademicBalance', 'totalCollectionsAcademic', 'expensesAcademicTotal', 'selectedCategory'));
-    //             } elseif ($selectedCategory === 'Professional') {
-    //                 $totalProfessionalBalance = $totalCollectionsProfessional - $expensesProfessionalTotal;
-    //                 return view('backend.reports.getbalancereportprofessional', compact('selectedCategory', 'totalProfessionalBalance', 'totalCollectionsProfessional', 'expensesProfessionalTotal'));
-    //             }
-    //         }
-    
-    //     } catch (\Exception $e) {
-    //         // Log the error
-    //         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-
-    //         return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
-    //     }
-    // }
-
     public function calculateBalanceTotal(Request $request) {
         try {
             // Validate the request data
             $validatedData = $request->validate([
-                'category' => 'nullable|string|in:Academic,Professional',
+                'category' => 'nullable|string|in:Academic,Professional,Total',
                 'current_month' => 'nullable|date_format:Y-m',
                 'start_date' => 'nullable|date',
                 'end_date' => 'nullable|date|after_or_equal:start_date'
@@ -483,17 +348,19 @@ class ReportsController extends Controller
             // Base query for expenses
             $expensesQuery = DB::table('expenses');
     
-            // Apply category filter
-            if ($selectedCategory) {
+            // Apply category filter for expenses
+            if ($selectedCategory === 'Total') {
+                $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
+            } elseif ($selectedCategory) {
                 $expensesQuery->where('source_of_expense', $selectedCategory);
             } else {
                 $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
             }
     
-            // Apply date filters
+            // Apply date filters for expenses
             if ($currentMonth) {
                 $expensesQuery->whereYear('created_at', date('Y', strtotime($currentMonth)))
-                              ->whereMonth('created_at', date('m', strtotime($currentMonth)));
+                               ->whereMonth('created_at', date('m', strtotime($currentMonth)));
             } elseif ($startDate && $endDate) {
                 $expensesQuery->whereBetween('created_at', [$startDate, $endDate]);
             } elseif ($startDate) {
@@ -502,22 +369,14 @@ class ReportsController extends Controller
                 $expensesQuery->where('created_at', '<=', $endDate);
             }
     
-            // Get expense totals
-            // $expensesTotals = $expensesQuery->selectRaw("
-            //     SUM(CASE WHEN source_of_expense = 'Academic' THEN amount ELSE 0 END) as expensesAcademicTotal,
-            //     SUM(CASE WHEN source_of_expense = 'Professional' THEN amount ELSE 0 END) as expensesProfessionalTotal
-            // ")->first();
-
-             // Calculate expenses totals
-            $expensesAcademicTotal = DB::table('expenses')
-                ->where('source_of_expense', 'Academic')
-                ->sum('amount');
+            // Calculate expenses totals
+            $expensesTotals = $expensesQuery->select(
+                'source_of_expense',
+                DB::raw('SUM(amount) as total')
+            )->groupBy('source_of_expense')->pluck('total', 'source_of_expense');
     
-            $expensesProfessionalTotal = DB::table('expenses')
-                ->where('source_of_expense', 'Professional')
-                ->sum('amount');
-
-            // return $expensesTotals;
+            $expensesAcademicTotal = $expensesTotals['Academic'] ?? 0;
+            $expensesProfessionalTotal = $expensesTotals['Professional'] ?? 0;
     
             // Query for fee collections
             $feeCollectionsQuery = DB::table('collect_fees')
@@ -547,17 +406,25 @@ class ReportsController extends Controller
             $totalCollectionsProfessional = $feeCollections['Professional'] ?? 0;
     
             // Compute balances
-            $totalAcademicBalance = $totalCollectionsAcademic - ($expensesAcademicTotal ?? 0);
-            $totalProfessionalBalance = $totalCollectionsProfessional - ($expensesProfessionalTotal ?? 0);
+            $totalAcademicBalance = $totalCollectionsAcademic - $expensesAcademicTotal;
+            $totalProfessionalBalance = $totalCollectionsProfessional - $expensesProfessionalTotal;
     
             // Determine which view to return
             if ($selectedCategory === 'Academic') {
                 return view('backend.reports.getbalancereportacademic', compact(
-                    'totalAcademicBalance', 'totalCollectionsAcademic', 'expensesAcademicTotal', 'selectedCategory'
+                    'totalAcademicBalance', 'totalCollectionsAcademic', 'expensesAcademicTotal', 'selectedCategory','currentMonth','startDate','endDate'
                 ));
             } elseif ($selectedCategory === 'Professional') {
                 return view('backend.reports.getbalancereportprofessional', compact(
-                    'totalProfessionalBalance', 'totalCollectionsProfessional', 'expensesProfessionalTotal', 'selectedCategory'
+                    'totalProfessionalBalance', 'totalCollectionsProfessional', 'expensesProfessionalTotal', 'selectedCategory','currentMonth','startDate','endDate'
+                ));
+            } elseif ($selectedCategory === 'Total') {
+                $totalCombinedBalance = $totalAcademicBalance + $totalProfessionalBalance;
+                $totalCombinedCollections = $totalCollectionsAcademic + $totalCollectionsProfessional;
+                $totalCombinedExpenses = $expensesAcademicTotal + $expensesProfessionalTotal;
+    
+                return view('backend.reports.getbalancereporttotal', compact(
+                    'totalCombinedBalance', 'totalCombinedCollections', 'totalCombinedExpenses', 'selectedCategory','currentMonth','startDate','endDate'
                 ));
             }
     

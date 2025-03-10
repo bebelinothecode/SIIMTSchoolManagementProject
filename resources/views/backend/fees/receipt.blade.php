@@ -92,6 +92,10 @@
         </table>
     </div>
 
+    <div>
+        <p><strong>Receipt Number:</strong> {{ $feespaid->receipt_number }}</p>
+    </div>
+
     <div class="footer">
         <p>Thank you for your payment!</p>
         <p>For any inquiries, please contact us at <strong>(+233) 057 080 1631</strong></p>        

@@ -67,7 +67,7 @@
 
         {{-- Expenses Made --}}
         <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Total Fees Collected: </h3>
+            <h3 class="text-gray-500 uppercase font-bold">Total Expenses Made: </h3>
             <span class="text-5xl font-bold text-red-600">GHS{{ number_format($totalExpensesMade, 2) }}</span>
         </div>
         @endhasrole

@@ -10,12 +10,6 @@ use Illuminate\Database\QueryException;
 
 class DiplomaController extends Controller
 {
-    // public function index() {
-    //     $diplomas = Diploma::all();
-
-    //     return view('backend.diploma.index',compact('diplomas'));
-    // }
-
     public function diplomaForm() {
         return view('backend.diploma.create');
     }
@@ -60,7 +54,7 @@ class DiplomaController extends Controller
         }
     }
 
-    public function editDiploma($id) {
+    public function editDiplomaForm($id) {
         $diploma = Diploma::findOrFail($id);
 
         return view('backend.diploma.edit', compact('diploma'));
@@ -68,34 +62,68 @@ class DiplomaController extends Controller
 
     public function updateDiploma($id, Request $request) {
         try {
-            dd($request->all());
-        } catch (\Throwable $th) {
+            // dd($request->all());
+
+            $validatedData = $request->validate([
+                'type_of_course' => 'required|string|max:255',
+                'code' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
+                'duration' => 'required|string|max:255',
+                'currency' => 'required|string|max:255',
+                'fees' => 'required|numeric'
+            ]);
+
+            $diploma = Diploma::findOrFail($id);
+
+            // Update the diploma record with the new data
+            $diploma->update([
+                'type_of_course' => $validatedData['type_of_course'],
+                'code' => $validatedData['code'],
+                'name' => $validatedData['name'],
+                'duration' => $validatedData['duration'],
+                'currency' => $validatedData['currency'],
+                'fees' => $validatedData['fees']
+            ]);
+    
+            // Redirect back with a success message
+            return redirect()->back()->with('success', 'Diploma/Certificate updated successfully!');
+        } catch (\Exception $e) {
             //throw $th;
+            Log::error('Error updating diploma',[$e->getMessage()]);       
         }
     }
 
-    public function index(Request $request)
-    {
-        $query = Diploma::query();
+    public function index(Request $request) {
+        try {
+            //code...
+            $query = Diploma::query();
 
-        if ($request->has('search')) {
-            $searchTerm = $request->input('search');
-
-            // Parse and validate the search term
-            $filters = $this->parseSearchTerm($searchTerm);
-
-            // Apply filters dynamically
-            foreach ($filters as $key => $value) {
-                if (in_array($key, ['type_of_course', 'code', 'name', 'duration', 'currency', 'amount'])) { // Allow only valid columns
-                    $query->where($key, 'like', '%' . $value . '%');
+            if ($request->has('search')) {
+                $searchTerm = $request->input('search');
+        
+                // Validate the search term
+                if (!empty($searchTerm)) {
+                    // Parse and validate the search term
+                    $filters = $this->parseSearchTerm($searchTerm);
+        
+                    // Apply filters dynamically
+                    foreach ($filters as $key => $value) {
+                        if (in_array($key, ['type_of_course', 'code', 'name', 'duration', 'currency', 'amount'])) { // Allow only valid columns
+                            $query->where($key, 'like', '%' . $value . '%');
+                        }
+                    }
                 }
             }
+        
+            // Paginate results
+            $diplomas = $query->latest()->paginate(5);
+        
+            return view('backend.diploma.index', compact('diplomas'));
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('Error deleting diploma',[$e->getMessage()]);
+
         }
-
-        // Paginate results
-        $diplomas = $query->latest()->paginate(5);
-
-        return view('backend.diploma.index', compact('diplomas'));
     }
 
     private function parseSearchTerm($searchTerm)
@@ -106,7 +134,13 @@ class DiplomaController extends Controller
         foreach ($terms as $term) {
             if (str_contains($term, '=')) {
                 list($key, $value) = explode('=', $term, 2);
-                $filters[trim($key)] = trim($value);
+                $key = trim($key);
+                $value = trim($value);
+
+                // Ensure the key and value are not empty
+                if (!empty($key) && !empty($value)) {
+                    $filters[$key] = $value;
+                }
             }
         }
 

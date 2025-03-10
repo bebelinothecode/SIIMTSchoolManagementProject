@@ -7,6 +7,7 @@ use App\Level;
 use App\Session;
 use App\Student;
 use App\FeesPaid;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -81,10 +82,12 @@ class  FeesController extends Controller
                 'currency' => 'required',
                 'Momo_number' => 'nullable',
                 'cheque_number' => 'nullable',
-                // 'remarks'  => 'nullable|string',
+                'remarks'  => 'nullable|string',
             ]);
 
             $student = Student::where('index_number',$validatedData['student_index_number'])->first();
+
+            $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
             $feespaid = FeesPaid::create([
                 'student_index_number' => $validatedData['student_index_number'],
@@ -95,8 +98,11 @@ class  FeesController extends Controller
                 'currency' => $validatedData['currency'],
                 'Momo_number' => $validatedData['Momo_number'],
                 'cheque_number' => $validatedData['cheque_number'],
-                // 'remarks' => $validatedData['remarks']
+                'remarks' => $validatedData['remarks'],
+                'receipt_number' => $receipt_number,
             ]);
+
+            // dd($feespaid);
 
             if($feespaid) {
                 $student->balance = $validatedData['balance'];

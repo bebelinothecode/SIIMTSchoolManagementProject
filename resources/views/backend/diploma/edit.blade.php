@@ -16,7 +16,7 @@
         </div>
 
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('store.diploma', $diploma->id) }}" method="POST" class="w-full max-w-xl px-6 py-12">
+            <form action="{{ route('update.diploma', $diploma->id) }}" method="POST" class="w-full max-w-xl px-6 py-12">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -113,7 +113,7 @@
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">
                         <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-                            Create 
+                            Update
                         </button>
                     </div>
                 </div>

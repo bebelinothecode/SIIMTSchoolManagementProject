@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="roles">
-
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-gray-700 uppercase font-bold">Collect Fees</h2>
@@ -168,6 +167,22 @@
                         @enderror
                     </div>
                 </div>
+
+                <!-- Remarks Textarea -->
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="remarks">
+                            Remarks (Optional)
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <textarea name="remarks" id="remarks" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" rows="4" placeholder="Enter any additional remarks or notes"></textarea>
+                        @error('remarks')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">
@@ -186,213 +201,6 @@
                         });
                     </script>
                 @endif
-                {{-- <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        // Assuming Choices.js is already initialized
-                        const amount = document.getElementById('amount');
-                        const balance = document.getElementById('balance');
-                        const indexNumberSelect = document.getElementById('choices-select');
-                        const studentNameSelect = document.getElementById('choices-select2');
-                        const feesData = @json($details);
-                    
-                        // Function to find matching student
-                        function findMatchingStudent(indexNumber, studentName) {
-                            return feesData.find(fee => 
-                                fee.index_number === indexNumber || fee.user.name === studentName
-                            );
-                        }
-                    
-                        // Function to calculate and update balance
-                        function calculateBalance() {
-                            const enteredAmount = parseFloat(amount.value) || 0;
-                            const selectedIndexNumber = indexNumberSelect.value;
-                            const selectedStudentName = studentNameSelect.value;
-
-                            const matchingStudent = findMatchingStudent(selectedIndexNumber, selectedStudentName);
-
-                            if (matchingStudent) {
-                                // Determine total fees, with fallback options
-                                let totalFees = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0;
-
-                                // Deduct scholarship amount if available
-                                let scholarshipAmount = parseFloat(matchingStudent.Scholarship_amount) || 0;
-                                if (matchingStudent.Scholarship === "Yes" && !isNaN(scholarshipAmount)) {
-                                    totalFees -= scholarshipAmount;
-                                }
-
-                                // Determine remaining balance, with fallback options
-                                let remainingBalance = parseFloat(matchingStudent.balance);
-                                if (isNaN(remainingBalance)) {
-                                    // If no specific balance, use adjusted total fees
-                                    remainingBalance = totalFees;
-                                }
-
-                                // Calculate new balance after deducting the entered amount
-                                let newBalance = remainingBalance - enteredAmount;
-
-                                // Prevent negative balance
-                                if (newBalance < 0) {
-                                    newBalance = 0;
-                                    alert('Payment exceeds the remaining balance. Balance cannot be negative.');
-                                }
-
-                                // Update the balance field
-                                balance.value = newBalance.toFixed(2);
-
-                                // Synchronize both selects if they're not already matched
-                                if (selectedIndexNumber !== matchingStudent.index_number) {
-                                    indexNumberSelect.value = matchingStudent.index_number;
-                                    // If using Choices.js, update the selected value
-                                    if (window.indexNumberChoices) {
-                                        window.indexNumberChoices.setChoiceByValue(matchingStudent.index_number);
-                                    }
-                                }
-
-                                if (selectedStudentName !== matchingStudent.user.name) {
-                                    studentNameSelect.value = matchingStudent.user.name;
-                                    // If using Choices.js, update the selected value
-                                    if (window.studentNameChoices) {
-                                        window.studentNameChoices.setChoiceByValue(matchingStudent.user.name);
-                                    }
-                                }
-                            } else {
-                                balance.value = '0.00';
-                            }
-                        }
-                    
-                        // Event listeners for both selects and amount input
-                        indexNumberSelect.addEventListener('change', calculateBalance);
-                        studentNameSelect.addEventListener('change', calculateBalance);
-                        amount.addEventListener('input', calculateBalance);
-                    
-                        // Initial setup for Choices.js dropdowns
-                        const indexNumberChoices = new Choices(indexNumberSelect, {
-                            searchEnabled: true,
-                            placeholder: true,
-                            placeholderValue: 'Select Index Number',
-                            removeItemButton: true
-                        });
-                    
-                        const studentNameChoices = new Choices(studentNameSelect, {
-                            searchEnabled: true,
-                            placeholder: true,
-                            placeholderValue: 'Select Student Name',
-                            removeItemButton: true
-                        });
-                    
-                        // Store choices in window to access globally
-                        window.indexNumberChoices = indexNumberChoices;
-                        window.studentNameChoices = studentNameChoices;
-                    
-                        // Populate dropdown options
-                        const indexNumberOptions = feesData.map(student => ({
-                            value: student.index_number,
-                            label: student.index_number
-                        }));
-                    
-                        const studentNameOptions = feesData.map(student => ({
-                            value: student.user.name,
-                            label: student.user.name
-                        }));
-                    
-                        indexNumberChoices.setChoices(indexNumberOptions, 'value', 'label', true);
-                        studentNameChoices.setChoices(studentNameOptions, 'value', 'label', true);
-                    });
-                </script> --}}
-                {{-- <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        // Get DOM elements
-                        const amount = document.getElementById('amount');
-                        const balance = document.getElementById('balance');
-                        const indexNumberSelect = document.getElementById('choices-select');
-                        const studentNameSelect = document.getElementById('choices-select2');
-                        const feesData = @json($details);
-                    
-                        // Initialize Choices.js dropdowns
-                        const indexNumberChoices = new Choices(indexNumberSelect, {
-                            searchEnabled: true,
-                            placeholder: true,
-                            placeholderValue: 'Select Index Number',
-                            removeItemButton: true
-                        });
-                    
-                        const studentNameChoices = new Choices(studentNameSelect, {
-                            searchEnabled: true,
-                            placeholder: true,
-                            placeholderValue: 'Select Student Name',
-                            removeItemButton: true
-                        });
-                    
-                        // Populate dropdowns
-                        indexNumberChoices.setChoices(feesData.map(student => ({
-                            value: student.index_number,
-                            label: student.index_number
-                        })), 'value', 'label', true);
-                    
-                        studentNameChoices.setChoices(feesData.map(student => ({
-                            value: student.user?.name || '',
-                            label: student.user?.name || 'Unknown'
-                        })).filter(option => option.value), 'value', 'label', true); // Filter out empty names
-                    
-                        // Function to find matching student
-                        function findMatchingStudent(indexNumber, studentName) {
-                            return feesData.find(fee =>
-                                (indexNumber && fee.index_number === indexNumber) ||
-                                (studentName && fee.user?.name === studentName)
-                            );
-                        }
-                    
-                        // Function to calculate and update balance
-                        function calculateBalance() {
-                            const enteredAmount = parseFloat(amount.value) || 0;
-                            const selectedIndexNumber = indexNumberSelect.value || '';
-                            const selectedStudentName = studentNameSelect.value || '';
-                    
-                            if (!selectedIndexNumber && !selectedStudentName) {
-                                balance.value = '';
-                                return;
-                            }
-                    
-                            const matchingStudent = findMatchingStudent(selectedIndexNumber, selectedStudentName);
-                    
-                            if (matchingStudent) {
-                                let totalFees = parseFloat(matchingStudent.fees) || parseFloat(matchingStudent.fees_prof) || 0;
-                                let scholarshipAmount = (matchingStudent.Scholarship === "Yes") ? (parseFloat(matchingStudent.Scholarship_amount) || 0) : 0;
-                                totalFees -= scholarshipAmount;
-                    
-                                let remainingBalance = parseFloat(matchingStudent.balance) || totalFees;
-                                let newBalance = Math.max(remainingBalance - enteredAmount, 0); // Prevent negative balance
-                    
-                                balance.value = newBalance.toFixed(2);
-                    
-                                // Synchronize selections without triggering another change event
-                                if (matchingStudent.index_number && selectedIndexNumber !== matchingStudent.index_number) {
-                                    indexNumberChoices.setChoiceByValue(matchingStudent.index_number);
-                                }
-                    
-                                if (matchingStudent.user?.name && selectedStudentName !== matchingStudent.user.name) {
-                                    studentNameChoices.setChoiceByValue(matchingStudent.user.name);
-                                }
-                            } else {
-                                balance.value = '';
-                            }
-                        }
-                    
-                        // Event listeners
-                        indexNumberSelect.addEventListener('change', calculateBalance);
-                        studentNameSelect.addEventListener('change', calculateBalance);
-                        amount.addEventListener('input', calculateBalance);
-                    
-                        // Handle clearing selections
-                        indexNumberSelect.addEventListener('removeItem', () => {
-                            if (!indexNumberSelect.value) calculateBalance();
-                        });
-                    
-                        studentNameSelect.addEventListener('removeItem', () => {
-                            if (!studentNameSelect.value) calculateBalance();
-                        });
-                    });
-                </script>--}}
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
                         // Get DOM elements
@@ -500,4 +308,3 @@
         </div>
     </div>
 @endsection
-
