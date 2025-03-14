@@ -194,20 +194,6 @@ class TeacherController extends Controller
 
         $subjects = Subject::all();
 
-        // $diplomas = Diploma::all();
-
-        // // 'subject_name',
-        // // 'subject_code',
-        // // 'semester',
-        // // 'level',
-        // // 'credit_hours',
-
-        // $dropdownitems = $subjects->map(function($subject){
-        //     return ['id' => $subject->id, 'name' => $subject->subject_name];
-        // })->merge($diplomas->map(function($diploma) {
-        //     return ['id'=> $diploma->id,'name'=> $diploma->name];
-        // }));
-
         return view('backend.teachers.assignsubject', compact('teacher','subjects'));
     }
 

@@ -11,15 +11,19 @@ use App\Enquiry;
 use App\Parents;
 use App\Session;
 use App\Student;
-use App\Teacher;
+use App\Subject;
+// use App\Teacher;
 use Carbon\Carbon;
 use App\AcademicYear;
-use Illuminate\Support\Str;
 // use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+// use App\Imports\StudentsImport;
+use App\Imports\StudentsImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Nette\Schema\ValidationException as SchemaValidationException;
 
 class StudentController extends Controller
@@ -110,21 +114,7 @@ class StudentController extends Controller
                 $rules['academicyear'] = 'required';
             }
 
-            // dd($validatedData);
-
             $validatedData = $request->validate($rules);
-
-            // dd($validatedData);
-
-            // if ($request->student_category === 'Professional') {
-            //     $courseID = $validatedData['course_id_prof'];
-            //     $query = Diploma::findOrFail($courseID);
-            //     $studentCount = Student::whereNotNull('id')->count();
-            //     $formattedCount = sprintf('%03d', $studentCount);
-            //     $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
-            //     $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
-            //     return $studentIndexNumber;
-            // }
 
             DB::beginTransaction();
 
@@ -605,6 +595,38 @@ class StudentController extends Controller
         }
     }
 
+    public function courseOverviewForm($id) {
+        $course = Grade::findOrFail($id);
+
+        $subjects = Subject::all();
+        
+        return view('backend.students.courseoutline', compact('subjects','course'));
+    }
+
+    function searchString($mainString, $searchString) {
+        return Str::contains($mainString, $searchString);
+    }
+
+    public function  courseOverviewReport(Request $request, $id) {
+        try {
+            // dd($request->all());
+            $validatedData = $request->validate([
+                'subject' => 'required',
+            ]);
+
+            $grade = Grade::findOrFail($id);
+
+            $grade->assignSubjectsToCourse()->sync($validatedData['subject']);  
+            
+            return redirect()->back()->with('success', 'Subject(s) assigned successfully!');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error("Error occured",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return redirect()->back()->with('error', 'Error assigning subject!');
+        }
+    }                                                                                                  
+
     public function test22(Request $request)
     {
         // Validate the search input
@@ -638,9 +660,32 @@ class StudentController extends Controller
     return $students;
 
     return view('backend.students.index', compact('students'));
-}
+    }
 
-    // public function 
+    public function showImportForm() {
+        return view('backend.students.importform');
+    }
 
+    public function import(Request $request) {
+        try {
+            //code...
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls,csv|max:10240'
+            ]);
 
+            DB::beginTransaction();
+    
+            Excel::import(new StudentsImport, $request->file('file'));
+
+            DB::commit();
+    
+            return redirect()->back()->with('success', 'Students imported successfully!');
+        } catch (\Exception $e) {
+            //throw $th;
+            DB::rollBack();
+            Log::error("Error occured",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return redirect()->back()->with('error', 'Error uploading file');
+        }
+    }
 }

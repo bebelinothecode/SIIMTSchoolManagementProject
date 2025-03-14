@@ -211,4 +211,35 @@ class SubjectController extends Controller
         return redirect()->back()->with('error', 'An error occurred while deleting subjects.');
        }
     }
+
+    public function getAssignSubjectsToCourseForm($id) {
+
+        $course =  Grade::findOrFail($id);
+
+        $subjects = Subject::all();
+
+        return view('backend.subjects.assignsubjectstocourseform', compact('subjects','course'));
+    }
+
+    public function assignSubjectsToCourse(Request $request, $id) {
+        try {
+            //code...
+            // dd($request->all());
+            $validatedData = $request->validate([
+                'subject' => 'required'
+            ]);
+
+            $course = Grade::findOrFail($id);
+
+            $course->subjects()->sync($validatedData['subject']);
+
+            return redirect()->back()->with('success', 'Subjects assigned to course successfully');
+
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error("Error occured",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return redirect()->back()->with('error', 'Error assigning subject!');
+        }
+    }
 }

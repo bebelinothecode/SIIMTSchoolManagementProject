@@ -32,4 +32,19 @@ class Grade extends Model
     {
         return $this->belongsTo(Teacher::class);
     }
+
+    //This relationship is for the one to many relationship where subjects are assigned to courses
+    // public function assignSubjectsToCourse() {
+    //     return $this->belongsToMany(Subject::class);
+    // }
+
+    public function assignSubjectsToCourse()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_course','course_id', 'subject_id');
+    }
+
+    // public function assignSubjects()
+    // {
+    //     return $this->belongsToMany(Subject::class,'teacher_subject');
+    // }
 }
