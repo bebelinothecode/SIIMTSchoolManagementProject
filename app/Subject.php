@@ -28,4 +28,11 @@ class Subject extends Model
     {
         return $this->belongsTo(Grade::class);
     }
+
+    //Assign subjects to course
+    public function courses()
+    {
+        return $this->belongsToMany(Grade::class, 'subject_course', 'course_id', 'subject_id')->withTimestamps();
+    }
+
 }

@@ -42,7 +42,7 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']], function () 
+Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student']], function () 
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');
@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::get('/teacher/profile/{id}', [TeacherController::class, 'profile'])->name('teacher.profile');
     Route::get('/assign/subject/{id}', [TeacherController::class, 'assignSubject'])->name('assign.subject');
     Route::post('/store/subject/{id}', [TeacherController::class, 'storeAssignedSubject'])->name('store.assignedsubject');
+    Route::post('/save/subjects/to/course/{id}', [SubjectController::class,'assignSubjectsToCourse'])->name('save.assignedsubjecttocourse');
     Route::delete('/delete/teacher/{id}',[TeacherController::class, 'deleteTeacher'])->name('teacher.delete');
     Route::get('/diploma/form', [DiplomaController::class, 'diplomaForm'])->name('diploma.form');
     Route::post('/store/diploma', [DiplomaController::class, 'storeDiplomaForm'])->name('store.diploma');
@@ -110,6 +111,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::get('/delete/assigned/subject/{id}',[SubjectController::class,'getDeleteForm'])->name('deleteassigned.subject');
     Route::delete('/delete/assigned/subject/{id}',[SubjectController::class,'deleteAssignedSubject'])->name('delete.assigned');
     Route::delete('/delete/diploma/{id}',[DiplomaController::class,'deleteDiploma'])->name('delete.diploma');
+    Route::get('/get/course/overview/form/{id}',[StudentController::class, 'courseOverviewForm'])->name('course.overviewform');
     Route::get("/enquiries/index", [StudentController::class, 'index22'])->name("enquiries.index");
     Route::get('/expenses',[ExpensesController::class, 'getExpensesForm'])->name('get.expensesForm');
     Route::post('/save/expense',[ExpensesController::class, 'storeExpenses'])->name('save.expense');
@@ -121,6 +123,10 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount']
     Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
     Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance');
     Route::get('/pay/fees/{id}',[StudentController::class, 'payStudentFeesForm'])->name('pay.feesform');
+    Route::get('/get/assign/form/{id}', [SubjectController::class, 'getAssignSubjectsToCourseForm'])->name('get.assignmentform');
+    Route::post('/get/course/overview/report/{id}', [StudentController::class, 'courseOverviewReport'])->name('courseoverview.report');
+    Route::get('/students/import', [StudentController::class, 'showImportForm'])->name('students.import.form');
+    Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');
