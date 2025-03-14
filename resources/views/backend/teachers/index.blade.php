@@ -34,9 +34,9 @@
                 <tbody class="text-gray-600 text-sm font-light">
                     @forelse ($teachers as $teacher)
                     <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $teacher->user->name }}</td>
-                        <td class="py-2 px-4 text-left">{{ $teacher->user->email }}</td>
-                        <td class="py-3 px-6 text-left">{{ $teacher->phone }}</td>
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $teacher->user->name ?? "N/A" }}</td>
+                        <td class="py-2 px-4 text-left">{{ $teacher->user->email ?? "N/A" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $teacher->phone ?? "N/A" }}</td>
                         <td class="py-3 px-6 text-left">
                             @forelse ($teacher->subjects as $subject)
                                 {{ $subject->subject_name }}@if (!$loop->last), @endif
