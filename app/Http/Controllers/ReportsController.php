@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Grade;
 use Exception;
 use App\Diploma;
@@ -16,6 +17,7 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ReportsController extends Controller
@@ -27,10 +29,18 @@ class ReportsController extends Controller
     }
 
     public function example() {
+<<<<<<< HEAD
         // $teachers = Teacher::with(['user', 'subjects'])->latest()->paginate(10);
         $students = Student::all();
 
         return $students;
+=======
+        $admins = User::role('Admin')->get();
+
+        // $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->id); 
+
+        return $admins;
+>>>>>>> b610b39d3bf4a0fcec76a47f1e98993d81768725
     }
     // public function example() {
     //     $teachers = Role::all();
@@ -44,6 +54,7 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
+<<<<<<< HEAD
             // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
             // Retrieve parameters from the request
         $startDate = $request->input('start_date');
@@ -86,8 +97,43 @@ class ReportsController extends Controller
         } catch (Exception $e) {
             //throw $th;
         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+=======
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $diplomaID = $request->input('diplomaID');
+    
+            $query = Student::with(['user', 'diploma'])
+                ->whereNotNull('diploma'); // Ensure students have an assigned diploma
+    
+            // Apply date range filter
+            if (!empty($startDate) && !empty($endDate)) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+    
+            // Apply diploma filter
+            if (!empty($diplomaID)) {
+                $query->where('diploma_id', $diplomaID);
+            }
+    
+            $students = $query->get();
+    
+            // Get all diplomas for the dropdown
+            $diplomas = Diploma::all();
+    
+            // Pass data to the view
+            return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate', 'diplomaID', 'diplomas'));
+    
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error in report generation', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'A database error occurred while generating the report.');
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error in report generation', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'An unexpected error occurred.');
+>>>>>>> b610b39d3bf4a0fcec76a47f1e98993d81768725
         }
     }
+    
+    
 
     public function teachersForm() {
         $subjects = Subject::all();

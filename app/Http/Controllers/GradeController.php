@@ -53,7 +53,6 @@ class GradeController extends Controller
                 'classes' => $classes,
                 'search' => $request->input('search')
             ]);
-
         } catch (\Exception $e) {
             Log::error('Search error: ' . $e->getMessage(), [
                 'search_term' => $request->input('search'),
