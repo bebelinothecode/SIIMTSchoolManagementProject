@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Grade;
 use Exception;
 use App\Diploma;
@@ -16,36 +17,23 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ReportsController extends Controller
 {
     public function getReportsForm(Request $request) {
-        // Fetch students and handle search
-        // $query = Student::with('user', 'course', 'diploma')
-        //     ->where(function ($q) {
-        //         $q->whereNotNull('course_id')
-        //         ->orWhereNotNull('course_id_prof');
-        //     });
-
-        // if ($request->has('search') && $request->search != '') {
-        //     $query->whereHas('user', function ($q) use ($request) {
-        //         $q->where('name', 'like', '%' . $request->search . '%')
-        //         ->orWhere('email', 'like', '%' . $request->search . '%');
-        //     })
-        //     ->orWhere('index_number', 'like', '%' . $request-]>search . '%');
-        // }
-
-        // $students = $query->latest()->paginate(10); // Adjust pagination size as needed
         $diplomas = Diploma::all();
 
         return view('backend.reports.students', compact('diplomas'));
     }
 
     public function example() {
-        $teachers = Teacher::with(['user', 'subjects'])->latest()->paginate(10);
+        $admins = User::role('Admin')->get();
 
-        return $teachers;
+        // $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->id); 
+
+        return $admins;
     }
     // public function example() {
     //     $teachers = Role::all();
@@ -59,40 +47,41 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
-            // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
-            // Retrieve parameters from the request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $diplomaID = $request->input('diplomaID');
-
-        $students = Student::with(['user', 'diploma'])
-            ->whereHas('diploma', function ($query) {
-                // Ensure the student is associated with a diploma
-                $query->whereNotNull('id'); // Assuming 'id' is the primary key of the diplomas table
-            })
-            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                // Filter students created within the date range
-                return $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->when($diplomaID, function ($query, $diplomaID) {
-                return $query->whereHas('diploma', function ($q) use ($diplomaID) {
-                    $q->where('id', $diplomaID); // Filter by subject ID
-                });
-            })
-            ->get();
-
-        
-        
-        // return $students;
-
-        // Pass data to the report view
-        return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate','diplomaID'));
-            
-        } catch (Exception $e) {
-            //throw $th;
-        Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $diplomaID = $request->input('diplomaID');
+    
+            $query = Student::with(['user', 'diploma'])
+                ->whereNotNull('diploma'); // Ensure students have an assigned diploma
+    
+            // Apply date range filter
+            if (!empty($startDate) && !empty($endDate)) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+    
+            // Apply diploma filter
+            if (!empty($diplomaID)) {
+                $query->where('diploma_id', $diplomaID);
+            }
+    
+            $students = $query->get();
+    
+            // Get all diplomas for the dropdown
+            $diplomas = Diploma::all();
+    
+            // Pass data to the view
+            return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate', 'diplomaID', 'diplomas'));
+    
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error in report generation', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'A database error occurred while generating the report.');
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error in report generation', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'An unexpected error occurred.');
         }
     }
+    
+    
 
     public function teachersForm() {
         $subjects = Subject::all();

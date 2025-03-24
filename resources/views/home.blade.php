@@ -18,7 +18,7 @@
     {{-- @role('Admin')
         @include('dashboard.admin')
     @endrole --}}
-    @hasrole('Admin|rector|AsstAccount|frontdesk')
+    @hasrole('Admin|rector|AsstAccount|frontdesk|StudCoordinator')
         @include('dashboard.admin')
     @endhasrole
 

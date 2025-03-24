@@ -23,11 +23,7 @@ class UserSeeder extends Seeder
         $user99->assignRole('frontdesk');
 
         $user100 = User::create([
-<<<<<<< HEAD
             'name'          => 'Cindy Amartei',
-=======
-            'name'          => 'Cindy Amarei',
->>>>>>> e5e49386b0efa58110d3d8ec91eceadc2d84b844
             'email'         => 'cindyamartei@demo.com',
             'password'      => bcrypt('12345678'),
             'created_at'    => date("Y-m-d H:i:s")

@@ -3,7 +3,7 @@
 
 @section('content')
 
-@hasrole('Admin|rector|frontdesk')
+{{-- @hasrole('Admin|rector|frontdesk') --}}
     <div class="container mx-auto mt-6">
         <h1 class="text-2xl font-bold text-gray-700">Subjects</h1>
 
@@ -80,5 +80,5 @@
             {{ $classes->links() }}
         </div>
     </div>
-@endhasrole
+{{-- @endhasrole --}}
 @endsection

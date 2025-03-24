@@ -688,4 +688,17 @@ class StudentController extends Controller
             return redirect()->back()->with('error', 'Error uploading file');
         }
     }
+
+    public function getDocumentRequestForm() {
+        return view('backend.students.documentrequest');
+    }
+
+    public function submitDocumentForm(Request $request) {
+        try {
+            //code...
+            dd($request->all());
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
 }

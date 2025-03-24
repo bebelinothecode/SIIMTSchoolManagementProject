@@ -21,7 +21,8 @@ class Expenses extends Model
         'mobile_money_details',
         'cash_details',
         'bank_details',
-        'cash_details'
+        'cash_details',
+        'BackDate'
     ];
 
 }

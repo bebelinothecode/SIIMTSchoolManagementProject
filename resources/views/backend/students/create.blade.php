@@ -18,7 +18,7 @@
         <form action="{{ route('student.store') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
             @csrf
 
-            @if ($errors->any())
+            {{-- @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
@@ -26,7 +26,7 @@
                         @endforeach
                     </ul>
                 </div>
-            @endif
+            @endif --}}
 
             <!-- Student Category Field -->
             <div class="md:flex md:items-center mb-6">

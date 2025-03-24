@@ -35,8 +35,10 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        // return $user;
         
-        if ($user->hasRole('Admin') || $user->hasRole('rector') || $user->hasRole('AsstAccount') || $user->hasRole('frontdesk')) {
+        if ($user->hasRole('Admin') || $user->hasRole('StudCoordinator') || $user->hasRole('rector') || $user->hasRole('AsstAccount') || $user->hasRole('frontdesk')) {
 
             $parents = Parents::latest()->get();
             $teachers = Teacher::latest()->get();
@@ -61,7 +63,7 @@ class HomeController extends Controller
 
         } elseif ($user->hasRole('Student')) {
             
-            $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->student->id); 
+            $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->id); 
 
             return view('home', compact('student'));
 
