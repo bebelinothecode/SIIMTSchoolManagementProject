@@ -41,11 +41,13 @@ class HomeController extends Controller
             $parents = Parents::latest()->get();
             $teachers = Teacher::latest()->get();
             $students = Student::latest()->get();
+            $studentsAcademic = Student::where('student_category','Academic')->count();
+            $studentsProfessional = Student::where('student_category','PROFESSIONAL')->count();
             $books = DB::table('books')->count();
             $totalFeesCollected = FeesPaid::sum('amount');
             $totalExpensesMade = Expenses::sum('amount');
 
-            return view('home', compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade'));
+            return view('home', compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade','studentsAcademic','studentsProfessional'));
 
         } elseif ($user->hasRole('Teacher')) {
 

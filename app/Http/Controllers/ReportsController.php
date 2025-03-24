@@ -21,31 +21,16 @@ use Illuminate\Support\Facades\Validator;
 class ReportsController extends Controller
 {
     public function getReportsForm(Request $request) {
-        // Fetch students and handle search
-        // $query = Student::with('user', 'course', 'diploma')
-        //     ->where(function ($q) {
-        //         $q->whereNotNull('course_id')
-        //         ->orWhereNotNull('course_id_prof');
-        //     });
-
-        // if ($request->has('search') && $request->search != '') {
-        //     $query->whereHas('user', function ($q) use ($request) {
-        //         $q->where('name', 'like', '%' . $request->search . '%')
-        //         ->orWhere('email', 'like', '%' . $request->search . '%');
-        //     })
-        //     ->orWhere('index_number', 'like', '%' . $request-]>search . '%');
-        // }
-
-        // $students = $query->latest()->paginate(10); // Adjust pagination size as needed
         $diplomas = Diploma::all();
 
         return view('backend.reports.students', compact('diplomas'));
     }
 
     public function example() {
-        $teachers = Teacher::with(['user', 'subjects'])->latest()->paginate(10);
+        // $teachers = Teacher::with(['user', 'subjects'])->latest()->paginate(10);
+        $students = Student::all();
 
-        return $teachers;
+        return $students;
     }
     // public function example() {
     //     $teachers = Role::all();
@@ -81,11 +66,21 @@ class ReportsController extends Controller
             })
             ->get();
 
-        
-        
+            // return $students;
+
+            // $diplomaIDS = [];
+
+            // foreach ($students as $key => $student) {
+            //     # code...
+            //     $diploma = $student->diploma->id;
+
+            //     array_push($diplomaIDS, $diploma);
+            // }
+
+            // return $diplomaIDS;
+
         // return $students;
 
-        // Pass data to the report view
         return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate','diplomaID'));
             
         } catch (Exception $e) {
