@@ -15,6 +15,7 @@ use App\Subject;
 // use App\Teacher;
 use Carbon\Carbon;
 use App\AcademicYear;
+use App\FeesType;
 // use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -35,6 +36,8 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
+        $sort = $request->input('sort');
+
         // Fetch students and handle search
         $query = Student::with('user', 'course', 'diploma')
             ->where(function ($q) {
@@ -50,10 +53,36 @@ class StudentController extends Controller
             ->orWhere('index_number', 'like', '%' . $request->search . '%');
         }
 
+        if ($sort === 'Academic' || $sort === 'Professional') {
+            $query->where('student_category', $sort);
+        }
+
+        // if($sort === 'All') {
+            
+        // }
+
         $students = $query->latest()->paginate(10); // Adjust pagination size as needed
 
         return view('backend.students.index', compact('students'));
     }
+
+    // public function indexStudents(Request $request)
+    // {
+    //     // Fetch enquiries with sorting
+    //     $sort = $request->input('sort'); // Get sorting filter
+
+    //     $enquiries = Enquiry::query();
+
+    //     // Apply sorting filter (Academic or Professional)
+    //     if ($sort === 'Academic' || $sort === 'Professional') {
+    //         $enquiries->where('type_of_course', $sort);
+    //     }
+
+    //     // Paginate results
+    //     $enquiries = $enquiries->orderBy('created_at', 'desc')->paginate(10);
+
+    //     return view('backend.students.enquiry', compact('enquiries'));
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -539,8 +568,9 @@ class StudentController extends Controller
         $studentName = $student->user->name;
         $studentIndexNumber = $student->index_number;
         $student_balance = $student->balance;
+        $feesTypes = FeesType::all();
         // return $student;
-        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance'));
+        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes'));
     }
 
     public function promoteAll(Request $request) {

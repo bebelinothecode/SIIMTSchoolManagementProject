@@ -16,6 +16,23 @@
             </div>
         </div>
 
+        <!-- Search Form -->
+    <form action="{{ route('fees.defaulters')}}" method="GET" class="flex items-center mt-4 space-x-4">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search Defaulters" 
+            value="{{ request('search') }}"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        >
+        <button 
+            type="submit" 
+            class="px-4 py-2 m-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+        >
+            Search
+        </button>
+    </form>
+
         <div class="mt-6 bg-white rounded-lg shadow">
             <table class="w-full table-auto">
                 <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -41,7 +58,7 @@
                             <td class="py-3 px-6 text-left">{{ $defaulter->index_number }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->level }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->session }}</td>
-                            <td class="py-3 px-6 text-left">{{ $defaulter->course->course_name ?? $defaulter->diploma->name }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->course->course_name ?? $defaulter->diploma->name ?? null }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->student_category }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->currency ?? $defaulter->currency_prof  }}</td>
                             <td class="py-3 px-6 text-left">{{ number_format($defaulter->balance, 2) }}</td>

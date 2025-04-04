@@ -27,7 +27,8 @@ class FeesPaid extends Model
         'Momo_number',
         // 'Fees',
         'remarks',
-        'receipt_number'
+        'receipt_number',
+        'fees_type'
     ];
 }
 
