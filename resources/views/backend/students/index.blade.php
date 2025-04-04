@@ -4,12 +4,25 @@
 <div class="container mx-auto mt-6">
     <h1 class="text-2xl font-bold text-gray-700">Students List</h1>
 
-    <div class="flex flex-wrap items-center">
-        <a href="{{ route('student.create') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
-            <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
-            <span class="ml-2 text-xs font-semibold">Student</span>
-        </a>
+    <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center">
+            <a href="{{ route('student.create') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
+                <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
+                <span class="ml-2 text-xs font-semibold">Student</span>
+            </a>
+        </div>
+    
+        <form action=" " method="GET" class="flex items-center">
+            <label for="sort" class="text-sm text-gray-600 mr-2">Sort by:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 rounded">
+                <option value="All">All</option>
+                <option value="Academic" {{ request('sort') === 'Academic' ? 'selected' : '' }}>Academic</option>
+                <option value="Professional" {{ request('sort') === 'Professional' ? 'selected' : '' }}>Professional</option>
+            </select>
+        </form>
     </div>
+
+    
 
     <!-- Search Form -->
     <form action="{{ route('student.index')}}" method="GET" class="flex items-center mt-4 space-x-4">
@@ -27,6 +40,15 @@
             Search
         </button>
     </form>
+
+    {{-- <form action=" " method="GET" class="flex items-center">
+        <label for="sort" class="text-sm text-gray-600 mr-2">Sort by:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 rounded">
+            <option value="">All</option>
+            <option value="Academic" {{ request('sort') === 'Academic' ? 'selected' : '' }}>Academic</option>
+            <option value="Professional" {{ request('sort') === 'Professional' ? 'selected' : '' }}>Professional</option>
+        </select>
+    </form> --}}
     
     <!-- Students Table -->
     <div class="mt-6 bg-white rounded-lg shadow">

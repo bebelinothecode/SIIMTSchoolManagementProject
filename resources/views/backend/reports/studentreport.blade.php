@@ -75,7 +75,7 @@
 
     <!-- Logo (Visible only during printing) -->
     <div class="print-logo hidden">
-        <img src="{{ asset('public/logo/SIIMT-logo.png') }}" alt="Company Logo" class="w-full h-auto">
+        <img src="{{ asset('logo/SIIMT-logo.png') }}" alt="Company Logo" class="w-full h-auto">
     </div>
 
     <h1 class="text-2xl font-bold text-gray-700">Students Professional Generated Report</h1>
@@ -84,8 +84,8 @@
     <div class="mt-4 p-6 bg-white rounded-lg shadow">
         <h2 class="text-lg font-semibold text-gray-700">Report Parameters</h2>
         <div class="mt-2 text-sm text-gray-600">
-            <p><strong>Date Range:</strong> {{ $startDate ?? 'N/A' }} - {{ $endDate ?? 'N/A' }}</p>
-            {{-- <p><strong>Diploma:</strong> {{ $students->diploma->code ?? "N/A" }}-{{$students->diploma->name ?? "N/A"}}</p> --}}
+            <p><strong>Date Range:</strong> {{ $start_date ?? 'N/A' }} - {{ $end_date ?? 'N/A' }}</p>
+            <p><strong>Diploma:</strong> {{$diploma->code ?? "N/A"}}-{{$diploma->name ?? "N/A"}}</p>
         </div>
     </div>
 

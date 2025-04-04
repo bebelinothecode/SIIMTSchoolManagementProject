@@ -35,11 +35,6 @@ class ReportsController extends Controller
 
         return $admins;
     }
-    // public function example() {
-    //     $teachers = Role::all();
-
-    //     return $teachers;
-    // }
 
     public function getPaymentReportForm() {
         return view('backend.reports.paymentform');
@@ -47,30 +42,27 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
-            $startDate = $request->input('start_date');
-            $endDate = $request->input('end_date');
-            $diplomaID = $request->input('diplomaID');
+            $validatedData = $request->validate([
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'diplomaID' => 'required|integer|exists:diploma,id'
+            ]);
+
+            $diplomaID = $validatedData['diplomaID'];
+            $end_date = $validatedData['end_date'];
+            $start_date = $validatedData['start_date'];
     
-            $query = Student::with(['user', 'diploma'])
-                ->whereNotNull('diploma'); // Ensure students have an assigned diploma
-    
-            // Apply date range filter
-            if (!empty($startDate) && !empty($endDate)) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            }
-    
-            // Apply diploma filter
-            if (!empty($diplomaID)) {
-                $query->where('diploma_id', $diplomaID);
-            }
-    
-            $students = $query->get();
-    
-            // Get all diplomas for the dropdown
-            $diplomas = Diploma::all();
+
+            $diploma = Diploma::findOrFail($diplomaID);
+
+            $students = Student::whereNotNull('course_id_prof')
+            ->where('course_id_prof', $diplomaID)
+            ->whereBetween('created_at', [$start_date, $end_date])
+            ->with('user') // Eager load the user relationship
+            ->get();
     
             // Pass data to the view
-            return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate', 'diplomaID', 'diplomas'));
+            return view('backend.reports.studentreport', compact('students', 'start_date', 'end_date', 'diploma'));
     
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Database error in report generation', ['message' => $e->getMessage()]);
@@ -127,51 +119,6 @@ class ReportsController extends Controller
             Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
         }
     }
-
-    // public function generatePaymentReport(Request $request)
-    // {
-    //     try {
-    //         // dd($request->all());
-    //         $validatedData = $request->validate([
-    //             'current_date' => 'nullable|date',
-    //             'start_date' => 'nullable|date',
-    //             'end_date' => 'nullable|date',
-    //             'aca_prof' => 'nullable|in:Academic,Professional'
-    //         ]);
-
-    //         $currentDate = $validatedData['current_date'];
-    //         $startDate = $validatedData['start_date'];
-    //         $endDate = $validatedData['end_date'];
-    //         $aca_prof = $validatedData['aca_prof'];
-
-
-    //         // Initialize the query
-    //         $query = FeesPaid::query();
-
-    //         // Apply filters based on input
-    //         if ($validatedData['current_date']) {
-    //             $query->whereDate('created_at', $validatedData['current_date']);
-    //         }
-
-    //         if ($validatedData['start_date'] && $validatedData['end_date']) {
-    //             $query->whereBetween('created_at', [$validatedData['start_date'], $validatedData['start_date']]);
-    //         }
-
-    //         // Fetch the results
-    //         $payments = $query->get();
-
-    //         // return $payments;
-
-    //         // Return the results to a view (or as JSON)
-    //         return view('backend.reports.paymentreport', compact('payments','currentDate','startDate','endDate','aca_prof')); // Replace 'payment_report' with your view name
-    //     } catch (Exception $e) {
-    //         // Log the error
-    //         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-
-    //         // Redirect back with an error message
-    //         return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
-    //     }
-    // }
 
     public function getAcademicReportsForm() {
         $courses = Grade::all();

@@ -13,6 +13,16 @@
                 </a>
             </div>
         </div>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <strong>There were some problems with your input:</strong>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="table w-full mt-8 bg-white rounded">
             <form action="{{ route('fees.collected') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
@@ -129,7 +139,23 @@
                             document.getElementById('momo_fields').classList.remove('hidden');
                         }
                     });
-                </script>                   
+                </script>
+                
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Fees Type
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <select name="fees_type" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="fees_type" required>
+                            <option value="">--Select Fee Type--</option>
+                            @foreach ($feesTypes as $feesType)
+                                <option value="{{ $feesType->fees_type }}">{{ $feesType->fees_type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">

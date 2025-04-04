@@ -8,7 +8,7 @@
     <div class="mt-8 p-6 bg-white rounded-lg shadow">
         <form action="{{ route('reports.generate') }}" method="GET" class="space-y-4">
             <!-- Date Range and Professional Courses -->
-            {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="start_date" class="block p-2 text-xl font-medium text-gray-700">Start Date</label>
                     <input 
@@ -16,6 +16,7 @@
                         name="start_date" 
                         id="start_date" 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        required
                     >
                 </div>
                 <div>
@@ -25,6 +26,7 @@
                         name="end_date" 
                         id="end_date" 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        required
                     >
                 </div>
                 <div>
@@ -33,6 +35,7 @@
                         name="diplomaID" 
                         id="choices-select" 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        required
                     >
                         <option value="">--Select Diploma/Professional--</option>
                         @foreach ($diplomas as $diploma)
@@ -40,42 +43,7 @@
                         @endforeach
                     </select>
                 </div>
-            </div> --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="flex items-center space-x-4">
-                    <label for="start_date" class="text-xl font-medium text-gray-700">Start Date:</label>
-                    <input 
-                        type="date" 
-                        name="start_date" 
-                        id="start_date" 
-                        class="px-4 py-2 m-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    >
-                </div>
-            
-                <div class="flex items-center space-x-4">
-                    <label for="end_date" class="text-xl font-medium text-gray-700">End Date:</label>
-                    <input 
-                        type="date" 
-                        name="end_date" 
-                        id="end_date" 
-                        class="px-4 py-2 m-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    >
-                </div>
-            
-                <div class="flex items-center space-x-4">
-                    <label for="diploma" class="m-2 text-xl font-medium text-gray-700">Diploma:</label>
-                    <select 
-                        name="diplomaID" 
-                        id="choices-select" 
-                        class="flex-1 px-4 py-2 m-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">--Select Diploma/Professional--</option>
-                        @foreach ($diplomas as $diploma)
-                            <option value="{{ $diploma->id }}">{{ $diploma->code }} - {{ $diploma->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>            
+            </div>
             <!-- Submit Button -->
             <div>
                 <button 
@@ -107,5 +75,4 @@
         });
     });
 </script>
-
 @endsection

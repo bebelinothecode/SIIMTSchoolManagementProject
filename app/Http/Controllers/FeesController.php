@@ -77,6 +77,7 @@ class  FeesController extends Controller
                 'student_index_number' => 'required|string',
                 'student_name' => 'required | string',
                 'method_of_payment' => 'required',
+                'fees_type' => 'required',
                 'amount' => 'required',
                 'balance' => 'required',
                 'currency' => 'required',
@@ -84,6 +85,8 @@ class  FeesController extends Controller
                 'cheque_number' => 'nullable',
                 'remarks'  => 'nullable|string',
             ]);
+
+            // dd($validatedData);
 
             $student = Student::where('index_number',$validatedData['student_index_number'])->first();
 
@@ -100,6 +103,7 @@ class  FeesController extends Controller
                 'cheque_number' => $validatedData['cheque_number'],
                 'remarks' => $validatedData['remarks'],
                 'receipt_number' => $receipt_number,
+                'fees_type' => $validatedData['fees_type']
             ]);
 
             // dd($feespaid);
@@ -121,14 +125,45 @@ class  FeesController extends Controller
         }
     }
 
-    public function  selectdefaulters() {
-        $defaulters = Student::with('user','course','diploma')
-        ->where('balance', '>', 0)
-        ->orderBy('balance', 'desc')
-        ->paginate(10);
+    // public function  selectdefaulters() {
+    //     $defaulters = Student::with('user','course','diploma')
+    //     ->where('balance', '>', 0)
+    //     ->orderBy('balance', 'desc')
+    //     ->paginate(10);
 
-        // return $defaulters;
+    //     // return $defaulters;
 
+    //     return view('backend.fees.defaulters', compact('defaulters'));
+    // }
+
+    public function selectdefaulters(Request $request) 
+    {
+        $query = Student::with('user', 'course', 'diploma')
+            ->where('balance', '>', 0);
+        
+        // Add search functionality
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%');
+                            // ->orWhere('email', 'like', '%' . $search . '%');
+                })
+                // ->orWhereHas('course', function($courseQuery) use ($search) {
+                //     $courseQuery->where('name', 'like', '%' . $search . '%');
+                // })
+                // ->orWhereHas('diploma', function($diplomaQuery) use ($search) {
+                //     $diplomaQuery->where('name', 'like', '%' . $search . '%');
+                // })
+                ->orWhere('index_number', 'like', '%' . $search . '%');
+            });
+        }
+
+        $defaulters = $query->orderBy('balance', 'desc')->paginate(10);
+
+        // dd($defaulters);
+        
         return view('backend.fees.defaulters', compact('defaulters'));
     }
 
