@@ -29,11 +29,18 @@ class ReportsController extends Controller
     }
 
     public function example() {
+<<<<<<< HEAD
+        // $teachers = Teacher::with(['user', 'subjects'])->latest()->paginate(10);
+        $students = Student::all();
+
+        return $students;
+=======
         $admins = User::role('Admin')->get();
 
         // $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->id); 
 
         return $admins;
+>>>>>>> b610b39d3bf4a0fcec76a47f1e98993d81768725
     }
 
     public function getPaymentReportForm() {
@@ -42,6 +49,7 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
+<<<<<<< HEAD
             $validatedData = $request->validate([
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date',
@@ -51,6 +59,55 @@ class ReportsController extends Controller
             $diplomaID = $validatedData['diplomaID'];
             $end_date = $validatedData['end_date'];
             $start_date = $validatedData['start_date'];
+=======
+<<<<<<< HEAD
+            // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
+            // Retrieve parameters from the request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $diplomaID = $request->input('diplomaID');
+
+        $students = Student::with(['user', 'diploma'])
+            ->whereHas('diploma', function ($query) {
+                // Ensure the student is associated with a diploma
+                $query->whereNotNull('id'); // Assuming 'id' is the primary key of the diplomas table
+            })
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                // Filter students created within the date range
+                return $query->whereBetween('created_at', [$startDate, $endDate]);
+            })
+            ->when($diplomaID, function ($query, $diplomaID) {
+                return $query->whereHas('diploma', function ($q) use ($diplomaID) {
+                    $q->where('id', $diplomaID); // Filter by subject ID
+                });
+            })
+            ->get();
+
+            // return $students;
+
+            // $diplomaIDS = [];
+
+            // foreach ($students as $key => $student) {
+            //     # code...
+            //     $diploma = $student->diploma->id;
+
+            //     array_push($diplomaIDS, $diploma);
+            // }
+
+            // return $diplomaIDS;
+
+        // return $students;
+
+        return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate','diplomaID'));
+            
+        } catch (Exception $e) {
+            //throw $th;
+        Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+=======
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $diplomaID = $request->input('diplomaID');
+>>>>>>> 1afc5ae13a46cdb058a1da87f3f9923bf5f35c93
     
 
             $diploma = Diploma::findOrFail($diplomaID);
@@ -70,6 +127,7 @@ class ReportsController extends Controller
         } catch (\Throwable $e) {
             Log::error('Unexpected error in report generation', ['message' => $e->getMessage()]);
             return redirect()->back()->with('error', 'An unexpected error occurred.');
+>>>>>>> b610b39d3bf4a0fcec76a47f1e98993d81768725
         }
     }
     

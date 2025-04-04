@@ -58,6 +58,14 @@
             <h3 class="text-gray-500 uppercase font-bold">Students</h3>
             <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", count($students)) }}</span>
         </div>
+        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
+            <h3 class="text-gray-500 uppercase font-bold">Academic Students</h3>
+            <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", $studentsAcademic) }}</span>
+        </div>
+        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
+            <h3 class="text-gray-500 uppercase font-bold">Professional Students</h3>
+            <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", $studentsProfessional) }}</span>
+        </div>
         @hasrole('Admin|rector|AsstAccount')
         {{-- Books Card --}} 
         <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">

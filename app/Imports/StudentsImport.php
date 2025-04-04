@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class StudentsImport implements WithHeadingRow, ToCollection
@@ -26,7 +25,7 @@ class StudentsImport implements WithHeadingRow, ToCollection
             ]);
 
             $studentData = [
-                'phone' => $row['phone'],
+                isset($row['phone']) ? $row['phone'] : null,
                 'gender' => $row['gender'],
                 'attendance_time' => $row['attendance_time'],
                 'dateofbirth' => $this->formatDate($row['dateofbirth']),
@@ -40,8 +39,7 @@ class StudentsImport implements WithHeadingRow, ToCollection
             ];
 
             if ($row['student_category'] === 'Professional') {
-                $studentData['course_id_prof'] = $row['course_id_prof'] ?? null;
-                $studentData['currency_prof'] = $row['currency_prof'] ?? null;
+                $row['course_id_prof'] = ($row['course_id_prof'] === 'NULL') ? null : $row['course_id_prof'];                $studentData['currency_prof'] = $row['currency_prof'] ?? null;
                 $studentData['fees_prof'] = $row['fees_prof'] ?? null;
                 $studentData['duration_prof'] = $row['duration_prof'] ?? null;
             } elseif ($row['student_category'] === 'Academic') {
