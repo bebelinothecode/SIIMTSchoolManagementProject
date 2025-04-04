@@ -44,7 +44,7 @@ class HomeController extends Controller
             $teachers = Teacher::latest()->get();
             $students = Student::latest()->get();
             $studentsAcademic = Student::where('student_category','Academic')->count();
-            $studentsProfessional = Student::where('student_category','PROFESSIONAL')->count();
+            $studentsProfessional = Student::where('student_category','Professional')->count();
             $books = DB::table('books')->count();
             $totalFeesCollected = FeesPaid::sum('amount');
             $totalExpensesMade = Expenses::sum('amount');

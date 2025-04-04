@@ -165,7 +165,7 @@
                                     <option value="{{ $parent->id }}"
                                         {{ ($parent->id === $student->parent_id) ? 'selected' : '' }}
                                     >
-                                    {{ $parent->user->name }}
+                                    {{ $parent->user->name ?? "" }}
                                 </option>
                                 @endforeach
                             </select>
