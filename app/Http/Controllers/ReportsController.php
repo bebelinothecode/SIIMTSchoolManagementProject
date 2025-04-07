@@ -29,18 +29,11 @@ class ReportsController extends Controller
     }
 
     public function example() {
-<<<<<<< HEAD
-        // $teachers = Teacher::with(['user', 'subjects'])->latest()->paginate(10);
-        $students = Student::all();
-
-        return $students;
-=======
         $admins = User::role('Admin')->get();
 
         // $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->id); 
 
         return $admins;
->>>>>>> b610b39d3bf4a0fcec76a47f1e98993d81768725
     }
 
     public function getPaymentReportForm() {
@@ -49,6 +42,8 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
             $validatedData = $request->validate([
                 'start_date' => 'required|date',
@@ -104,6 +99,7 @@ class ReportsController extends Controller
             //throw $th;
         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 =======
+>>>>>>> a8d70c0f0c23f64510d6be167c90711828bc5e1b
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $diplomaID = $request->input('diplomaID');
@@ -127,7 +123,6 @@ class ReportsController extends Controller
         } catch (\Throwable $e) {
             Log::error('Unexpected error in report generation', ['message' => $e->getMessage()]);
             return redirect()->back()->with('error', 'An unexpected error occurred.');
->>>>>>> b610b39d3bf4a0fcec76a47f1e98993d81768725
         }
     }
     
