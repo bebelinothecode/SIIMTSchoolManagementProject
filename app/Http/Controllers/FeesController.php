@@ -78,8 +78,9 @@ class  FeesController extends Controller
                 'student_name' => 'required | string',
                 'method_of_payment' => 'required',
                 'fees_type' => 'required',
-                'amount' => 'required',
-                'balance' => 'required',
+                'amount' => 'nullable',
+                'amount_paid' => 'nullable',
+                'balance' => 'nullable',
                 'currency' => 'required',
                 'Momo_number' => 'nullable',
                 'cheque_number' => 'nullable',
@@ -92,20 +93,35 @@ class  FeesController extends Controller
 
             $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
-            $feespaid = FeesPaid::create([
-                'student_index_number' => $validatedData['student_index_number'],
-                'student_name' => $validatedData['student_name'],
-                'method_of_payment' => $validatedData['method_of_payment'],
-                'amount' => $validatedData['amount'],
-                'balance' => $validatedData['balance'],
-                'currency' => $validatedData['currency'],
-                'Momo_number' => $validatedData['Momo_number'],
-                'cheque_number' => $validatedData['cheque_number'],
-                'remarks' => $validatedData['remarks'],
-                'receipt_number' => $receipt_number,
-                'fees_type' => $validatedData['fees_type']
-            ]);
-
+            if ($validatedData['fees_type'] === 'School Fees') {
+                $feespaid = FeesPaid::create([
+                    'student_index_number' => $validatedData['student_index_number'],
+                    'student_name' => $validatedData['student_name'],
+                    'method_of_payment' => $validatedData['method_of_payment'],
+                    'amount' => $validatedData['amount'],
+                    'balance' => $validatedData['balance'],
+                    'currency' => $validatedData['currency'],
+                    'Momo_number' => $validatedData['Momo_number'],
+                    'cheque_number' => $validatedData['cheque_number'],
+                    'remarks' => $validatedData['remarks'],
+                    'receipt_number' => $receipt_number,
+                    'fees_type' => $validatedData['fees_type']
+                ]);
+            } else {
+                $feespaid = FeesPaid::create([
+                    'student_index_number' => $validatedData['student_index_number'],
+                    'student_name' => $validatedData['student_name'],
+                    'method_of_payment' => $validatedData['method_of_payment'],
+                    'amount' => $validatedData['amount_paid'],
+                    'balance' => 0,
+                    'currency' => $validatedData['currency'],
+                    'Momo_number' => $validatedData['Momo_number'],
+                    'cheque_number' => $validatedData['cheque_number'],
+                    'remarks' => $validatedData['remarks'],
+                    'receipt_number' => $receipt_number,
+                    'fees_type' => $validatedData['fees_type']
+                ]);
+            }
             // dd($feespaid);
 
             if($feespaid) {

@@ -156,34 +156,55 @@
                         </select>
                     </div>
                 </div>
-                
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="amount">
-                            Amount
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number"  required>
-                        @error('amount')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="balance">
-                            Balance
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="balance" value="{{$student->balance}}" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" readonly>
-                        @error('balance')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
+
+                <div id="amount_paid_id" class="hidden">
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/3">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="amount">
+                                Amount Paid
+                            </label>
+                        </div>
+                        <div class="md:w-2/3">
+                            <input name="amount_paid" id="amount_paid" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
+                            @error('amount')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
+                <div id="amount_id" class="hidden">
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/3">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="amount">
+                                Amount
+                            </label>
+                        </div>
+                        <div class="md:w-2/3">
+                            <input name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
+                            @error('amount')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="balance_div">
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/3">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="balance">
+                                Balance
+                            </label>
+                        </div>
+                        <div class="md:w-2/3">
+                            <input name="balance" value="{{$student->balance}}" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" readonly>
+                            @error('balance')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+               
                 <!-- Remarks Textarea -->
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -233,6 +254,27 @@
                 balanceField.value = 0;
             } else {
                 balanceField.value = initialBalance - amount;
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('fees_type').addEventListener('change', function () {
+            const selectedMethod = this.value;
+            console.log(selectedMethod);
+            
+            // Hide all fields initially
+            document.getElementById('balance_div').classList.add('hidden');
+            document.getElementById('amount_id').classList.add('hidden');
+            document.getElementById('amount_paid_id').classList.add('hidden')
+            // document.getElementById('amount_div').classList.add('hidden');
+
+            if (selectedMethod === 'School Fees') {
+                document.getElementById('balance_div').classList.remove('hidden')
+                document.getElementById('amount_id').classList.remove('hidden')
+            } else {
+                document.getElementById('amount_paid_id').classList.remove('hidden')
+                document.getElementById('amount_id').classList.add('hidden')
             }
         });
     </script>

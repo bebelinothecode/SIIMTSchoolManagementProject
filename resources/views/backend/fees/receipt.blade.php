@@ -127,13 +127,19 @@
             <h3>Payment Details</h3>
             <table>
                 <tr>
+                    <th>Fees Type</th>
+                    <td>{{ $feespaid->fees_type }}</td>
+                </tr>
+                <tr>
                     <th>Amount Paid</th>
                     <td>{{ $feespaid->currency }} {{ number_format($feespaid->amount, 2) }}</td>
                 </tr>
+                @if($feespaid->fees_type === 'School Fees')
                 <tr>
                     <th>Balance</th>
                     <td>{{ $feespaid->currency }} {{ number_format($feespaid->balance, 2) }}</td>
                 </tr>
+                @endif
                 <tr>
                     <th>Method of Payment</th>
                     <td>{{ $feespaid->method_of_payment }}</td>
