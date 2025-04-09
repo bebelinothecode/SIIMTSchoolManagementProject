@@ -11,6 +11,7 @@ use App\Subject;
 use App\Teacher;
 use App\FeesPaid;
 use App\AcademicYear;
+use App\Enquiry;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
 // use Illuminate\Validation\Validator;
@@ -42,9 +43,6 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
             $validatedData = $request->validate([
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date',
@@ -54,8 +52,6 @@ class ReportsController extends Controller
             $diplomaID = $validatedData['diplomaID'];
             $end_date = $validatedData['end_date'];
             $start_date = $validatedData['start_date'];
-=======
-<<<<<<< HEAD
             // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
             // Retrieve parameters from the request
         $startDate = $request->input('start_date');
@@ -98,14 +94,9 @@ class ReportsController extends Controller
         } catch (Exception $e) {
             //throw $th;
         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-=======
->>>>>>> a8d70c0f0c23f64510d6be167c90711828bc5e1b
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
-            $diplomaID = $request->input('diplomaID');
->>>>>>> 1afc5ae13a46cdb058a1da87f3f9923bf5f35c93
-    
-
+            $diplomaID = $request->input('diplomaID');    
             $diploma = Diploma::findOrFail($diplomaID);
 
             $students = Student::whereNotNull('course_id_prof')
@@ -222,28 +213,36 @@ class ReportsController extends Controller
     public function generatePaymentReport(Request $request)
     {
         try {
-            //code...
             $validatedData = $request->validate([
                 'current_date' => 'nullable|date',
                 'start_date' => 'nullable|date',
                 'end_date' => 'nullable|date',
                 'aca_prof' => 'nullable|in:Academic,Professional'
             ]);
+
+            // dd($validatedData);
     
             $currentDate = $validatedData['current_date'];
             $startDate = $validatedData['start_date'];
             $endDate = $validatedData['end_date'];
             $aca_prof = $validatedData['aca_prof'];
+
     
         // Step 1: Get unique student index numbers from the collect_fees table
         $uniqueIndexNumbers = FeesPaid::distinct()->pluck('student_index_number');
+
+        // dd($uniqueIndexNumbers);
     
         // Step 2: Fetch student categories for the unique index numbers
         $students = Student::whereIn('index_number', $uniqueIndexNumbers)
             ->pluck('student_category', 'index_number');
+        
+        // dd($students);
     
         // Step 3: Fetch all fee transactions with optional filters
         $feeTransactionsQuery = FeesPaid::whereIn('student_index_number', $uniqueIndexNumbers);
+
+        // dd($feeTransactionsQuery);
     
         // Apply date range filter if provided
         if ($startDate && $endDate) {
@@ -266,7 +265,24 @@ class ReportsController extends Controller
         }
     
         $feeTransactions = $feeTransactionsQuery->get();
-    
+
+        // return $feeTransactions;
+
+        $cashTotal = $feeTransactions->where('method_of_payment', 'Cash')
+        ->sum(function($transaction) {
+            return (float) $transaction['amount'];
+        });
+
+        $momoTotal = $feeTransactions->where('method_of_payment', 'Momo')
+                ->sum(function($transaction) {
+                    return (float) $transaction['amount'];
+                });
+
+        $chequeTotal = $feeTransactions->where('method_of_payment', 'Cheque')
+                ->sum(function($transaction) {
+                    return (float) $transaction['amount'];
+                });
+
         // Step 4: Group transactions by student category and currency
         $transactionsByCategoryAndCurrency = [
             'academic' => [],
@@ -304,9 +320,9 @@ class ReportsController extends Controller
             'totals_by_category_and_currency' => $totalsByCategoryAndCurrency
         ];
 
-    
-        // return $response;
-        return view('backend.reports.paymentreport', compact('transactionsByCategoryAndCurrency','currentDate','startDate','endDate','aca_prof','totalsByCategoryAndCurrency')); // Replace 'payment_report' with your view name
+        $boughtFormsAmount = Enquiry::where('bought_forms', '=', 'Yes')->sum(DB::raw('CAST(amount AS DECIMAL)'));
+        
+        return view('backend.reports.paymentreport', compact('transactionsByCategoryAndCurrency','currentDate','startDate','endDate','aca_prof','totalsByCategoryAndCurrency','boughtFormsAmount','momoTotal','cashTotal','chequeTotal')); // Replace 'payment_report' with your view name
         } catch (\Exception $e) {
             //throw $th;
             Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);

@@ -65,6 +65,66 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                            Bought Forms?
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <div class="md:w-2/3">
+                            <select name="bought_forms" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="bought_forms" required>
+                                <option value="">-- Select answer --</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        @error('type_of_course')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="hidden" id="amount_paid_div">
+
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/3">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                                Currency
+                            </label>
+                        </div>
+                        <div class="md:w-2/3">
+                            <div class="md:w-2/3">
+                                <select name="currency" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="currency">
+                                    <option value="">-- Select currency --</option>
+                                    <option value="Dollar">Dollar</option>
+                                    <option value="Ghana Cedi">Ghana Cedi</option>
+                                </select>
+                            </div>
+                            @error('currency')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/3">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                                Amount Paid
+                            </label>
+                        </div>
+                        <div class="md:w-2/3">
+                            <div class="md:w-2/3">
+                                <input name="amount_paid" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number">
+                            </div>
+                            @error('amount_paid')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    
+                </div>
+                
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
                             Interested Course
                         </label>
                     </div>
@@ -121,5 +181,20 @@
             </script>
         @endif   
         </div>
+        <script>
+            document.getElementById('bought_forms').addEventListener('change', function () {
+                const selectedMethod = this.value;
+                console.log(selectedMethod);
+                
+                // Hide all fields initially
+                // document.getElementById('balance_div').classList.add('hidden');
+                    
+                if (selectedMethod === 'Yes') {
+                    document.getElementById('amount_paid_div').classList.remove('hidden')
+                } else {
+                    document.getElementById('amount_paid_div').classList.add('hidden')
+                }
+            });
+        </script>
     </div>
 @endsection
