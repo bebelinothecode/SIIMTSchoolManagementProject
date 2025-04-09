@@ -42,9 +42,6 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
             $validatedData = $request->validate([
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date',
@@ -54,8 +51,6 @@ class ReportsController extends Controller
             $diplomaID = $validatedData['diplomaID'];
             $end_date = $validatedData['end_date'];
             $start_date = $validatedData['start_date'];
-=======
-<<<<<<< HEAD
             // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
             // Retrieve parameters from the request
         $startDate = $request->input('start_date');
@@ -98,12 +93,10 @@ class ReportsController extends Controller
         } catch (Exception $e) {
             //throw $th;
         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-=======
->>>>>>> a8d70c0f0c23f64510d6be167c90711828bc5e1b
+
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $diplomaID = $request->input('diplomaID');
->>>>>>> 1afc5ae13a46cdb058a1da87f3f9923bf5f35c93
     
 
             $diploma = Diploma::findOrFail($diplomaID);

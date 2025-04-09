@@ -93,6 +93,8 @@ class  FeesController extends Controller
 
             $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
+            DB::beginTransaction();
+
             if ($validatedData['fees_type'] === 'School Fees') {
                 $feespaid = FeesPaid::create([
                     'student_index_number' => $validatedData['student_index_number'],
@@ -130,9 +132,13 @@ class  FeesController extends Controller
                 Log::info('Balance saved successfully');
             }
 
+            DB::commit();
+
             return view('backend.fees.receipt', compact('feespaid'))->with('success', 'School Fees has been collected');
         } catch (\Exception $e) {
             //throw $th;
+            DB::rollBack();
+            
             Log::info('Request Data', $request->all());
 
             Log::error('Error collecting fees: ' . $e);
