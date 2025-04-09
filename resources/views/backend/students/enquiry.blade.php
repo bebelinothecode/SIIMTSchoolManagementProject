@@ -11,7 +11,7 @@
         </a>
 
         <!-- Sorting Dropdown -->
-        <form action="{{ route('enquiries.index') }}" method="GET" class="flex items-center">
+        <form action=" " method="GET" class="flex items-center">
             <label for="sort" class="text-sm text-gray-600 mr-2">Sort by:</label>
             <select name="sort" id="sort" onchange="this.form.submit()" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 rounded">
                 <option value="">All</option>
@@ -20,6 +20,24 @@
             </select>
         </form>
     </div>
+
+    <form action="{{ route('enquiries.index') }}" method="GET" class="flex items-center mt-4 space-x-4">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search..." 
+            value="{{ request('search') }}"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        >
+        <button 
+            type="submit" 
+            class="px-4 py-2 m-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+        >
+            Search
+        </button>
+    </form>
+
+    
     
     <!-- Enquiry Table -->
     <div class="mt-6 bg-white rounded-lg shadow">
@@ -31,6 +49,9 @@
                     <th class="py-2 px-4 text-left">Type of Course (Academic or Professional)</th>                    
                     <th class="py-3 px-6 text-left">Interested Course</th>
                     <th class="py-3 px-6 text-left">Expected Start Date</th>
+                    <th class="py-3 px-6 text-left">Bought Forms</th>
+                    <th class="py-3 px-6 text-left">Currency</th>
+                    <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Created On</th>
                 </tr>
             </thead>
@@ -42,6 +63,11 @@
                     <td class="border border-gray-200 px-2 py-2">{{ $enquiry->type_of_course ?? "N/A" }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->interested_course }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->expected_start_date)->format('M d, Y') }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->bought_forms }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->currency }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount }}</td>
+                    {{-- <td class="border border-gray-200 px-4 py-2">{{ $enquiry->interested_course }}</td> --}}
+
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->created_at)->format('M d, Y H:i A') }}</td>
                 </tr>
                 @endforeach

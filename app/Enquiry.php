@@ -15,7 +15,11 @@ class Enquiry extends Model
         'interested_course',
         'type_of_course',
         'expected_start_date',
+        'bought_forms',
+        'currency',
+        'amount_paid'
     ];
 
     use HasFactory;
 }
+

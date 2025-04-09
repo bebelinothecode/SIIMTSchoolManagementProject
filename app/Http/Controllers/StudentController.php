@@ -6,20 +6,18 @@ use App\Fees;
 use App\User;
 use App\Grade;
 use App\Level;
+use Exception;
 use App\Diploma;
 use App\Enquiry;
 use App\Parents;
 use App\Session;
 use App\Student;
 use App\Subject;
-// use App\Teacher;
+use App\FeesType;
 use Carbon\Carbon;
 use App\AcademicYear;
-use App\FeesType;
-// use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-// use App\Imports\StudentsImport;
 use App\Imports\StudentsImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -57,32 +55,10 @@ class StudentController extends Controller
             $query->where('student_category', $sort);
         }
 
-        // if($sort === 'All') {
-            
-        // }
-
         $students = $query->latest()->paginate(10); // Adjust pagination size as needed
 
         return view('backend.students.index', compact('students'));
     }
-
-    // public function indexStudents(Request $request)
-    // {
-    //     // Fetch enquiries with sorting
-    //     $sort = $request->input('sort'); // Get sorting filter
-
-    //     $enquiries = Enquiry::query();
-
-    //     // Apply sorting filter (Academic or Professional)
-    //     if ($sort === 'Academic' || $sort === 'Professional') {
-    //         $enquiries->where('type_of_course', $sort);
-    //     }
-
-    //     // Paginate results
-    //     $enquiries = $enquiries->orderBy('created_at', 'desc')->paginate(10);
-
-    //     return view('backend.students.enquiry', compact('enquiries'));
-    // }
 
     /**
      * Show the form for creating a new resource.
@@ -392,40 +368,53 @@ class StudentController extends Controller
         return $students;
     }
 
-    public function studentEnquiry(Request $request)
-    {
-        // Get the sorting parameter from the request
-        $sort = $request->query('sort');
+    public function index22(Request $request) {
+        // dd($request->all());
+        $sort = $request->input('sort');
 
-        // Query the enquiries
-        $enquiries = Enquiry::when($sort, function ($query, $sort) {
-            // Filter by type_of_course if a sort value is provided
-            return $query->where('type_of_course', $sort);
-        })
-        ->latest() // Sort by the latest entries
-        ->paginate(5); // Paginate the results
+        $query = Enquiry::query();
 
-        // Return the view with the enquiries data
-        return view('backend.students.enquiry', compact('enquiries'));
-    }
-
-    public function index22(Request $request)
-    {
-        // Fetch enquiries with sorting
-        $sort = $request->input('sort'); // Get sorting filter
-
-        $enquiries = Enquiry::query();
-
-        // Apply sorting filter (Academic or Professional)
-        if ($sort === 'Academic' || $sort === 'Professional') {
-            $enquiries->where('type_of_course', $sort);
+        if($sort === 'Academic' || $sort === 'Professional') {
+            $query->where('type_of_course', $sort);
         }
 
-        // Paginate results
-        $enquiries = $enquiries->orderBy('created_at', 'desc')->paginate(10);
+        if($request->filled('search') && $request->search != '') {
+            $searchTerm = $request->search;
+
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', '%'.$searchTerm.'%')
+                  ->orWhere('telephone_number', 'like', '%'.$searchTerm.'%')
+                  ->orWhere('interested_course', 'like', '%'.$searchTerm.'%')
+                  ->orWhere('bought_forms', 'like', '%'.$searchTerm.'%')
+                  ->orWhere('currency', 'like', '%'.$searchTerm.'%');
+            });
+        }
+
+        $enquiries = $query->latest()->paginate(10);
 
         return view('backend.students.enquiry', compact('enquiries'));
     }
+
+
+
+
+    // public function index22(Request $request)
+    // {
+    //     // Fetch enquiries with sorting
+    //     $sort = $request->input('sort'); // Get sorting filter
+
+    //     $enquiries = Enquiry::query();
+
+    //     // Apply sorting filter (Academic or Professional)
+    //     if ($sort === 'Academic' || $sort === 'Professional') {
+    //         $enquiries->where('type_of_course', $sort);
+    //     }
+
+    //     // Paginate results
+    //     $enquiries = $enquiries->orderBy('created_at', 'desc')->paginate(10);
+
+    //     return view('backend.students.enquiry', compact('enquiries'));
+    // }
 
     public function saveStudentEnquiry() {
         $courses = Grade::all();
@@ -443,12 +432,16 @@ class StudentController extends Controller
 
     public function storeEnquiry(Request $request) {
         try {
+            // dd($request->all());
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
             'course' => 'required|string',
             'expected_start_date' => 'required',
-            'type_of_course' => 'required'
+            'type_of_course' => 'required',
+            'bought_forms' => 'nullable|in:Yes,No',
+            'currency' => 'nullable|string',
+            'amount_paid' => 'nullable|numeric'
         ]);
 
         // dd($validatedData);
@@ -458,16 +451,19 @@ class StudentController extends Controller
             'telephone_number' => $validatedData['telephone_number'],
             'interested_course' => $validatedData['course'],
             'expected_start_date' => $validatedData['expected_start_date'],
-            'type_of_course' => $validatedData['type_of_course']
+            'type_of_course' => $validatedData['type_of_course'],
+            'bought_forms' => $validatedData['bought_forms'],
+            'currency' => $validatedData['currency'],
+            'amount' => $validatedData['amount_paid']
         ]);
 
         return redirect()->back()->with('success', 'Enquiry created successfully');
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             //throw $th;
-            Log::error('Error creating student: ' . $e);
+            Log::error('Validation errors: ', $e->errors());
 
             return redirect()->back()->with('error', 'Error saving Enquiry');
-        }
+        } 
         // dd($request->all());
 
     }
