@@ -543,6 +543,7 @@ class StudentController extends Controller
 
     public function updateStudent(Request $request, $id) {
         try {
+            // dd($request->all());
             $validatedData = $request->validate([
                 'name' => 'required|string',
                 'email' => 'required|email',
@@ -550,6 +551,9 @@ class StudentController extends Controller
                 'gender' => 'required',
                 'dateofbirth' => 'required|date',
                 'current_address' => 'required',
+                'fees' => 'required',
+                'currency' => 'required',
+                'balance' => 'required',
                 'course_id' => 'required',
                 'parent_id' => 'required' 
             ]);
@@ -561,14 +565,14 @@ class StudentController extends Controller
 
             $item = $course ?? $diploma;
 
-            DB::beginTransaction();
-
             if ($request->hasFile('profile_picture')) {
                 $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
                 $request->profile_picture->move(public_path('images/profile'), $profile);
             } else {
                 $profile = $student->user->profile_picture;
             }
+
+            DB::beginTransaction();
 
             $student->user()->update([
                 'name'              => $validatedData['name'],
@@ -584,10 +588,9 @@ class StudentController extends Controller
                 }
                 $student->update([
                     'course_id' => $validatedData['course_id'],
-                    'balance'   => $courseChanged ? '0.0' : $student->balance,
-                    'fees' => $item->fees,
-                    'currency' => $item->currency
-                    // 'fees' => ,
+                    'balance'   => $courseChanged ? '0.0' : $validatedData['balance'],
+                    'fees' => $validatedData['fees'],
+                    'currency' => $validatedData['currency']
                 ]);
             } else {
                 if ($student->course_id_prof != $validatedData['course_id']) {
@@ -595,10 +598,9 @@ class StudentController extends Controller
                 }
                 $student->update([
                     'course_id_prof' => $validatedData['course_id'],
-                    // 'balance' => "0.0",
-                    'fees' => $item->fees,
-                    'currency_prof' => $item->currency,
-                    'balance' => $courseChanged ? '0.0' : $student->balance
+                    'fees' => $validatedData['fees'],
+                    'currency_prof' => $validatedData['currency'],
+                    'balance' => $courseChanged ? '0.0' : $validatedData['balance']
                 ]);
             }
 
@@ -608,13 +610,11 @@ class StudentController extends Controller
                 'phone'             => $validatedData['phone'],
                 'dateofbirth'       => $validatedData['dateofbirth'],
                 'current_address'   => $validatedData['current_address'],
-                // 'balance'           => 0
             ]);
 
             DB::commit();
 
             return redirect()->back()->with('success', 'Student updated successfully');    
-            // dd($validatedData);
         } catch (\Exception $e) {
             //throw $th;
             DB::rollBack();

@@ -39,16 +39,7 @@
         >
             Search
         </button>
-    </form>
-
-    {{-- <form action=" " method="GET" class="flex items-center">
-        <label for="sort" class="text-sm text-gray-600 mr-2">Sort by:</label>
-        <select name="sort" id="sort" onchange="this.form.submit()" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 rounded">
-            <option value="">All</option>
-            <option value="Academic" {{ request('sort') === 'Academic' ? 'selected' : '' }}>Academic</option>
-            <option value="Professional" {{ request('sort') === 'Professional' ? 'selected' : '' }}>Professional</option>
-        </select>
-    </form> --}}
+    </form> 
     
     <!-- Students Table -->
     <div class="mt-6 bg-white rounded-lg shadow">

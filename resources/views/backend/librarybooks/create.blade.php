@@ -49,8 +49,13 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
+<<<<<<< HEAD
+                        <input name="isbn_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('email') }}">
+                        @error('isbn_number')
+=======
                         <input name="isbn_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text">
                         @error('isbn_numbethor')
+>>>>>>> 6a62d84a3707155ce9d5dde0db49fd458dc293e0
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
