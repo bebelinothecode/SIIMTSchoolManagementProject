@@ -397,36 +397,34 @@ class StudentController extends Controller
 
     public function studentEnquiry(Request $request)
     {
-        // Start with base query
-        $query = Enquiry::query();
-        
-        // Apply search filter if search term is present
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('telephone_number', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('interested_course', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('type_of_course', 'LIKE', "%{$searchTerm}%");
-            });
+        try {
+            //code...
+            $query = Enquiry::query();
+
+            if($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('name', 'like', "%{$searchTerm}%")
+                      ->orWhere('telephone_number', 'like', "%{$searchTerm}%")
+                      ->orWhere('interested_course', 'like', "%{$searchTerm}%")
+                      ->orWhere('type_of_course', 'like', "%{$searchTerm}%");
+                });
+            }
+
+            // Apply sorting filter if sort parameter is present
+            if ($request->has('sort') && !empty($request->sort)) {
+                $query->where('type_of_course', $request->sort);
+            }
+
+            // Order by latest first and paginate
+            $enquiries = $query->latest()->paginate(10);
+
+            return view('backend.students.enquiry', compact('enquiries'));
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('Error searching enquiry:' . $e);
         }
-        
-        // Apply sorting filter if sort parameter is present
-        if ($request->has('sort') && !empty($request->sort)) {
-            $query->where('type_of_course', $request->sort);
-        }
-        
-        // Order by latest first and paginate
-        $enquiries = $query->latest()->paginate(10);
-        
-        // Append query parameters to pagination links
-        // $enquiries->appends([
-        //     'search' => $request->search,
-        //     'sort' => $request->sort
-        // ]);
-        
-        return view('backend.students.enquiry', compact('enquiries'));
     }
 
     // public function studentEnquiry(Request $request) {

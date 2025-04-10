@@ -21,7 +21,7 @@
         </form>
     </div>
 
-    <form action="{{ route('enquiries.index') }}" method="GET" class="flex items-center mt-4 space-x-4">
+    <form action="{{ route('student.enquires') }}" method="GET" class="flex items-center mt-4 space-x-4">
         <input 
             type="text" 
             name="search" 
