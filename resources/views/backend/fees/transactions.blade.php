@@ -62,7 +62,7 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
-                    <th class="py-1 px-3 text-left">Transaction ID</th>
+                    {{-- <th class="py-1 px-3 text-left">Transaction ID</th> --}}
                     <th class="py-3 px-6 text-left">Student Name</th>
                     <th class="py-3 px-6 text-left">Method of Payment</th>
                     <th class="py-3 px-6 text-left">Amount</th>
@@ -71,12 +71,14 @@
                     <th class="py-3 px-6 text-left">Cheque Number</th>
                     <th class="py-3 px-6 text-left">Momo Number</th>
                     <th class="py-3 px-6 text-left">Date</th>
+                    <th class="py-3 px-6 text-left">Actions</th>
+
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
                 @forelse ($transactions as $transaction)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-1 px-3 text-left">{{ $transaction->id }}</td>
+                    {{-- <td class="py-1 px-3 text-left">{{ $transaction->id }}</td> --}}
                     <td class="py-3 px-6 text-left">{{ $transaction->student_name }}</td>
                     <td class="py-3 px-6 text-left">{{ $transaction->method_of_payment }}</td>
                     <td class="py-3 px-6 text-left">{{ number_format($transaction->amount, 2) }}</td>
@@ -85,6 +87,17 @@
                     <td class="py-3 px-6 text-left">{{ $transaction->cheque_number ?? "Not Found" }}</td>
                     <td class="py-3 px-6 text-left">{{ $transaction->Momo_number ?? "Not Found" }}</td>
                     <td class="py-3 px-6 text-left">{{ $transaction->created_at->format('Y-m-d') }}</td>
+                    <td class="py-3 px-6 text-center">
+                        {{-- <a href=" " class="text-blue-600 hover:underline">View</a> --}}
+                        @hasanyrole('Admin|rector')
+                             <a href="{{route('edit.transactionform',$transaction->id)}}" class="ml-4 text-green-600 hover:underline">Edit</a>
+                             <form action="{{route('delete.transaction',$transaction->id)}}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                            </form>
+                        @endhasanyrole
+                    </td>
                 </tr>
                 @empty
                 <tr>
@@ -222,4 +235,24 @@
         });
     });
 </script>
+@if (session('success'))
+    <script>
+        Swal.fire({
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif
+@if (session('error'))
+    <script>
+        Swal.fire({
+            title: 'Oops!',
+            text: '{{ session('error') }}',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif
 @endpush

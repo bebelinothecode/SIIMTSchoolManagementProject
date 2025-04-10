@@ -251,9 +251,41 @@ class  FeesController extends Controller
         }
     }
 
+    public function editTransactionForm($id) {
+        $transaction = FeesPaid::findOrFail($id);
+
+        return view('backend.fees.edittransactionform', compact('transaction'));
+    }
+
+    public function updateTransaction(Request $request, $id) {
+
+        try {
+            $validatedData = $request->validate([
+                'student_name' => 'required',
+                'student_index_number' => 'required',
+                'method_of_payment' => 'required',
+                'amount' => 'required',
+                'balance' => 'required',
+                'currency' => 'required',
+                'cheque_number' => 'nullable',
+                'Momo_number' => 'nullable',
+                'remarks' => 'nullable',
+                'receipt_number' => 'nullable',
+                'fees_type' => 'required',
+            ]);
+    
+            $transaction = FeesPaid::findOrFail($id);
+    
+            $transaction->update($validatedData);
+    
+            return redirect()->back()->with("success","School Fees has been set successfully");
+        } catch (\Exception $e) {
+            Log::error('Error updating transaction:'. $e);
+        }
+    }
+
     public function test(Request $request) {
         $query = 'Cam $ Mase';
-
 
         $books = DB::table('pdf')
                ->where('isbn_number', 'LIKE', "%{$query}%")
@@ -262,6 +294,23 @@ class  FeesController extends Controller
                ->get();
 
         return response()->json($books);
+    }
+
+    public function deleteTransaction($id) {
+        try {
+            //code...
+            $transaction = FeesPaid::findOrFail($id);
+
+            $transaction->delete();
+
+            return redirect()->back()->with('success','Transaction deleted successfully');
+        } catch (\Exception $e) {
+            //throw $th;
+            Log::error('Error deleting diploma',[$e->getMessage()]);
+
+            return redirect()->back()->with('error','Error deleting transaction');
+        }
+       
     }
 }
 

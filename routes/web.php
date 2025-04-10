@@ -129,6 +129,9 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
     Route::get('/document/request/form',[StudentController::class, 'getDocumentRequestForm'])->name('document.request');
     Route::post('/submit/document/request', [StudentController::class, 'submitDocumentForm'])->name('submit.documentform');
+    Route::get('/edit/transaction/form/{id}',[FeesController::class, 'editTransactionForm'])->name('edit.transactionform');
+    Route::put('/edit/transaction/{id}',[FeesController::class, 'updateTransaction'])->name('edit.transaction');
+    Route::delete('/delete/transaction/{id}',[FeesController::class, 'deleteTransaction'])->name('delete.transaction');
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');

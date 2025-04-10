@@ -49,6 +49,9 @@ class StudentController extends Controller
                 ->orWhere('email', 'like', '%' . $request->search . '%');
             })
             ->orWhere('index_number', 'like', '%' . $request->search . '%');
+            $query->orWhereHas('course', function ($subQ) use ($request) {
+                $subQ->where('course_name', 'like','%'. $request->search. '%');
+            });
         }
 
         if ($sort === 'Academic' || $sort === 'Professional') {

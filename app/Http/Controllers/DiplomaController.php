@@ -171,8 +171,6 @@ class DiplomaController extends Controller
             //code...
             $diploma = Diploma::findOrFail($id);
 
-            // dd($diploma);
-
             $diploma->delete();
 
             return redirect()->back()->with('success','Diploma Course deleted successfully');
