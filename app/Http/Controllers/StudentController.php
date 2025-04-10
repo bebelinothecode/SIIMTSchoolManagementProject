@@ -368,29 +368,95 @@ class StudentController extends Controller
         return $students;
     }
 
-    public function index22(Request $request) {
-        // dd($request->all());
-        $sort = $request->input('sort');
+    // public function studentEnquiry(Request $request)
+    // {
+    //     // Get the sorting parameter from the request
+    //     $sort = $request->query('sort');
 
+    //     // Query the enquiries
+    //     $enquiries = Enquiry::when($sort, function ($query, $sort) {
+    //         // Filter by type_of_course if a sort value is provided
+    //         return $query->where('type_of_course', $sort);
+    //     })
+    //     ->latest() // Sort by the latest entries
+    //     ->paginate(5); // Paginate the results
+
+    //     $searchTerm = $request->input('search');
+
+    //     $results = Enquiry::where(function ($query) use ($searchTerm) {
+    //         $query->where('name', 'LIKE', "%{$searchTerm}%")
+    //             ->orWhere('telephone_number', 'LIKE', "%{$searchTerm}%")
+    //             ->orWhere('interested_course', 'LIKE', "%{$searchTerm}%")
+    //             ->orWhere('bought_forms', 'LIKE', "%{$searchTerm}%")
+    //             ->orWhere('amount', 'LIKE', "%{$searchTerm}%");
+    //     })->get();
+
+    //     // Return the view with the enquiries data
+    //     return view('backend.students.enquiry', compact('enquiries'));
+    // }
+
+    public function studentEnquiry(Request $request)
+    {
+        // Start with base query
         $query = Enquiry::query();
-
-        if($sort === 'Academic' || $sort === 'Professional') {
-            $query->where('type_of_course', $sort);
-        }
-
-        if($request->filled('search') && $request->search != '') {
+        
+        // Apply search filter if search term is present
+        if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
-
+            
             $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'like', '%'.$searchTerm.'%')
-                  ->orWhere('telephone_number', 'like', '%'.$searchTerm.'%')
-                  ->orWhere('interested_course', 'like', '%'.$searchTerm.'%')
-                  ->orWhere('bought_forms', 'like', '%'.$searchTerm.'%')
-                  ->orWhere('currency', 'like', '%'.$searchTerm.'%');
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('telephone_number', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('interested_course', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('type_of_course', 'LIKE', "%{$searchTerm}%");
             });
         }
-
+        
+        // Apply sorting filter if sort parameter is present
+        if ($request->has('sort') && !empty($request->sort)) {
+            $query->where('type_of_course', $request->sort);
+        }
+        
+        // Order by latest first and paginate
         $enquiries = $query->latest()->paginate(10);
+        
+        // Append query parameters to pagination links
+        // $enquiries->appends([
+        //     'search' => $request->search,
+        //     'sort' => $request->sort
+        // ]);
+        
+        return view('backend.students.enquiry', compact('enquiries'));
+    }
+
+    // public function studentEnquiry(Request $request) {
+    //     dd($request->all());
+    //     $sort = $request->input('sort');
+
+    //     $query = Enquiry::query();
+
+    //     if ($request->has('search') && $request->search != '') {
+            
+    //     };
+    // }
+
+
+
+
+    public function index22(Request $request)
+    {
+        // Fetch enquiries with sorting
+        $sort = $request->input('sort'); // Get sorting filter
+
+        $enquiries = Enquiry::query();
+
+        // Apply sorting filter (Academic or Professional)
+        if ($sort === 'Academic' || $sort === 'Professional') {
+            $enquiries->where('type_of_course', $sort);
+        }
+
+        // Paginate results
+        $enquiries = $enquiries->orderBy('created_at', 'desc')->paginate(10);
 
         return view('backend.students.enquiry', compact('enquiries'));
     }
