@@ -82,23 +82,27 @@ class ExpensesController extends Controller
 
             $expensesQuery = Expenses::query();
 
-            if ($validatedData['start_date'] && $validatedData['end_date']) {
+            if($validatedData['start_date'] && $validatedData['end_date']) {
                 $expensesQuery->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
-            } elseif ($validatedData['current_date']) {
+            }
+
+            if($validatedData['current_date']) {
                 $expensesQuery->whereDate('created_at', $validatedData['current_date']);
-                }
-        
-                if ($validatedData['category']) {
-                $expensesQuery->where('category', $validatedData['category']);
+            }
+
+            if($validatedData['current_date'] && $validatedData['category']) {
+                $expensesQuery->whereDate('created_at', $validatedData['current_date'])
+                              ->where('category', $validatedData['category']);  
+            }
+
+            if($validatedData['start_date'] && $validatedData['end_date'] && $validatedData['category']) {
+                $expensesQuery->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']])
+                              ->where('category', $validatedData['category']);
             }
 
             $expenses = $expensesQuery->get();
 
-            // return $expenses;
-
             return view('backend.reports.expensesreport', compact('expenses','category','endDate','startDate','currentDate'));
-
-            // return redirect()->back()->with('success', 'E generating expenses report');    
         } catch (\Exception $e) {
             //throw $th;
             Log::error("Error genrating expenses report".$e->getMessage());

@@ -427,16 +427,7 @@ class StudentController extends Controller
         }
     }
 
-    // public function studentEnquiry(Request $request) {
-    //     dd($request->all());
-    //     $sort = $request->input('sort');
-
-    //     $query = Enquiry::query();
-
-    //     if ($request->has('search') && $request->search != '') {
-            
-    //     };
-    // }
+   
 
 
 
