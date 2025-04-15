@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('calculate.balance') }}" method="POST" class="w-full max-w-xl px-6 py-12">
+            <form action="{{ route('calculate.balance') }}" method="POST" class="w-full max-w-xl px-6 py-12" target="_blank">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -70,8 +70,11 @@
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3 space-x-4">
-                        <button type="submit" class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
-                            Generate Report
+                        <button 
+                            type="submit" 
+                            class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+                        >
+                        Generate Report
                         </button>
                         <button type="reset" class="shadow bg-gray-500 hover:bg-gray-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
                             Reset

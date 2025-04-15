@@ -132,7 +132,6 @@ class BookController extends Controller
     }
 
     public function uploadExamsQuestions(Request $request) {
-        // Validate the request
     $validatedData = $request->validate([
         'year_of_exams' => 'required|integer',
         'course_name' => 'required|string',
@@ -177,9 +176,73 @@ class BookController extends Controller
         return view('backend.librarybooks.pastquestions', compact('results'));
     }
 
-    public function viewQuestionsOnline($id) {
-        $question = PastQuestions::findOrFail($id);
+    // public function viewQuestionsOnline($id) {
+    //     $question = PastQuestions::findOrFail($id);
 
-        return response()->file(storage_path('app/public/' . $question->file_path));
+    //     return response()->file(storage_path('app/public/' . $question->file_path));
+    // }
+
+    // public function viewQuestionsOnline($id) {
+    //     $question = PastQuestions::findOrFail($id);
+        
+    //     $filePath = storage_path('app/public/' . $question->file_path);
+        
+    //     if (!file_exists($filePath)) {
+    //         abort(404, 'The requested file does not exist.');
+    //     }
+        
+    //     return response()->file($filePath, [
+    //         'Content-Type' => 'application/pdf',
+    //         'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"'
+    //     ]);
+    // }
+
+    // public function viewQuestionsOnline($id)
+    // {
+    //     $question = PastQuestions::findOrFail($id);
+        
+    //     return Storage::disk('public')->download(
+    //         $question->file_path, 
+    //         $question->original_filename ?? 'past_question.pdf'
+    //     );
+    // }
+
+    // public function viewQuestionsOnline($id) {
+    //     $question = PastQuestions::findOrFail($id);
+
+    //     return response()->download(storage_path('app/public/' . $question->file_path));
+    // }
+
+    public function viewQuestionsOnline($id)
+    {
+        $pastQuestion = PastQuestions::findOrFail($id);
+        
+        if (!Storage::disk('public')->exists($pastQuestion->exams_paper)) {
+            return redirect()->back()->with('error', 'File not found!');
+        }
+    
+        return Storage::disk('public')->download(
+            $pastQuestion->exams_paper,
+            $pastQuestion->course_name . '_' . $pastQuestion->year_of_exams . '.' . 
+            pathinfo($pastQuestion->exams_paper, PATHINFO_EXTENSION)
+        );
     }
-}
+
+    // public function viewQuestionsOnline($id)
+    //     {
+    //         $question = PastQuestions::findOrFail($id);
+            
+    //         // Check if file exists in storage
+    //         if (!Storage::disk('public')->exists($question->file_path)) {
+    //             abort(404, 'The requested file does not exist.');
+    //         }
+            
+    //         // Get the original filename or default
+    //         $filename = $question->original_filename ?? basename($question->file_path);
+            
+    //         // Return the file download
+    //         return Storage::disk('public')->download($question->file_path, $filename, [
+    //             'Content-Type' => 'application/pdf',
+    //         ]);
+    //     }
+    }

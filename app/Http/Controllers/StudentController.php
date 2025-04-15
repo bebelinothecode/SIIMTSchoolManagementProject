@@ -38,19 +38,24 @@ class StudentController extends Controller
 
         // Fetch students and handle search
         $query = Student::with('user', 'course', 'diploma')
-            ->where(function ($q) {
-                $q->whereNotNull('course_id')
-                ->orWhereNotNull('course_id_prof');
-            });
+        ->where(function ($q) {
+            $q->whereNotNull('course_id')
+            ->orWhereNotNull('course_id_prof');
+        });
 
         if ($request->has('search') && $request->search != '') {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('email', 'like', '%' . $request->search . '%');
-            })
-            ->orWhere('index_number', 'like', '%' . $request->search . '%');
-            $query->orWhereHas('course', function ($subQ) use ($request) {
-                $subQ->where('course_name', 'like','%'. $request->search. '%');
+            $query->where(function($q) use ($request) {
+                $q->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
+                })
+                ->orWhere('index_number', 'like', '%' . $request->search . '%')
+                ->orWhereHas('course', function ($subQ) use ($request) {
+                    $subQ->where('course_name', 'like', '%'. $request->search. '%');
+                })
+                ->orWhereHas('diploma', function ($qq) use ($request) {
+                    $qq->where('name', 'like', '%'.$request->search. '%');
+                });
             });
         }
 

@@ -113,7 +113,7 @@
         <!-- Admission Details -->
         <div class="mb-6 avoid-break">
             <p class="text-gray-800">
-                1. This is to inform you that the Academic Board of SIIMT University College has admitted you to pursue a @if($student->student_category === 'Academic') degree programme in {{ $student->course->course_name }} level {{ $student->level }}, Semester - {{ $student->session ?? "N/A" }} @else Diploma/Professional course in {{ $student->diploma->name }} @endif. This will lead to the award of a @if($student->student_category === 'Academic') Bachelor of Science in {{ $student->course->course_name }} @else  {{ $student->diploma->name }} @endif certificate by the University of Cape-Coast.
+                1. This is to inform you that the Academic Board of SIIMT University College has admitted you to pursue a @if($student->student_category === 'Academic') degree programme in {{ $student->course->course_name ?? "N/A" }} level {{ $student->level ?? "N/A" }}, Semester - {{ $student->session ?? "N/A" }} @else Diploma/Professional course in {{ $student->diploma->name ?? "N/A" }} @endif. This will lead to the award of a @if($student->student_category === 'Academic') Bachelor of Science in {{ $student->course->course_name ?? "N/A" }} @else  {{ $student->diploma->name ?? "N/A" }} @endif certificate by the University of Cape-Coast.
             </p>
         </div>
 
@@ -187,7 +187,11 @@
         @else
             <div class="mb-6 avoid-break">
                 <p class="text-gray-800">
-                    2. School fees per semester is <span>@if($student->student_category === 'Academic') {{ $student->course->currency }}-{{ number_format($student->course->fees, 2) }} @else {{ $student->diploma->currency }}-{{ number_format($student->diploma->fees, 2) }} @endif</span>.
+                    {{-- 2. School fees per semester is <span>@if($student->student_category === 'Academic') {{ $student->course->currency ?? "N/A" }}-{{ number_format($student->course->fees, 2) }} @else {{ $student->diploma->currency ?? "N/A" }}-{{ number_format($student->diploma->fees, 2) }} @endif</span>. --}}
+                    2. School fees per semester is <span>@if($student->student_category === 'Academic'){{ $student->course->currency ?? "N/A" }}-{{ isset($student->course->fees) ? number_format($student->course->fees, 2) : "N/A" }}
+                    @else
+                        {{ $student->diploma->currency ?? "N/A" }}-{{ isset($student->diploma->fees) ? number_format($student->diploma->fees, 2) : "N/A" }}
+                    @endif
                 </p>
             </div>
         @endif
