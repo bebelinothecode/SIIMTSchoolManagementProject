@@ -624,7 +624,7 @@ class StudentController extends Controller
         $student_balance = $student->balance;
         $feesTypes = FeesType::all();
         // return $student;
-        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes'));
+        return view('backend.students.payfee  sform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes'));
     }
 
     public function promoteAll(Request $request) {

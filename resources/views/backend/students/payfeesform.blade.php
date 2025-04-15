@@ -228,12 +228,12 @@
                         </button>
                     </div>
                 </div>
-                @if (session('success'))
+                @if (session('error'))
                     <script>
                         Swal.fire({
-                            title: 'Success!',
-                            text: '{{ session('success') }}',
-                            icon: 'success',
+                            title: 'Error!',
+                            text: '{{ session('error') }}',
+                            icon: 'error',
                             confirmButtonText: 'OK'
                         });
                     </script>
@@ -242,7 +242,7 @@
         </div>
     </div>
 
-    <script>
+    <!-- <script>
         document.getElementById('amount').addEventListener('input', function () {
             const amount = parseFloat(this.value) || 0;
             const initialBalance = parseFloat("{{$student->balance}}");
@@ -256,6 +256,47 @@
                 balanceField.value = initialBalance - amount;
             }
         });
+    </script> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded',()=> {
+            const amount = document.getElementById('amount');
+            const balance = document.getElementById('balance');
+            const student = @json($student);
+            console.log(student)
+            let totalFees = parseFloat(student.fees) || parseFloat(student.fees_prof) || 0;
+            console.log(totalFees);
+
+
+            let scholarshipAmount = parseFloat(student.Scholarship_amount) || 0;
+            function calculateBalance() {
+                const enteredAmount = parseFloat(amount.value) || 0;
+
+                if(student.Scholarship === 'Yes' && !isNaN(scholarshipAmount)) {
+                    totalFees -= scholarshipAmount;
+                }
+
+                let remainingBalance = parseFloat(student.balance);
+
+                if (isNaN(remainingBalance)) {
+                    // If no specific balance, use adjusted total fees
+                    remainingBalance = totalFees;
+                }
+
+                // Calculate new balance after deducting the entered amount
+                let newBalance = remainingBalance - enteredAmount;
+
+                if (newBalance < 0) {
+                    newBalance = 0;
+                    alert('Payment exceeds the remaining balance. Balance cannot be negative.');
+                }
+
+                // Update the balance field
+                balance.value = newBalance.toFixed(2);
+            }
+
+            amount.addEventListener('input', calculateBalance);
+        })
     </script>
 
     <script>

@@ -94,7 +94,7 @@ class ReportsController extends Controller
         } catch (Exception $e) {
             //throw $th;
         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            $startDate = $request->input('start_date');
+             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $diplomaID = $request->input('diplomaID');    
             $diploma = Diploma::findOrFail($diplomaID);
