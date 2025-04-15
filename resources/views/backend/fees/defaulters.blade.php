@@ -16,6 +16,25 @@
             </div>
         </div>
 
+        <div class="flex items-center justify-between">
+            <!-- Your form -->
+            <form action="" method="GET" class="flex items-center">
+                <label for="sort" class="text-sm text-gray-600 mr-2">Sort by:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 rounded">
+                    <option value="All">All</option>
+                    <option value="Academic" {{ request('sort') === 'Academic' ? 'selected' : '' }}>Academic</option>
+                    <option value="Professional" {{ request('sort') === 'Professional' ? 'selected' : '' }}>Professional</option>
+                </select>
+            </form>
+        
+            <!-- Your amount labels -->
+            <div class="text-right">
+                <div><label class="text-sm text-gray-600">Total Academic: GHS-{{$defaultersAcademicTotal}}</label></div>
+                <div><label class="text-sm text-gray-600">Total Professional: GHS-{{$defaultersAcademicProfessional}}</label></div>
+                <div><label class="text-sm text-gray-600">Total All: GHS-{{$totalAmount}}</label></div>
+            </div>
+        </div>
+
         <!-- Search Form -->
     <form action="{{ route('fees.defaulters')}}" method="GET" class="flex items-center mt-4 space-x-4">
         <input 

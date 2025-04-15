@@ -158,36 +158,33 @@ class  FeesController extends Controller
     //     return view('backend.fees.defaulters', compact('defaulters'));
     // }
 
-    public function selectdefaulters(Request $request) 
-    {
-        $query = Student::with('user', 'course', 'diploma')
-            ->where('balance', '>', 0);
-        
-        // Add search functionality
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            
-            $query->where(function($q) use ($search) {
-                $q->whereHas('user', function($userQuery) use ($search) {
-                    $userQuery->where('name', 'like', '%' . $search . '%');
-                            // ->orWhere('email', 'like', '%' . $search . '%');
-                })
-                // ->orWhereHas('course', function($courseQuery) use ($search) {
-                //     $courseQuery->where('name', 'like', '%' . $search . '%');
-                // })
-                // ->orWhereHas('diploma', function($diplomaQuery) use ($search) {
-                //     $diplomaQuery->where('name', 'like', '%' . $search . '%');
-                // })
-                ->orWhere('index_number', 'like', '%' . $search . '%');
-            });
+    public function selectdefaulters(Request $request) {
+        $sort = $request->input('sort');
+
+        $query = Student::with('user', 'course', 'diploma')->where('balance', '>', 0);
+
+        if($request->has('search') && $request->search != "") {
+            $query->whereHas('user', function($q) use ($request) {
+                $q->where('name','like','%'.$request->search .'%');
+            })->orWhere('index_number', 'like', '%' . $request->search . '%');
+        }
+
+        if($sort === 'Academic' || $sort === 'Professional') {
+            $query->where('student_category', $sort);
         }
 
         $defaulters = $query->orderBy('balance', 'desc')->paginate(10);
 
-        // dd($defaulters);
-        
-        return view('backend.fees.defaulters', compact('defaulters'));
+        $defaultersAcademicTotal = Student::where('balance', '>', 0)->where('student_category', 'Academic')->sum(DB::raw('CAST(balance AS DECIMAL(10,2))'));
+
+        $defaultersAcademicProfessional = Student::where('balance', '>', 0)->where('student_category','Professional')->sum(DB::raw('CAST(balance AS DECIMAL(10,2))'));
+
+        $totalAmount = $defaultersAcademicTotal + $defaultersAcademicProfessional;
+
+        return view('backend.fees.defaulters', compact('defaulters','defaultersAcademicTotal','defaultersAcademicProfessional','totalAmount'));
     }
+
+        
 
     public function studentFees(Request $request) {
         $request = $request->all();

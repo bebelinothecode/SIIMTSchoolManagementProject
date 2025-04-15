@@ -1,127 +1,315 @@
-@extends('layouts.app')
-
-@section('title', 'Total Balance Generated Report')
-
-@section('content')
-<style>
-    @media print {
-        /* Hide everything except the table and logo */
-        body * {
-            visibility: hidden;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Report(Total)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
         }
         
-        /* Show only the table, logo, and their contents */
-        .print-section,
-        .print-section *,
-        .print-logo {
-            visibility: visible;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         
-        /* Position the logo at the top of the printed page */
-        .print-logo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 150px; /* Adjust the width as needed */
-            height: auto;
-            margin-bottom: 20px; /* Add space below the logo */
+        h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
         }
         
-        /* Position the table below the logo */
-        .print-section {
-            position: absolute;
-            left: 0;
-            top: 100px; /* Adjust based on logo height */
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        select, input {
             width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
         }
         
-        /* Hide the print button when printing */
-        .no-print {
-            display: none !important;
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
         }
         
-        /* Ensure table looks good on paper */
-        .print-section table {
-            width: 100%;
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        table {
             border-collapse: collapse;
-            page-break-inside: auto;
+            width: 100%;
+            margin: 20px 0;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
-        .print-section tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-        
-        .print-section th,
-        .print-section td {
-            padding: 8px;
+        th, td {
             border: 1px solid #ddd;
+            padding: 10px 12px;
+            text-align: left;
         }
-    }
-</style>
-
-<div class="container mx-auto mt-6">
-    <!-- Back Button -->
-    <div class="mb-4 no-print">
-        <a href="{{ url()->previous() }}" 
-           class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-           aria-label="Go back to the previous page"
-        >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Back
-        </a>
-    </div>
-
-    <!-- Logo (Visible only during printing) -->
-    <div class="print-logo hidden">
-        <img src="{{ asset('logo/SIIMT-logo.png') }}" alt="Company Logo" class="w-full h-auto">
-    </div>
-
-    <h1 class="text-2xl font-bold text-gray-700">Combined Balance Report (Academic + Professional)</h1>
-
-    <!-- Report Parameters -->
-    <div class="mt-4 p-6 bg-white rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700">Report Parameters</h2>
-        <div class="mt-2 text-sm text-gray-600">
-            <p><strong>Selected Category:</strong> {{ $selectedCategory ?? 'N/A' }}</p>
-            <p><strong>Report Date:</strong> {{ now()->format('Y-m-d H:i:s') }}</p>
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #e9e9e9;
+        }
+        
+        caption {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 1.1em;
+            color: #2c3e50;
+            padding: 5px 0;
+        }
+        
+        .summary-card {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .summary-card h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .summary-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2980b9;
+        }
+        
+        .table-container {
+            margin-bottom: 30px;
+        }
+        
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-range input {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-group {
+                flex-direction: column;
+            }
+            
+            .filter-item {
+                min-width: 100%;
+            }
+            
+            .date-range {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Balance Report(Professional + Academic)</h3>
+        <!-- Summary Cards -->
+        <div class="summary-card">
+            <h4>Financial Summary</h4>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <p>Total Collections(School Fees + Form Fees)</p>
+                    <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount, 2) }}</p>                </div>
+                <div class="filter-item">
+                    <p>Total Expenses</p>
+                    <p class="summary-value">GHS {{ number_format($expensesTotalAmount,2) }}</p>
+                </div>
+                <div class="filter-item">
+                    <p>Net Balance</p>
+                    <p class="summary-value">
+                        GHS {{ number_format(($feesPaymentsTotal + $formFeesAllAmount) - $expensesTotalAmount, 2) }}
+                    </p>                
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payments Table -->
+        <div class="table-container">
+            <table id="paymentsTable">
+                <caption>Payments Table</caption>
+                <thead>
+                    <tr>
+                        <th>Student Index</th>
+                        <th>Student Name</th>
+                        <th>Amount</th>
+                        <th>Balance</th>
+                        <th>Currency</th>
+                        <th>Method</th>
+                        <th>Receipt No.</th>
+                        <th>Fee Type</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($feeCollectionTransactions as $feeCollectionTransaction)
+                    <tr>
+                        <td>{{ $feeCollectionTransaction->student_index_number ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->student_name ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->amount ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->balance ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->currency ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->mode_of_payment ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->receipt_number ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->fees_type }}</td>
+                        <td>{{ $feeCollectionTransaction->created_at }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="9" class="text-center">No payments found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">Total Payments:</td>
+                        <td colspan="7">GHS {{$feesPaymentsTotal}}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        
+        <!-- Form Fees Table -->
+        <div class="table-container">
+            <table id="formFeesTable">
+                <caption>Form Fees Table</caption>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($formFeesBebelinos as $formFeesBebelino)
+                    <tr>
+                        <td>{{ $formFeesBebelino->name ?? "N/A" }}</td>
+                        <td>{{ $formFeesBebelino->telephone_number ?? "N/A" }}</td>
+                        <td>{{ $formFeesBebelino->currency ?? "N/A" }}</td>
+                        <td>{{ $formFeesBebelino->amount ?? "N/A" }}</td>
+                        <td>{{ $formFeesBebelino->created_at ?? "N/A" }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No form fee payments found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Total Form Fees:</td>
+                        <td colspan="2">GHS {{$formFeesAllAmount}}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        
+        <!-- Expenses Table -->
+        <div class="table-container">
+            <table id="expensesTable">
+                <caption>Expenses Table</caption>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($expensesTransactions as $expensesTransaction)
+                    <tr>
+                        <td>{{ $expensesTransaction->source_of_expense ?? "N/A" }}</td>
+                        <td>{{ $expensesTransaction->description_of_expense ?? "N/A" }}</td>
+                        <td>{{ $expensesTransaction->category ?? "N/A" }}</td>
+                        <td>{{ $expensesTransaction->amount ?? "N/A" }}</td>
+                        <td>{{ $expensesTransaction->mode_of_payment ?? "N/A" }}</td>
+                        <td>{{ $expensesTransaction->created_at }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center">No expenses found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Total Expenses:</td>
+                        <td colspan="3">GHS {{$expensesTotalAmount}}</td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
-
-    <!-- Balance Table -->
-    <div class="print-section mt-6 bg-white rounded-lg shadow overflow-x-auto">
-        <table class="w-full table-auto">
-            <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                <tr>
-                    <th class="py-3 px-6 text-left">Category</th>
-                    <th class="py-3 px-6 text-left">Total Collections</th>
-                    <th class="py-3 px-6 text-left">Total Expenses</th>
-                    <th class="py-3 px-6 text-left">Total Balance</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-600 text-sm font-light">
-                {{-- @forelse($balances as $balance) --}}
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">Combined (Academic + Professional)</td>
-                        <td class="py-3 px-6 text-left">{{ number_format($totalCombinedCollections, 2) }}</td>
-                        <td class="py-3 px-6 text-left">{{ number_format($totalCombinedExpenses, 2) }}</td>
-                        <td class="py-3 px-6 text-left">{{ number_format($totalCombinedBalance, 2) }}</td>
-                    </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Print Button -->
-    <div class="mt-8 no-print">
-        <button 
-            onclick="window.print()" 
-            class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-            aria-label="Print this report"
-        >
-            Print Report
-        </button>
-    </div>
-</div>
-@endsection
+</body>
+</html>
