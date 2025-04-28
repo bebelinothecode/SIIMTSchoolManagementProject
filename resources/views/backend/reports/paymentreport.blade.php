@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                                                                                                                                        <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -246,27 +246,16 @@
             </table>
         </div>
 
-<<<<<<< HEAD
         <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals by Cash, Momo, Cheque</h4>
-=======
-        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals(Method of Payments)</h4>
->>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-light">
                     <tr>
-<<<<<<< HEAD
                         <th>Method of Payment</th>
-=======
-                        <th>Momo</th>
-                        <th>Cash</th>
-                        <th>Cheque</th>
->>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                         <th>Total Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-<<<<<<< HEAD
                     
                     <tr class=" ">
                         <td>Cash</td>
@@ -282,35 +271,6 @@
                     </tr>
                         
                     
-=======
-                    <tr class="total-highlight">
-                        <td>GHS{{ number_format($momoTotal, 2) ?? "0.00" }}</td>
-                        <td>GHS{{ number_format($cashTotal, 2) ?? "0.00" }}</td>
-                        <td>GHS{{number_format($chequeTotal, 2) ?? "0.00" }}</td>
-                        <td>GHS{{ $momoTotal + $cashTotal + $chequeTotal   }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals(Form Payments)</h4>
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Total Amount</th>
-                        <!-- <th>Cash</th>
-                        <th>Cheque</th> -->
-                        <!-- <th>Total Amount</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="total-highlight">
-                        <td>GHS{{ number_format($boughtFormsAmount, 2) ?? "0.00" }}</td>
-                        <!-- <td>GHS{{ number_format($cashTotal, 2) ?? "0.00" }}</td>
-                        <td>GHS{{number_format($chequeTotal, 2) ?? "0.00" }}</td> -->
-                    </tr>
->>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                 </tbody>
             </table>
         </div>

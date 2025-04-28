@@ -32,8 +32,6 @@ class ExpensesController extends Controller
                 "bank_details" => 'nullable|string'
             ]);
 
-            // dd($validatedData);
-
             Expenses::create([
                 'source_of_expense'=> $validatedData['source_of_expense'],
                 'description_of_expense' => $validatedData['description'],
@@ -61,6 +59,7 @@ class ExpensesController extends Controller
         return view('backend.reports.expensesreportform', compact('categorys'));
     }
 
+<<<<<<< HEAD
     // public function generateExpensesReport(Request $request) {
     //     try {
     //         $validatedData = $request->validate([
@@ -146,6 +145,8 @@ class ExpensesController extends Controller
     // }
     
 
+=======
+>>>>>>> d9624125e5bfd82f994640b4cc4d6e25c90846bf
     public function generateExpensesReport(Request $request) {
         try {
             $validatedData = $request->validate([

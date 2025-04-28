@@ -254,9 +254,10 @@ class ReportsController extends Controller
             $feeTransactions = $feeTransactionsQuery->get();
 
             // Calculate payment method totals
-            $cashTotal = $feeTransactions->where('method_of_payment', 'Cash')->sum('amount');
+            $method_of_Payment_Total = $feeTransactions->where('method_of_payment', $methodOfPayment)->sum('amount');
             $momoTotal = $feeTransactions->where('method_of_payment', 'Momo')->sum('amount');
             $chequeTotal = $feeTransactions->where('method_of_payment', 'Cheque')->sum('amount');
+            $cashTotal = $feeTransactions->where('method_of_payment', 'Cash')->sum('amount');
 
             // Step 5: Group transactions by student category and currency
             $transactionsByCategoryAndCurrency = [
@@ -304,19 +305,24 @@ class ReportsController extends Controller
                 'endDate' => $endDate,
                 'aca_prof' => $aca_prof,
                 'boughtFormsAmount' => $boughtFormsAmount,
+                'method_of_Payment_Total' => $method_of_Payment_Total,
+                'methodOfPayment' => $methodOfPayment,
                 'cashTotal' => $cashTotal,
                 'momoTotal' => $momoTotal,
                 'chequeTotal' => $chequeTotal
             ]);
 
+<<<<<<< HEAD
         } catch (Exception $e) {
+=======
+        } catch (\Exception $e) {
+>>>>>>> d9624125e5bfd82f994640b4cc4d6e25c90846bf
             Log::error('Error generating payment report', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return redirect()->back()
-                ->with('error', 'An error occurred while generating the report. Please try again.');
+            return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
         }
     }
 
