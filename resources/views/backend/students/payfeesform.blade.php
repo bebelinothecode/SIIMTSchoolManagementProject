@@ -228,12 +228,12 @@
                         </button>
                     </div>
                 </div>
-                @if (session('success'))
+                @if (session('error'))
                     <script>
                         Swal.fire({
-                            title: 'Success!',
-                            text: '{{ session('success') }}',
-                            icon: 'success',
+                            title: 'Error!',
+                            text: '{{ session('error') }}',
+                            icon: 'error',
                             confirmButtonText: 'OK'
                         });
                     </script>
@@ -247,7 +247,7 @@
             const amount = document.getElementById('amount');
             const balance = document.getElementById('balance');
             const student = @json($student);
-            console.log(student)
+            // console.log(student)
             let totalFees = parseFloat(student.fees) || parseFloat(student.fees_prof) || 0;
             console.log(totalFees);
 
@@ -282,60 +282,6 @@
             amount.addEventListener('input', calculateBalance);
         })
     </script>
-
-    {{-- <script>
-        document.getElementById('amount').addEventListener('input', function () {
-            
-            const amount = parseFloat(this.value) || 0;
-
-            const schoolFees = schoolFees ? student.fees : student.fees_prof;
-            console.log(schoolFees);
-
-            const initialBalance = parseFloat({$student->balance});
-            const balanceField = document.getElementById('balance');
-
-            // console.log("Balance Field:",balanceField.value)
-
-            if (amount > initialBalance) {
-                alert('Amount cannot be greater than the balance.');
-                this.value = initialBalance;
-                balanceField.value = 0;
-            } else {
-                balanceField.value = initialBalance - amount;
-            }
-        });
-    </script> --}}
-
-    {{-- <script>
-        document.getElementById('amount').addEventListener('input', function () {
-            const amount = parseFloat(this.value) || 0;
-            const initialBalance = parseFloat({{ $student->balance ?? 0 }});
-            const schoolFees = schoolFees ? student.fees : student.fees_prof;
-            console.log(schoolFees);
-            // const schoolFees = parseFloat({{ $student->school_fees ?? 0 }}); // Make sure to pass this from controller
-            const balanceField = document.getElementById('balance');
-
-            if (initialBalance <= 0 || isNaN(initialBalance)) {
-                // If balance is zero/null, subtract from school fees
-                if (amount > schoolFees) {
-                    alert('Amount cannot be greater than the school fees.');
-                    this.value = schoolFees;
-                    balanceField.value = 0;
-                } else {
-                    balanceField.value = schoolFees - amount;
-                }
-            } else {
-                // Original logic for positive balance
-                if (amount > initialBalance) {
-                    alert('Amount cannot be greater than the balance.');
-                    this.value = initialBalance;
-                    balanceField.value = 0;
-                } else {
-                    balanceField.value = initialBalance - amount;
-                }
-            }
-        });
-    </script> --}}
 
     <script>
         document.getElementById('fees_type').addEventListener('change', function () {

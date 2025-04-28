@@ -59,9 +59,9 @@ class StudentController extends Controller
                 });
             });
         }
-
+ 
         if ($sort === 'Academic' || $sort === 'Professional') {
-            $query->where('student_category', $sort);
+           $query->where('student_category', $sort);
         }
 
         $students = $query->latest()->paginate(10); // Adjust pagination size as needed

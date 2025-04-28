@@ -81,9 +81,10 @@
         <!-- Header with Logo -->
         <div class="header">
             <div class="logo-container">
-                <img src="resources/views/backend/fees/siimtlogo.jpeg" alt="Institution Logo" class="logo">
+                <img src="{{asset('logo\SIIMT-logo.png')}}" alt="Institution Logo" class="logo">
             </div>
-            <h1 class="report-title">PAYMENT COLLECTIONS REPORT</h1>
+            <h2 class="report-title">SIIMT UNIVERSITY COLLEGE</h2>
+            <h5 class="report-title">PAYMENT COLLECTIONS REPORT</h5>
             <div class="report-date">
                 <i class="far fa-calendar-alt"></i> Generated on: {{ \Carbon\Carbon::now()->format('F j, Y h:i A') }}
             </div>
@@ -117,11 +118,17 @@
                         <span class="badge badge-success">{{ ucfirst($aca_prof) }}</span>
                     </div>
                 @endif
+                @if ($methodOfPayment)
+                    <div class="col-md-3">
+                        <strong>Method of Payment:</strong><br>
+                        <span class="badge badge-success">{{ ucfirst($methodOfPayment) }}</span>
+                    </div>
+                @endif
             </div>
         </div>
 
         <!-- Payment Method Summary -->
-        <h4 class="section-title"><i class="fas fa-money-bill-wave"></i> Payment Method Summary</h4>
+        <!-- <h4 class="section-title"><i class="fas fa-money-bill-wave"></i> Payment Method Summary</h4>
         <div class="row mb-4">
             <div class="col-md-4">
                 <div class="card text-white bg-success mb-3">
@@ -147,10 +154,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Registration Forms Summary -->
-        <h4 class="section-title"><i class="fas fa-file-alt"></i> Registration Forms</h4>
+        <!-- <h4 class="section-title"><i class="fas fa-file-alt"></i> Registration Forms</h4>
         <div class="row mb-5">
             <div class="col-md-12">
                 <div class="card bg-light">
@@ -160,7 +167,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Detailed Transactions -->
         <h4 class="section-title"><i class="fas fa-list-ul"></i> Detailed Transactions</h4>
@@ -215,7 +222,7 @@
         @endforeach
 
         <!-- Summary Totals -->
-        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals</h4>
+        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals(Student Category)</h4>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-light">
@@ -239,16 +246,27 @@
             </table>
         </div>
 
+<<<<<<< HEAD
         <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals by Cash, Momo, Cheque</h4>
+=======
+        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals(Method of Payments)</h4>
+>>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-light">
                     <tr>
+<<<<<<< HEAD
                         <th>Method of Payment</th>
+=======
+                        <th>Momo</th>
+                        <th>Cash</th>
+                        <th>Cheque</th>
+>>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                         <th>Total Amount</th>
                     </tr>
                 </thead>
                 <tbody>
+<<<<<<< HEAD
                     
                     <tr class=" ">
                         <td>Cash</td>
@@ -264,6 +282,35 @@
                     </tr>
                         
                     
+=======
+                    <tr class="total-highlight">
+                        <td>GHS{{ number_format($momoTotal, 2) ?? "0.00" }}</td>
+                        <td>GHS{{ number_format($cashTotal, 2) ?? "0.00" }}</td>
+                        <td>GHS{{number_format($chequeTotal, 2) ?? "0.00" }}</td>
+                        <td>GHS{{ $momoTotal + $cashTotal + $chequeTotal   }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals(Form Payments)</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Total Amount</th>
+                        <!-- <th>Cash</th>
+                        <th>Cheque</th> -->
+                        <!-- <th>Total Amount</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="total-highlight">
+                        <td>GHS{{ number_format($boughtFormsAmount, 2) ?? "0.00" }}</td>
+                        <!-- <td>GHS{{ number_format($cashTotal, 2) ?? "0.00" }}</td>
+                        <td>GHS{{number_format($chequeTotal, 2) ?? "0.00" }}</td> -->
+                    </tr>
+>>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                 </tbody>
             </table>
         </div>

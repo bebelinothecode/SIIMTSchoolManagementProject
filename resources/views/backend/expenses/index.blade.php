@@ -12,7 +12,7 @@
     </div>
 
     <!-- Search Form -->
-    <form action="{{ route('student.index')}}" method="GET" class="flex items-center mt-4 space-x-4">
+    <form action="{{ route('expenses.table')}}" method="GET" class="flex items-center mt-4 space-x-4">
         <input 
             type="text" 
             name="search" 
@@ -28,7 +28,7 @@
         </button>
     </form>
     
-    <!-- Students Table -->
+    <!-- Expenses Table -->
     <div class="mt-6 bg-white rounded-lg shadow">
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">

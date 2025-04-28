@@ -8,7 +8,11 @@
             </div>
         </div>
         <div class="table w-full mt-8 bg-white rounded">
+<<<<<<< HEAD
             <form action="{{ route('generate.expensesreport') }}" method="GET" class="w-full max-w-xl px-6 py-12" onsubmit="return validateForm()" target="_blank">
+=======
+            <form action="{{ route('generate.expensesreport') }}" method="GET" class="w-full max-w-xl px-6 py-12" target="_blank" onsubmit="return validateForm()">
+>>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -52,18 +56,63 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Mode of Payment
+                        </label>
+                    </div>
+                    <div class="md:w-2/3 block text-gray-600 font-bold">
+                        <select name="mode_of_payment" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="mode_of_payment">
+                            <option value="">--Select Category--</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Mobile Money">Mobile Money</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Student Category
+                        </label>
+                    </div>
+                    <div class="md:w-2/3 block text-gray-600 font-bold">
+                        <select name="student_category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="student_category">
+                            <option value="">--Select Category--</option>
+                            <option value="Academic">Academic</option>
+                            <option value="Professional">Professional</option>
+                            <!-- @foreach ($categorys as $category)
+                                <option value="{{ $category->expense_category }}">{{ $category->expense_category }}</option>
+                            @endforeach -->
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
                             Category
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
                         <select name="category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="method_of_payment">
                             <option value="">--Select Category--</option>
+<<<<<<< HEAD
                             <option value="Academic">Academic</option>
                             <option value="Professional">Professional</option>
+=======
+                            @foreach ($categorys as $category)
+                                <option value="{{ $category->expense_category }}">{{ $category->expense_category }}</option>
+                            @endforeach
+>>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                         </div>
+<<<<<<< HEAD
                     </div>
                 </div>
                 <div class="md:flex md:items-center mb-6">
@@ -104,8 +153,10 @@
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                             </div>
+=======
+>>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                     </div>
-                </div>
+                </div> -->
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3 space-x-4">

@@ -29,9 +29,9 @@
         
             <!-- Your amount labels -->
             <div class="text-right">
-                <div><label class="text-sm text-gray-600">Total Academic: GHS-{{$defaultersAcademicTotal}}</label></div>
-                <div><label class="text-sm text-gray-600">Total Professional: GHS-{{$defaultersAcademicProfessional}}</label></div>
-                <div><label class="text-sm text-gray-600">Total All: GHS-{{$totalAmount}}</label></div>
+                <div><label class="text-sm text-gray-600">Total Academic: GHS{{number_format($defaultersAcademicTotal,2)}}</label></div>
+                <div><label class="text-sm text-gray-600">Total Professional: GHS{{number_format($defaultersAcademicProfessional,2)}}</label></div>
+                <div><label class="text-sm text-gray-600">Total All: GHS{{number_format($totalAmount,2)}}</label></div>
             </div>
         </div>
 
