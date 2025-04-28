@@ -25,25 +25,6 @@
     </div>
 
     <!-- Search Form -->
-<<<<<<< HEAD
-    <form action="{{ route('student.index')}}" method="GET" class="flex items-center mt-4 space-x-4">
-        <input 
-            type="text" 
-            name="search" 
-            placeholder="Search Student" 
-            value="{{ request('search') }}"
-            oninput="this.value = this.value.toUpperCase()"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-        >
-        <button 
-            type="submit" 
-            class="px-4 py-2 m-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-        >
-            Search
-        </button>
-    </form> 
-    
-=======
     <form action="{{ route('student.index') }}" method="GET" class="mb-6">
         <div class="flex flex-col sm:flex-row gap-3">
             <div class="flex-1 relative">
@@ -54,12 +35,24 @@
                 </div>
                 <input 
                     type="text" 
-                    name="search" 
+                    name="search"
+                    id="search-input" 
                     placeholder="Search by name, email or index number" 
                     value="{{ request('search') }}"
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 >
             </div>
+            <script>
+                const searchInput = document.getElementById('search-input')
+
+                // searchInput.addEventListener('input',function() {
+                //     this.value = this.value.toUpperCase();
+                // })
+
+                searchInput.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                })
+            </script>
             <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Search
             </button>
@@ -71,7 +64,6 @@
         </div>
     </form>
 
->>>>>>> 50e3e156ea3092306feb0a8d766f76e662db5f3e
     <!-- Students Table -->
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="overflow-x-auto">
@@ -79,7 +71,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <!-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th> -->
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index Number</th>
@@ -91,10 +83,10 @@
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="text-sm font-medium text-gray-900">{{ $student->user->name }}</div>
+                                <div class="text-sm font-small text-gray-900">{{ $student->user->name }}</div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $student->user->email }}</td>
+                        <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $student->user->email }}</td> -->
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $student->balance < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
                                 {{ number_format($student->balance, 2) }}

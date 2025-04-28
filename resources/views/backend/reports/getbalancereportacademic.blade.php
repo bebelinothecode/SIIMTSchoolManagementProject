@@ -167,6 +167,11 @@
         }
     </style>
 </head>
+@php
+$totalCollectionsGotten = $totalCollectionsAcademics + $formFeesTotals;
+
+$netBalance = $totalCollectionsGotten - $expensesAcademicTotal;
+@endphp
 <body>
     <div class="container">
         <h3>Balance Report(Academic)</h3>
@@ -176,18 +181,19 @@
             <div class="filter-group">
                 <div class="filter-item">
                     <p>Total Collections(School Fees + Form Fees)</p>
-                    <p class="summary-value">GHS {{ $totalCollectionsAcademic + $formFeesTotals }}</p>
+                    <p class="summary-value">GHS {{ number_format($totalCollectionsGotten,2) }}</p>
                 </div>
                 <div class="filter-item">
                     <p>Total Expenses</p>
-                    <p class="summary-value">GHS {{ $totalCombinedExpenses }}</p>
+                    <p class="summary-value">GHS {{ number_format($totalCombinedExpenses,2) }}</p>
                 </div>
                 <div class="filter-item">
                     <p>Net Balance</p>
-                    <p class="summary-value">GHS {{ ($totalCollectionsAcademic + $formFeesTotals) - $totalCombinedExpenses }}</p>
+                    <p class="summary-value">GHS {{ number_format($netBalance,2) }}</p>
                 </div>
             </div>
         </div>
+        
         
         <!-- Payments Table -->
         <div class="table-container">
@@ -214,7 +220,7 @@
                         <td>{{ $feesTransaction->amount ?? "N/A" }}</td>
                         <td>{{ $feesTransaction->balance ?? "N/A" }}</td>
                         <td>{{ $feesTransaction->currency ?? "N/A" }}</td>
-                        <td>{{ $feesTransaction->mode_of_payment ?? "N/A" }}</td>
+                        <td>{{ $feesTransaction->method_of_payment ?? "N/A" }}</td>
                         <td>{{ $feesTransaction->receipt_number ?? "N/A" }}</td>
                         <td>{{ $feesTransaction->fees_type }}</td>
                         <td>{{ $feesTransaction->created_at }}</td>
@@ -227,8 +233,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2">Total Payments:</td>
-                        <td colspan="7">GHS {{$totalCollectionsAcademic}}</td>
+                        <td colspan="2">Total Payments:GHS{{ number_format($totalCollectionsAcademics,2) }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -304,11 +309,38 @@
                 <tfoot>
                     <tr>
                         <td colspan="3">Total Expenses:</td>
-                        <td colspan="3">GHS {{$totalCombinedExpenses}}</td>
+                        <td colspan="3">GHS {{number_format($expensesAcademicTotal,2)}}</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
+        <div class="overflow-x-auto">
+        <h3 class="text-lg font-bold mb-4">Balance by Category and Mode of Payment</h3>
+        <table class="table-auto w-full border border-gray-300 text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border px-4 py-2">Category</th>
+                    <th class="border px-4 py-2">Cash</th>
+                    <th class="border px-4 py-2">Mobile Money</th>
+                    <th class="border px-4 py-2">Bank Transfer</th>
+                    <th class="border px-4 py-2">Momo</th>
+                    <th class="border px-4 py-2">Cheque</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($balanceByCategoryAndMode as $category => $modes)
+                    <tr>
+                        <td class="border px-4 py-2 font-semibold">{{ $category }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Cash'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Mobile Money'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Bank Transfer'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Momo'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Cheque'] ?? 0, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+</div>
     </div>
 </body>
 </html>

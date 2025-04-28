@@ -88,14 +88,13 @@ class  FeesController extends Controller
             ]);
 
             // dd($validatedData);
+            DB::beginTransaction();
 
             $student = Student::where('index_number',$validatedData['student_index_number'])->first();
 
             $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
-            DB::beginTransaction();
-
-            if ($validatedData['fees_type'] === 'School Fees') {
+            if($validatedData['fees_type'] === 'School Fees') {
                 $feespaid = FeesPaid::create([
                     'student_index_number' => $validatedData['student_index_number'],
                     'student_name' => $validatedData['student_name'],

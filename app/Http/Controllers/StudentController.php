@@ -58,9 +58,9 @@ class StudentController extends Controller
                 });
             });
         }
-
+ 
         if ($sort === 'Academic' || $sort === 'Professional') {
-            $query->where('student_category', $sort);
+           $query->where('student_category', $sort);
         }
 
         $students = $query->latest()->paginate(10); // Adjust pagination size as needed
@@ -629,7 +629,7 @@ class StudentController extends Controller
         $student_balance = $student->balance;
         $feesTypes = FeesType::all();
         // return $student;
-        return view('backend.students.payfee  sform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes'));
+        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes'));
     }
 
     public function promoteAll(Request $request) {

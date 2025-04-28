@@ -17,7 +17,7 @@ class Enquiry extends Model
         'expected_start_date',
         'bought_forms',
         'currency',
-        'amount_paid'
+        'amount'
     ];
 
     use HasFactory;

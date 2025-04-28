@@ -106,7 +106,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/teacher/form', [ReportsController::class, 'teachersForm'])->name('teacherreport.form');
     Route::get('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
     Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
-    Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
+    Route::get('payments/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
     Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
     Route::get('/delete/assigned/subject/{id}',[SubjectController::class,'getDeleteForm'])->name('deleteassigned.subject');
     Route::delete('/delete/assigned/subject/{id}',[SubjectController::class,'deleteAssignedSubject'])->name('delete.assigned');
@@ -132,6 +132,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/edit/transaction/form/{id}',[FeesController::class, 'editTransactionForm'])->name('edit.transactionform');
     Route::put('/edit/transaction/{id}',[FeesController::class, 'updateTransaction'])->name('edit.transaction');
     Route::delete('/delete/transaction/{id}',[FeesController::class, 'deleteTransaction'])->name('delete.transaction');
+    // Route::get('/expenses/table',[ExpensesController::class, 'searchExpensesTable'])->name('search.expenses');
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');
