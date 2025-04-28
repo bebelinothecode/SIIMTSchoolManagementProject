@@ -42,6 +42,7 @@
                     <input 
                         type="text" 
                         name="search" 
+                        id="search"
                         placeholder="Search by name, email or index number" 
                         value="{{ request('search') }}"
                         class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -60,42 +61,14 @@
                         </a>
                     @endif
                 </div>
-<<<<<<< HEAD
             </div>
         </form>
     </div>
-=======
-                <input 
-                    type="text" 
-                    name="search"
-                    id="search-input" 
-                    placeholder="Search by name, email or index number" 
-                    value="{{ request('search') }}"
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-            </div>
-            <script>
-                const searchInput = document.getElementById('search-input')
-
-                // searchInput.addEventListener('input',function() {
-                //     this.value = this.value.toUpperCase();
-                // })
-
-                searchInput.addEventListener('input', function() {
-                    this.value = this.value.toUpperCase();
-                })
-            </script>
-            <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Search
-            </button>
-            @if(request()->has('search') || request()->has('sort'))
-                <a href="{{ route('student.index') }}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Clear Filters
-                </a>
-            @endif
-        </div>
-    </form>
->>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
+    <script>
+        document.getElementById('search').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        })
+    </script>
 
     <!-- Students Table -->
     {{-- <div class="bg-white shadow-sm rounded-lg">
@@ -103,12 +76,7 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-<<<<<<< HEAD
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-=======
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <!-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th> -->
->>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Index Number</th>
@@ -120,7 +88,6 @@
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-<<<<<<< HEAD
                                 <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
                                     {{ substr($student->user->name, 0, 1) }}
                                 </div>
@@ -130,12 +97,6 @@
                                 </div>
                             </div>
                         </td>
-=======
-                                <div class="text-sm font-small text-gray-900">{{ $student->user->name }}</div>
-                            </div>
-                        </td>
-                        <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $student->user->email }}</td> -->
->>>>>>> 75d88e5e788890fab25d7c9df02aa49016ba9a04
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $student->balance < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
                                 {{ number_format($student->balance, 2) }}
