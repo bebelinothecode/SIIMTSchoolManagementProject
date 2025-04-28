@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('title', 'Expenses Generated Report')
 
@@ -59,7 +59,6 @@
         }
     }
 </style>
-
 <div class="container mx-auto mt-6">
     <!-- Back Button -->
     <div class="mb-4 no-print">
@@ -102,10 +101,6 @@
                     <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Mode of Payment</th>
                     <th class="py-3 px-6 text-left">Created on</th>
-                    {{-- <th class="py-3 px-6 text-left">Amount</th>
-                    <th class="py-3 px-6 text-left">Amount</th>
-                    <th class="py-3 px-6 text-left">Amount</th> --}}
-
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
@@ -118,9 +113,6 @@
                         <td class="py-3 px-6 text-left">{{ $expense->amount }}</td>
                         <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
                         <td class="py-3 px-6 text-left">{{ $expense->created_at }}</td>
-                        {{-- <td class="py-3 px-6 text-left">{{ $student->phone }}</td>
-                        <td class="py-3 px-6 text-left">{{ $student->phone }}</td> --}}
-
                     </tr>
                 @empty
                     <tr>
@@ -148,4 +140,320 @@
         </button>
     </div>
 </div>
-@endsection
+@endsection --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Report</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        .header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-height: 80px;
+        }
+        .report-title {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .report-date {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        .filters-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            color: #007bff;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .table {
+            font-size: 14px;
+        }
+        .table thead {
+            background-color: #007bff;
+            color: white;
+        }
+        .total-highlight {
+            font-weight: bold;
+            background-color: #e9f7fe;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+        }
+        .category-title {
+            background-color: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <!-- Header with Logo -->
+        <div class="header">
+            <div class="logo-container">
+                <img src="resources/views/backend/fees/siimtlogo.jpeg" alt="Institution Logo" class="logo">
+            </div>
+            <h1 class="report-title">EXPENSES REPORT</h1>
+            <div class="report-date">
+                <i class="far fa-calendar-alt"></i> Generated on: {{ \Carbon\Carbon::now()->format('F j, Y h:i A') }}
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h4><i class="fas fa-filter"></i> Filters Applied</h4>
+            <div class="row">
+                @if ($currentDate)
+                    <div class="col-md-3">
+                        <strong>Current Date:</strong><br>
+                        <span class="badge badge-primary">{{ \Carbon\Carbon::parse($currentDate)->format('M j, Y') }}</span>
+                    </div>
+                @endif
+                @if ($startDate)
+                    <div class="col-md-3">
+                        <strong>Start Date:</strong><br>
+                        <span class="badge badge-info">{{ \Carbon\Carbon::parse($startDate)->format('M j, Y') }}</span>
+                    </div>
+                @endif
+                @if ($endDate)
+                    <div class="col-md-3">
+                        <strong>End Date:</strong><br>
+                        <span class="badge badge-info">{{ \Carbon\Carbon::parse($endDate)->format('M j, Y') }}</span>
+                    </div>
+                @endif
+                @if ($category)
+                    <div class="col-md-3">
+                        <strong>Category:</strong><br>
+                        <span class="badge badge-success">{{ $category }}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Payment Method Summary -->
+        <h4 class="section-title"><i class="fas fa-money-bill-wave"></i> Payment Method Summary</h4>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Mobile Money</h5>
+                        <p class="card-text display-4">GHS{{ number_format($sumMomoTransactions,2) ?? "0.00" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Cash</h5>
+                        <p class="card-text display-5">GHS{{ number_format($sumCashTransactions, 2) ?? "0.00" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Cheque</h5>
+                        <p class="card-text display-4">{{ number_format($sumBankTransactions,2) ?? "0.00" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <!-- Detailed Transactions -->
+         <h4 class="section-title"><i class="fas fa-list-ul"></i> Detailed Cash Expenses</h4>
+                 <div class="table-responsive">
+                     <table class="table table-sm table-hover">
+                         <thead class="thead-dark">
+                             <tr>
+                                 <th>Source of Expense</th>
+                                 <th>Description of Expense</th>
+                                 <th>Category</th>
+                                 <th>Currency</th>
+                                 <th>Amount</th>
+                                 <th>Mode of Payment</th>
+                                 <th>Mobile Money Details</th>
+                                 <th>Cash Details</th>
+                                 <th>Bank Details</th>
+                                 <th>Cheque Details</th>
+                                 <th>Date</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             @foreach ($cashTransactions as $cashTransaction)
+                                 <tr>
+                                     <td>{{ $cashTransaction->source_of_expense }}</td>
+                                     <td>{{ $cashTransaction->description_of_expense }}</td>
+                                     <td>{{ $cashTransaction->category }}</td>
+                                     <td>{{ $cashTransaction->currency }}</td>
+                                     <td>{{ $cashTransaction->amount }}</td>
+                                     <td>{{ $cashTransaction->mode_of_payment }}</td>
+                                     <td>{{ $cashTransaction->mobile_money_details }}</td>
+                                     <td>{{ $cashTransaction->cash_details }}</td>
+                                     <td>{{ $cashTransaction->bank_details }}</td>
+                                     <td>{{ $cashTransaction->cheque_details }}</td>
+                                     <td>{{ $cashTransaction->created_at }}</td>
+                                 </tr>
+                             @endforeach
+                         </tbody>
+                     </table>
+                 </div>
+
+                 <h4 class="section-title"><i class="fas fa-list-ul"></i> Detailed Mobile Money Expenses</h4>
+                 <div class="table-responsive">
+                     <table class="table table-sm table-hover">
+                         <thead class="thead-dark">
+                             <tr>
+                                 <th>Source of Expense</th>
+                                 <th>Description of Expense</th>
+                                 <th>Category</th>
+                                 <th>Currency</th>
+                                 <th>Amount</th>
+                                 <th>Mode of Payment</th>
+                                 <th>Mobile Money Details</th>
+                                 <th>Cash Details</th>
+                                 <th>Bank Details</th>
+                                 <th>Cheque Details</th>
+                                 <th>Date</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             @foreach ($momoTransactions as $momoTransaction)
+                                 <tr>
+                                     <td>{{ $momoTransaction->source_of_expense }}</td>
+                                     <td>{{ $momoTransaction->description_of_expense }}</td>
+                                     <td>{{ $momoTransaction->category }}</td>
+                                     <td>{{ $momoTransaction->currency }}</td>
+                                     <td>{{ $momoTransaction->amount }}</td>
+                                     <td>{{ $momoTransaction->mode_of_payment }}</td>
+                                     <td>{{ $momoTransaction->mobile_money_details }}</td>
+                                     <td>{{ $momoTransaction->cash_details }}</td>
+                                     <td>{{ $momoTransaction->bank_details }}</td>
+                                     <td>{{ $momoTransaction->cheque_details }}</td>
+                                     <td>{{ $momoTransaction->created_at }}</td>
+                                 </tr>
+                             @endforeach
+                         </tbody>
+                     </table>
+                 </div>
+
+                 <h4 class="section-title"><i class="fas fa-list-ul"></i> Detailed Bank Expenses</h4>
+                 <div class="table-responsive">
+                     <table class="table table-sm table-hover">
+                         <thead class="thead-dark">
+                             <tr>
+                                 <th>Source of Expense</th>
+                                 <th>Description of Expense</th>
+                                 <th>Category</th>
+                                 <th>Currency</th>
+                                 <th>Amount</th>
+                                 <th>Mode of Payment</th>
+                                 <th>Mobile Money Details</th>
+                                 <th>Cash Details</th>
+                                 <th>Bank Details</th>
+                                 <th>Cheque Details</th>
+                                 <th>Date</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             @foreach ($bankTransactions as $bankTransaction)
+                                 <tr>
+                                     <td>{{ $bankTransaction->source_of_expense }}</td>
+                                     <td>{{ $bankTransaction->description_of_expense }}</td>
+                                     <td>{{ $bankTransaction->category }}</td>
+                                     <td>{{ $bankTransaction->currency }}</td>
+                                     <td>{{ $bankTransaction->amount }}</td>
+                                     <td>{{ $bankTransaction->mode_of_payment }}</td>
+                                     <td>{{ $bankTransaction->mobile_money_details }}</td>
+                                     <td>{{ $bankTransaction->cash_details }}</td>
+                                     <td>{{ $bankTransaction->bank_details }}</td>
+                                     <td>{{ $bankTransaction->cheque_details }}</td>
+                                     <td>{{ $bankTransaction->created_at }}</td>
+                                 </tr>
+                             @endforeach
+                         </tbody>
+                     </table>
+                 </div>
+
+                 <h4 class="section-title"><i class="fas fa-list-ul"></i> Detailed {{$category}} Expenses</h4>
+                 <div class="table-responsive">
+                     <table class="table table-sm table-hover">
+                         <thead class="thead-dark">
+                             <tr>
+                                 <th>Source of Expense</th>
+                                 <th>Description of Expense</th>
+                                 <th>Category</th>
+                                 <th>Currency</th>
+                                 <th>Amount</th>
+                                 <th>Mode of Payment</th>
+                                 <th>Mobile Money Details</th>
+                                 <th>Cash Details</th>
+                                 <th>Bank Details</th>
+                                 <th>Cheque Details</th>
+                                 <th>Date</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             @foreach ($expenses as $expense)
+                                 <tr>
+                                     <td>{{ $expense->source_of_expense }}</td>
+                                     <td>{{ $expense->description_of_expense }}</td>
+                                     <td>{{ $expense->category }}</td>
+                                     <td>{{ $expense->currency }}</td>
+                                     <td>{{ $expense->amount }}</td>
+                                     <td>{{ $expense->mode_of_payment }}</td>
+                                     <td>{{ $expense->mobile_money_details }}</td>
+                                     <td>{{ $expense->cash_details }}</td>
+                                     <td>{{ $expense->bank_details }}</td>
+                                     <td>{{ $expense->cheque_details }}</td>
+                                     <td>{{ $expense->created_at }}</td>
+                                 </tr>
+                             @endforeach
+                         </tbody>
+                     </table>
+                 </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>This report was automatically generated by the University Financial System</p>
+            <p><i class="far fa-copyright"></i> {{ date('Y') }} - All Rights Reserved</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

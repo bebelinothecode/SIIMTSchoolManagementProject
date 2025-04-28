@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 use App\Imports\StudentsImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Nette\Schema\ValidationException as SchemaValidationException;
@@ -495,7 +496,8 @@ class StudentController extends Controller
 
     public function storeEnquiry(Request $request) {
         try {
-            // dd($request->all());
+            // dd(Auth::user());
+            // return Auth::user()->name;
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -504,7 +506,8 @@ class StudentController extends Controller
             'type_of_course' => 'required',
             'bought_forms' => 'nullable|in:Yes,No',
             'currency' => 'nullable|string',
-            'amount_paid' => 'nullable|numeric'
+            'amount_paid' => 'nullable|numeric',
+            'User' => 'nullable|string'
         ]);
 
         // dd($validatedData);
@@ -517,7 +520,8 @@ class StudentController extends Controller
             'type_of_course' => $validatedData['type_of_course'],
             'bought_forms' => $validatedData['bought_forms'],
             'currency' => $validatedData['currency'],
-            'amount' => $validatedData['amount_paid']
+            'amount' => $validatedData['amount_paid'],
+            'User' => Auth::user()->name
         ]);
 
         return redirect()->back()->with('success', 'Enquiry created successfully');

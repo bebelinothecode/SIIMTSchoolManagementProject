@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\ExpenseCategory;
 use App\Expenses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ExpensesController extends Controller
@@ -44,7 +45,7 @@ class ExpensesController extends Controller
                 'cash_details' => $validatedData['cash_amount_details'],
                 'bank_details' => $validatedData['bank_details'],
                 'cash_details' => $validatedData['cash_amount_details']
-            ]);
+                ]);
 
             return redirect()->back()->with('success', 'Expense created successfully.');
         } catch (\Exception $e) {
@@ -82,6 +83,22 @@ class ExpensesController extends Controller
 
             $expensesQuery = Expenses::query();
 
+            // dd($expensesQuery->get());
+            $expensesTransactions = $expensesQuery->get();
+
+            $momoTransactions = $expensesTransactions->where('mode_of_payment','Mobile Money')->all();
+            $cashTransactions = $expensesTransactions->where('mode_of_payment','Cash')->all();
+            $bankTransactions = $expensesTransactions->where('mode_of_payment','Bank Transfer')->all();
+
+            $sumMomoTransactions = $expensesTransactions->where('mode_of_payment','Mobile Money')->sum('amount');
+            $sumCashTransactions = $expensesTransactions->where('mode_of_payment','Cash')->sum('amount');
+            $sumBankTransactions = $expensesTransactions->where('mode_of_payment','Bank Transfer')->sum('amount');
+
+            // dd($sumMomoTransactions);
+
+
+
+
             if($validatedData['start_date'] && $validatedData['end_date']) {
                 $expensesQuery->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
             }
@@ -92,17 +109,17 @@ class ExpensesController extends Controller
 
             if($validatedData['current_date'] && $validatedData['category']) {
                 $expensesQuery->whereDate('created_at', $validatedData['current_date'])
-                              ->where('category', $validatedData['category']);  
+                              ->where('source_of_expense', $validatedData['category']);  
             }
 
             if($validatedData['start_date'] && $validatedData['end_date'] && $validatedData['category']) {
                 $expensesQuery->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']])
-                              ->where('category', $validatedData['category']);
+                              ->where('source_of_expense', $validatedData['category']);
             }
 
             $expenses = $expensesQuery->get();
 
-            return view('backend.reports.expensesreport', compact('expenses','category','endDate','startDate','currentDate'));
+            return view('backend.reports.expensesreport', compact('sumBankTransactions','sumCashTransactions','sumMomoTransactions','bankTransactions','cashTransactions','momoTransactions','expenses','category','endDate','startDate','currentDate'));
         } catch (\Exception $e) {
             //throw $th;
             Log::error("Error genrating expenses report".$e->getMessage());

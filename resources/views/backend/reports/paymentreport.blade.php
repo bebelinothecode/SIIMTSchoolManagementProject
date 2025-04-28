@@ -127,7 +127,7 @@
                 <div class="card text-white bg-success mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Mobile Money</h5>
-                        <p class="card-text display-4">{{ $momoTotal ?? "0.00" }}</p>
+                        <p class="card-text display-4">GHS{{ number_format($momoTotal,2) ?? "0.00" }}</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                 <div class="card text-white bg-primary mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Cash</h5>
-                        <p class="card-text display-4">{{ $cashTotal ?? "0.00" }}</p>
+                        <p class="card-text display-5">GHS{{ number_format($cashTotal, 2) ?? "0.00" }}</p>
                     </div>
                 </div>
             </div>
@@ -143,7 +143,7 @@
                 <div class="card text-white bg-warning mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Cheque</h5>
-                        <p class="card-text display-4">{{ $chequeTotal ?? "0.00" }}</p>
+                        <p class="card-text display-4">{{ number_format($chequeTotal,2) ?? "0.00" }}</p>
                     </div>
                 </div>
             </div>
@@ -156,7 +156,7 @@
                 <div class="card bg-light">
                     <div class="card-body text-center">
                         <h5 class="card-title">Total Registration Forms Revenue</h5>
-                        <p class="card-text display-4 text-success">GHS {{ $boughtFormsAmount ?? "0.00" }}</p>
+                        <p class="card-text display-4 text-success">GHS {{ number_format($boughtFormsAmount, 2) ?? "0.00" }}</p>
                     </div>
                 </div>
             </div>
@@ -235,6 +235,35 @@
                             </tr>
                         @endforeach
                     @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="section-title"><i class="fas fa-calculator"></i> Summary Totals by Cash, Momo, Cheque</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Method of Payment</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr class=" ">
+                        <td>Cash</td>
+                        <td><strong>GHS{{ number_format($cashTotal, 2) }}</strong></td>
+                    </tr>
+                    <tr class=" ">
+                        <td>Mobile Money(Momo)</td>
+                        <td><strong>GHS{{ number_format($momoTotal, 2) }}</strong></td>
+                    </tr>
+                    <tr class=" ">
+                        <td>Cheque</td>
+                        <td><strong>GHS{{ number_format($chequeTotal, 2) }}</strong></td>
+                    </tr>
+                        
+                    
                 </tbody>
             </table>
         </div>
