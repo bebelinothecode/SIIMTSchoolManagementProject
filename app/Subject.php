@@ -32,7 +32,14 @@ class Subject extends Model
     //Assign subjects to course
     public function courses()
     {
-        return $this->belongsToMany(Grade::class, 'subject_course', 'course_id', 'subject_id')->withTimestamps();
+        return $this->belongsToMany(Grade::class, 'subject_course', 'course_id', 'subject_id')->withPivot('level_id', 'semester_id') ->withTimestamps();
     }
+
+//     public function courses()
+// {
+//     return $this->belongsToMany(Course::class, 'course_subject')
+//         ->withPivot('level_id', 'semester_id')
+//         ->withTimestamps();
+// }
 
 }

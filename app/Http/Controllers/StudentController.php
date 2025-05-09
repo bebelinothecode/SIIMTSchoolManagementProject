@@ -430,7 +430,7 @@ class StudentController extends Controller
             $enquiries = $query->latest()->paginate(10);
 
             return view('backend.students.enquiry', compact('enquiries'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
             Log::error('Error searching enquiry:' . $e);
         }
@@ -616,7 +616,7 @@ class StudentController extends Controller
             DB::commit();
 
             return redirect()->back()->with('success', 'Student updated successfully');    
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
             DB::rollBack();
 
@@ -680,7 +680,7 @@ class StudentController extends Controller
     
             // Return a error response
             return redirect()->back()->with('error', 'Error saving students details');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
             Log::error('An error occurred', [
                 'exception' => $e, // Include the exception in the context array
@@ -690,10 +690,11 @@ class StudentController extends Controller
 
     public function courseOverviewForm($id) {
         $course = Grade::findOrFail($id);
-
         $subjects = Subject::all();
+        $levels = Level::all();
+        $semesters = Session::all();
         
-        return view('backend.students.courseoutline', compact('subjects','course'));
+        return view('backend.students.courseoutline', compact('subjects','course','levels','semesters'));
     }
 
     function searchString($mainString, $searchString) {
@@ -701,18 +702,32 @@ class StudentController extends Controller
     }
 
     public function  courseOverviewReport(Request $request, $id) {
+        //Assigning subjects to a course controller
         try {
             // dd($request->all());
             $validatedData = $request->validate([
                 'subject' => 'required',
+                'level_id' => 'required',
+                'semester_id' => 'required'
             ]);
+
+            $subjects_ids = $validatedData['subject'];
+            $level_id = $validatedData['level_id'];
+            $semester_id = $validatedData['semester_id'];
 
             $grade = Grade::findOrFail($id);
 
-            $grade->assignSubjectsToCourse()->sync($validatedData['subject']);  
+            foreach ($subjects_ids as $subjects_id) {
+                $grade->assignSubjectsToCourse()->attach($subjects_id, [
+                    'level_id' => $level_id,
+                    'semester_id' => $semester_id
+                ]);
+            }
+
+            // $grade->assignSubjectsToCourse()->sync([$subject_id,$level_id,$semester_id]);  
             
             return redirect()->back()->with('success', 'Subject(s) assigned successfully!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
             Log::error("Error occured",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 
@@ -750,7 +765,7 @@ class StudentController extends Controller
     // Fetch paginated results
     $students = $query->latest()->paginate(10); // Adjust pagination size as needed
 
-    return $students;
+    // return $students;
 
     return view('backend.students.index', compact('students'));
     }
@@ -773,7 +788,7 @@ class StudentController extends Controller
             DB::commit();
     
             return redirect()->back()->with('success', 'Students imported successfully!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
             DB::rollBack();
             Log::error("Error occured",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
@@ -793,5 +808,31 @@ class StudentController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         }
+    }
+
+    public function getCourseOutlineForm() {
+        $userId = Auth::user()->id;
+        // $user = Auth::user();
+
+        // return $user;
+
+        $student = Student::findOrFail($userId);
+
+        $courseId = $student->course_id ?? $student->course_id_prof;
+        // $course = Grade::findOrFail($courseId) ?? Diploma::findOrFail($courseId);
+
+        // $levels = [100, 200, 300, 400];  
+
+        // $semesters = [1, 2];
+
+        $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
+            $query->withPivot('level_id', 'semester_id');
+        }])->findOrFail($courseId);
+
+        $groupedSubjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
+            return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
+        });
+
+        return view('backend.students.getcourseoutline',compact('groupedSubjects'));
     }
 }

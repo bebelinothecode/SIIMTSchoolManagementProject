@@ -47,23 +47,42 @@
                         </select>
                     </div>
                 </div>
-                {{-- <div class="md:flex md:items-center mb-6">
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="semester">
+                            Level
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <select name="level_id" id="level" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            <option value="">-- Select Level --</option>
+                            @foreach ($levels as $level)
+                                <option value="{{ $level->id }}">Level {{ $level->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('level')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div> 
+                <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="semester">
                             Semester
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <select name="semester" id="semester" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                        <select name="semester_id" id="semester" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                             <option value="">-- Select Semester --</option>
-                            <option value="1">Semester One</option>
-                            <option value="2">Semester Two</option>
+                            @foreach ($semesters as $semester)
+                                <option value="{{ $semester->id }}">Semester {{ $semester->name }}</option>
+                            @endforeach
                         </select>
                         @error('semester')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
-                </div> --}}
+                </div> 
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">

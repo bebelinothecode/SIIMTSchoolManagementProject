@@ -215,7 +215,7 @@
                         <td>{{ $feeCollectionTransaction->amount ?? "N/A" }}</td>
                         <td>{{ $feeCollectionTransaction->balance ?? "N/A" }}</td>
                         <td>{{ $feeCollectionTransaction->currency ?? "N/A" }}</td>
-                        <td>{{ $feeCollectionTransaction->mode_of_payment ?? "N/A" }}</td>
+                        <td>{{ $feeCollectionTransaction->method_of_payment  }}</td>
                         <td>{{ $feeCollectionTransaction->receipt_number ?? "N/A" }}</td>
                         <td>{{ $feeCollectionTransaction->fees_type }}</td>
                         <td>{{ $feeCollectionTransaction->created_at }}</td>
@@ -309,6 +309,33 @@
                     </tr>
                 </tfoot>
             </table>
+        </div>
+        <div class="overflow-x-auto">
+        <h3 class="text-lg font-bold mb-4">Balance by Category and Mode of Payment</h3>
+        <table class="table-auto w-full border border-gray-300 text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border px-4 py-2">Category</th>
+                    <th class="border px-4 py-2">Cash</th>
+                    <th class="border px-4 py-2">Mobile Money</th>
+                    <th class="border px-4 py-2">Bank Transfer</th>
+                    <!-- <th class="border px-4 py-2">Momo</th>
+                    <th class="border px-4 py-2">Cheque</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($balanceByCategoryAndMode as $category => $modes)
+                    <tr>
+                        <td class="border px-4 py-2 font-semibold">{{ $category }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Cash'] ?? 0, 2) }}</td>
+                        <!-- <td class="border px-4 py-2">{{ number_format($modes['Mobile Money'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Bank Transfer'] ?? 0, 2) }}</td> -->
+                        <td class="border px-4 py-2">{{ number_format($modes['Momo'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Cheque'] ?? 0, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
         </div>
     </div>
 </body>

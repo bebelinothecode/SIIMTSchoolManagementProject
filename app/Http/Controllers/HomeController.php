@@ -65,7 +65,7 @@ class HomeController extends Controller
 
         } elseif ($user->hasRole('Student')) {
             
-            $student = Student::with(['user','parent','class','attendances'])->findOrFail($user->id); 
+            $student = Student::with(['user','parent','attendances'])->findOrFail($user->id); 
 
             return view('home', compact('student'));
 

@@ -132,6 +132,10 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/edit/transaction/form/{id}',[FeesController::class, 'editTransactionForm'])->name('edit.transactionform');
     Route::put('/edit/transaction/{id}',[FeesController::class, 'updateTransaction'])->name('edit.transaction');
     Route::delete('/delete/transaction/{id}',[FeesController::class, 'deleteTransaction'])->name('delete.transaction');
+    Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
+
+    // Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
+
     // Route::get('/expenses/table',[ExpensesController::class, 'searchExpensesTable'])->name('search.expenses');
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
@@ -183,8 +187,10 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::get('/fees', [StudentController::class,'studentSchoolFees'])->name('see.fees');    // Route::get('/books/{book}/download', [BookController::class, 'download'])->name('books.download');
 
     Route::get('/history',[FeesController::class, 'feesHistory'])->name('fees.history');
+    Route::post('/get/course/overview/report/{id}', [StudentController::class, 'courseOverviewReport'])->name('courseoverview.report');
     Route::post("/gethistory", [FeesController::class, 'getFeeHistory'])->name('get.history');
     Route::post('/query/books', [BookController::class,'searchBooks'])->name('query.books');
+    Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
 });
 
 // Route::group(['middleware' => ['auth','role:frontdesk']], function () {

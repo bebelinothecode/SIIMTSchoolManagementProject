@@ -17,11 +17,7 @@ class Enquiry extends Model
         'expected_start_date',
         'bought_forms',
         'currency',
-<<<<<<< HEAD
-        'amount_paid',
-=======
         'amount',
->>>>>>> d9624125e5bfd82f994640b4cc4d6e25c90846bf
         'User'
     ];
 

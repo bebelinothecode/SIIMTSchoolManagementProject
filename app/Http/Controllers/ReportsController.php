@@ -249,7 +249,9 @@ class ReportsController extends Controller
                 $feeTransactionsQuery->whereDate('created_at', $currentDate);
             }
 
-            // if($)
+            if($methodOfPayment) {
+                $feeTransactionsQuery->where('method_of_payment', $methodOfPayment);
+            }
 
             $feeTransactions = $feeTransactionsQuery->get();
 
@@ -312,11 +314,7 @@ class ReportsController extends Controller
                 'chequeTotal' => $chequeTotal
             ]);
 
-<<<<<<< HEAD
         } catch (Exception $e) {
-=======
-        } catch (\Exception $e) {
->>>>>>> d9624125e5bfd82f994640b4cc4d6e25c90846bf
             Log::error('Error generating payment report', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -654,7 +652,6 @@ class ReportsController extends Controller
     public function calculateBalanceTotal(Request $request)
     {
         try {
-            // Validate the request data
             $validatedData = $request->validate([
                 'category' => 'nullable|string|in:Academic,Professional,Total',
                 'current_date' => 'nullable|date',
@@ -682,18 +679,32 @@ class ReportsController extends Controller
 
             $formFeesTransactions = $formFeesQuery
                 ->where('bought_forms', 'Yes')
-                ->where('type_of_course', $selectedCategory)
-                ->get();
+                ->when($selectedCategory, function ($query) use ($selectedCategory) {
+                    return $query->where('type_of_course', $selectedCategory);
+                }, function ($query) {
+                    return $query->whereIn('type_of_course', ['Academic', 'Professional']);
+                })->get();
+
             $formFeesTotals = $formFeesTransactions->sum('amount');
 
             // ========== EXPENSES ==========
             $expensesQuery = DB::table('expenses');
-            if ($selectedCategory === 'Total') {
-                $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
-            } elseif ($selectedCategory) {
+            if($selectedCategory === 'Academic' || $selectedCategory === 'Professional') {
                 $expensesQuery->where('source_of_expense', $selectedCategory);
             } else {
                 $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
+            }
+            // if ($selectedCategory === 'Total') {
+            //     $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
+            // } elseif ($selectedCategory) {
+            //     $expensesQuery->where('source_of_expense', $selectedCategory);
+            // } else {
+            //     $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
+            // }
+            if($modeOfPayment === 'Cash' || $modeOfPayment === 'Mobile Money' || $modeOfPayment === 'Bank Transfer') {
+                $expensesQuery->where('mode_of_payment', $modeOfPayment);
+            } else {
+                $expensesQuery->whereIn('mode_of_payment',['Cash','Mobile Money','Bank Transfer']);
             }
 
             if ($currentDate) {
@@ -709,6 +720,9 @@ class ReportsController extends Controller
             $expensesTransactions = $expensesQuery->get();
             $expensesTotalAmount = $expensesTransactions->sum('amount');
 
+            $expensesTransactions = $expensesQuery->get();
+            $expensesTotalAmount = $expensesTransactions->sum('amount');
+
             $expensesTotals = $expensesTransactions->groupBy('source_of_expense')
                 ->map(fn($items) => $items->sum('amount'));
 
@@ -719,6 +733,16 @@ class ReportsController extends Controller
             $feeCollectionsQuery = DB::table('collect_fees')
                 ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
                 ->whereIn('students.student_category', ['Academic', 'Professional']);
+
+            $paymentMethodMap = [
+                'Cash' => 'Cash',
+                'Mobile Money' => 'Momo',
+                'Bank Transfer' => 'Cheque'
+            ];
+
+            if (isset($paymentMethodMap[$modeOfPayment])) {
+                $feeCollectionsQuery->where('method_of_payment', $paymentMethodMap[$modeOfPayment]);
+            }
 
             if ($currentDate) {
                 $feeCollectionsQuery->whereDate('collect_fees.created_at', $currentDate);
@@ -732,12 +756,15 @@ class ReportsController extends Controller
 
             $feeCollectionTransactions = $feeCollectionsQuery
                 ->select('collect_fees.*', 'students.student_category')
-                ->get();
-            // return $feeCollectionTransactions;
-
+                ->get();   
+ 
             $feesPaymentsTotal = $feeCollectionTransactions->sum('amount');
 
-            $feesTransactions = $feeCollectionTransactions->where('student_category',$selectedCategory)->all();
+            // $feesTransactions = $feeCollectionTransactions->where('student_category',$selectedCategory)->all();
+            $feesTransactions = in_array($selectedCategory, ['Academic', 'Professional']) 
+                    ? $feeCollectionTransactions->where('student_category', $selectedCategory)->all()
+                    : $feeCollectionTransactions->whereIn('student_category', ['Academic', 'Professional'])->all();
+            // return $feesTransactions;
 
             $feeCollectionsTotals = $feeCollectionTransactions->groupBy('student_category')
                 ->map(fn($items) => $items->sum('amount'));
@@ -758,14 +785,18 @@ class ReportsController extends Controller
                     $categoryGroup->map(fn($items) => $items->sum('amount'))
                 );
 
+                // return $collectionsByCategoryAndMode;
+
             $expensesByCategoryAndMode = $expensesTransactions->groupBy(['source_of_expense', 'mode_of_payment'])
                 ->map(fn($categoryGroup) =>
                     $categoryGroup->map(fn($items) => $items->sum('amount'))
                 );
 
+                // return $expensesByCategoryAndMode;
+
             $balanceByCategoryAndMode = [];
             foreach (['Academic', 'Professional'] as $category) {
-                foreach (['Cash', 'Mobile Money', 'Bank Transfer', 'Momo', 'Cheque'] as $mode) {
+                foreach (['Cash', 'Momo', 'Cheque'] as $mode) {
                     $collections = $collectionsByCategoryAndMode[$category][$mode] ?? 0;
                     $expenses = $expensesByCategoryAndMode[$category][$mode] ?? 0;
                     $balanceByCategoryAndMode[$category][$mode] = $collections - $expenses;
@@ -800,6 +831,7 @@ class ReportsController extends Controller
                 'formFeesBebelinos' => $formFeesBebelinos,
                 'formFeesAllAmount' => $formFeesAllAmount,
                 'feesPaymentsTotal' => $feesPaymentsTotal,
+                'expensesTotalAmount' => $expensesTotalAmount,
 
                 'collectionsByCategoryAndMode' => $collectionsByCategoryAndMode,
                 'expensesByCategoryAndMode' => $expensesByCategoryAndMode,
@@ -823,9 +855,5 @@ class ReportsController extends Controller
             return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
         }
     }
-
-
-
-    
 }
 
