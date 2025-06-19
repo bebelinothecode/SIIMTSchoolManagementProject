@@ -17,9 +17,8 @@
     </div>
 
     <div class="table w-full mt-8 bg-white rounded">
-        <form action="{{ route('save.expense')}}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
+        <form action="{{ route('expense.update',$expense->id)}}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
             @csrf
-
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="academic_professional">
@@ -29,8 +28,8 @@
                 <div class="md:w-2/3">
                     <select name="source_of_expense" id="source_of_expense" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight m-3 focus:outline-none focus:bg-white focus:border-gray-500" required>
                         <option value="">--Select one--</option>
-                        <option value="Academic">Academic</option>
-                        <option value="Professional">Professional</option>
+                        <option value="Academic" {{ $expense->source_of_expense == 'Academic' ? 'selected' : '' }}>Academic</option>
+                        <option value="Professional" {{ $expense->source_of_expense == 'Professional' ? 'selected' : '' }}>Professional</option>
                     </select>
                 </div>
             </div>
@@ -42,7 +41,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <textarea name="description" id="description" placeholder="Enter here..." class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"></textarea>
+                    <textarea name="description" id="description" placeholder="Enter here..." class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">{{ old('description', $expense->description_of_expense) }}</textarea>
                 </div>
             </div>
             <div class="md:flex md:items-center mb-6">
@@ -52,10 +51,12 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <select name="expense_category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expense_category">
+                    <select name="category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expense_category">
                         <option value="">--Select Category--</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->expense_category }}">{{ $category->expense_category }}</option>
+                            <option value="{{ $category->expense_category }}" {{ $expense->category == $category->expense_category ? 'selected' : '' }}>
+                                {{ $category->expense_category }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -70,8 +71,8 @@
                 <div class="md:w-2/3">
                     <select name="currency" id="currency" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
                         <option value="">--Select Currency--</option>
-                        <option value="Dollar">Dollar</option>
-                        <option value="Ghana Cedi">Ghana Cedi</option>
+                        <option value="Dollar" {{ $expense->currency == 'Dollar' ? 'selected' : '' }}>Dollar</option>
+                        <option value="Ghana Cedi" {{ $expense->currency == 'Ghana Cedi' ? 'selected' : '' }}>Ghana Cedi</option>
                     </select>
                 </div>
             </div>
@@ -83,7 +84,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <input type="number" name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" placeholder="Enter cash amount" step="0.01" min="0">
+                    <input type="number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" name="amount" value="{{ old('amount', $expense->amount) }}" ... >
                 </div>
             </div>
 
@@ -96,10 +97,10 @@
                 <div class="md:w-2/3">
                     <select name="mode_of_payment" id="mode_of_payment" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
                         <option value="">--Mode of Payment--</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Cheque">Cheque</option>
-                        <option value="Mobile Money">Mobile Money</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash" {{ $expense->mode_of_payment == 'Cash' ? 'selected' : '' }}>Cash</option>
+                        <option value="Cheque" {{ $expense->mode_of_payment == 'Cheque' ? 'selected' : '' }}>Cheque</option>
+                        <option value="Mobile Money" {{ $expense->mode_of_payment == 'Mobile Money' ? 'selected' : '' }}>Mobile Money</option>
+                        <option value="Bank Transfer" {{ $expense->mode_of_payment == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
                     </select>
                 </div>
             </div>
@@ -160,7 +161,7 @@
                 <div class="md:w-1/3"></div>
                 <div class="md:w-2/3">
                     <button type="submit" class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
-                        Create Expense
+                        Update Expense
                     </button>
                 </div>
             </div>

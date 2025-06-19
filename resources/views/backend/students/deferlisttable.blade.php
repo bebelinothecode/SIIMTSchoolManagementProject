@@ -2,40 +2,56 @@
 
 @section('content')
 
-@hasanyrole('Admin|rector|AsstAccount')
+@hasanyrole('Admin|rector')
 <div class="container mx-auto mt-6">
-    <h1 class="text-2xl font-bold text-gray-700">Transactions History</h1>
+    <!-- <h1 class="text-2xl font-bold text-gray-700">Defer List Table</h1> -->
+
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-bold text-gray-700">Defer List Table</h1>
+
+        <form action=" ">
+            <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                Print
+            </button>
+        </form>
+        
+        <!-- <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            Print
+        </button> -->
+    </div>
+
 
     <!-- Date Range Filter Form -->
-    <form action="{{route('get.transactions')}}" method="GET" class="flex items-center mt-4 space-x-4">
+    <form action=" " method="GET" class="flex items-center mt-4 space-x-4">
         <!-- Start Date Picker -->
 
         <div class="flex flex-col sm:flex-row gap-3">
             <div class="flex-1 relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <!-- <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                     </svg>
-                </div>
-                <input 
+                </div> -->
+                <!-- Search  -->
+                <!-- <input 
                     type="text" 
                     name="search" 
                     id="search"
                     placeholder="Search by name, email or index number" 
                     value="{{ request('search') }}"
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                <script>
+                > -->
+                <!-- <script>
                     document.getElementById('search').addEventListener('input', function(e) {
                         this.value = this.value.toUpperCase();
                     })
-                </script>
+                </script> -->
             </div>
-            <div class="flex flex-col sm:flex-row gap-2">
+            <!-- <div class="flex flex-col sm:flex-row gap-2">
                 <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
                     Search
                 </button>
-            </div>
+            </div> -->
         </div>
         
     </form>
@@ -46,42 +62,42 @@
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
                     <th class="py-3 px-6 text-left">Student Name</th>
-                    <th class="py-3 px-6 text-left">Method of Payment</th>
-                    <th class="py-3 px-6 text-left">Amount</th>
+                    <th class="py-3 px-6 text-left">Phone Number</th>
+                    <th class="py-3 px-6 text-left">Index Number</th>
+                    <th class="py-3 px-6 text-left">Course</th>
+                    <th class="py-3 px-6 text-left">Fees</th>
                     <th class="py-3 px-6 text-left">Balance</th>
-                    <th class="py-3 px-6 text-left">Currency</th>
-                    <th class="py-3 px-6 text-left">Cheque Number</th>
-                    <th class="py-3 px-6 text-left">Momo Number</th>
-                    <th class="py-3 px-6 text-left">Date</th>
                     <th class="py-3 px-6 text-left">Actions</th>
-
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
-                @forelse ($transactions as $transaction)
+                @forelse ($students as $student)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left">{{ $transaction->student_name }}</td>
-                    <td class="py-3 px-6 text-left">{{ $transaction->method_of_payment }}</td>
-                    <td class="py-3 px-6 text-left">{{ number_format($transaction->amount, 2) }}</td>
-                    <td class="py-3 px-6 text-left">{{ $transaction->balance }}</td>
-                    <td class="py-3 px-6 text-left">{{ $transaction->currency }}</td>
-                    <td class="py-3 px-6 text-left">{{ $transaction->cheque_number ?? "Not Found" }}</td>
-                    <td class="py-3 px-6 text-left">{{ $transaction->Momo_number ?? "Not Found" }}</td>
-                    <td class="py-3 px-6 text-left">{{ $transaction->created_at->format('Y-m-d') }}</td>
-                    <td class="py-3 px-6 text-center">
+                    <td class="py-3 px-6 text-left">{{ $student->user_name }}</td>
+                    <td class="py-3 px-6 text-left">{{ $student->phone }}</td>
+                    <td class="py-3 px-6 text-left">{{ $student->index_number }}</td>
+                    @if ($student->student_category === 'Academic')
+                        <td class="py-3 px-6 text-left">{{ $student->grade_name }}</td>
+                     @endif
+                     @if ($student->student_category === 'Professional')
+                        <td class="py-3 px-6 text-left">{{ $student->diploma_title }}</td>
+                     @endif
+                     @if ($student->student_category === 'Academic')
+                        <td class="py-3 px-6 text-left">{{ $student->fees }}</td>
+                     @endif
+                     @if ($student->student_category === 'Professional')
+                        <td class="py-3 px-6 text-left">{{ $student->fees_prof }}</td>
+                     @endif
+                    <td class="py-3 px-6 text-left">{{ $student->balance }}</td>
+                    <td class="py-3 px-6 text-center"> 
                         @hasanyrole('Admin|rector')
-                             <a href="{{route('edit.transactionform',$transaction->id)}}" class="ml-4 text-green-600 hover:underline">Edit</a>
-                             <form action="{{route('delete.transaction',$transaction->id)}}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
-                            </form>
+                             <a href="{{ url('/restore/defer/students/' . $student->id) }}" onclick="return confirm('Are you sure you want to restore this student?')" class="ml-4 text-green-600 hover:underline">Restore Student</a>
                         @endhasanyrole
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="py-3 px-6 text-center text-gray-500">No transactions found.</td>
+                    <td colspan="5" class="py-3 px-6 text-center text-gray-500">No students found in Defer List.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -89,9 +105,9 @@
     </div>
 
     <!-- Pagination -->
-    <div class="mt-8">
-        {{ $transactions->appends(request()->query())->links() }}
-    </div>
+    <!-- <div class="mt-8">
+
+    </div> -->
 </div>
 @endhasanyrole
 

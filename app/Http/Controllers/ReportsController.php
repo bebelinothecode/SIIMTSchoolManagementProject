@@ -43,19 +43,20 @@ class ReportsController extends Controller
 
     public function generate(Request $request) {
         try {
+            // dd($request->all());
             $validatedData = $request->validate([
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
+                // 'start_date' => 'required|date',
+                // 'end_date' => 'required|date|after_or_equal:start_date',
                 'diplomaID' => 'required|integer|exists:diploma,id'
             ]);
 
             $diplomaID = $validatedData['diplomaID'];
-            $end_date = $validatedData['end_date'];
-            $start_date = $validatedData['start_date'];
+            // $end_date = $validatedData['end_date'];
+            // $start_date = $validatedData['start_date'];
             // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
             // Retrieve parameters from the request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        // $startDate = $request->input('start_date');
+        // $endDate = $request->input('end_date');
         $diplomaID = $request->input('diplomaID');
 
         $students = Student::with(['user', 'diploma'])
@@ -63,34 +64,25 @@ class ReportsController extends Controller
                 // Ensure the student is associated with a diploma
                 $query->whereNotNull('id'); // Assuming 'id' is the primary key of the diplomas table
             })
-            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                // Filter students created within the date range
-                return $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
+            // ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+            //     // Filter students created within the date range
+            //     return $query->whereBetween('created_at', [$startDate, $endDate]);
+            // })
             ->when($diplomaID, function ($query, $diplomaID) {
                 return $query->whereHas('diploma', function ($q) use ($diplomaID) {
                     $q->where('id', $diplomaID); // Filter by subject ID
                 });
-            })
-            ->get();
-        return view('backend.reports.studentreport', compact('students', 'startDate', 'endDate','diplomaID'));
+            })->get();
+        return view('backend.reports.studentreport', compact('students', 'diplomaID'));
             
         } catch (Exception $e) {
             //throw $th;
         Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-             $startDate = $request->input('start_date');
-            $endDate = $request->input('end_date');
-            $diplomaID = $request->input('diplomaID');    
-            $diploma = Diploma::findOrFail($diplomaID);
-
-            $students = Student::whereNotNull('course_id_prof')
-            ->where('course_id_prof', $diplomaID)
-            ->whereBetween('created_at', [$start_date, $end_date])
-            ->with('user') // Eager load the user relationship
-            ->get();
+             
+            
     
-            // Pass data to the view
-            return view('backend.reports.studentreport', compact('students', 'start_date', 'end_date', 'diploma'));
+            // // Pass data to the view
+            // return view('backend.reports.studentreport', compact('students', 'start_date', 'end_date', 'diploma'));
     
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Database error in report generation', ['message' => $e->getMessage()]);
@@ -159,38 +151,68 @@ class ReportsController extends Controller
     public function generateAcademicReport(Request $request) {
         try {
             // dd($request->all());
-            $courseID = $request->input('courseID');
-            $academicyear = $request->input('academicyear');
-            $level = $request->input('level');
-            $semester = $request->input('semester');
+            $validatedData = $request->validate([
+                'courseID' => 'required',
+                'level' => 'nullable|in:100,200,300,400',
+                'semester' => 'nullable|in:1,2'
+            ]);
 
-            $studentsQuery = Student::with('user','course');
+            $courseID = $validatedData['courseID'];
+            $level = $validatedData['level'];
+            $semester = $validatedData['semester'];
 
-            // $course = Grade::findOrFail($courseID);
+            // $students = DB::table('students as s')
+            // ->join('users as u', 's.user_id', '=', 'u.id')
+            // ->join('grades as g', 's.course_id', '=', 'g.id')
+            // ->select([
+            // 's.id as student_id',
+            // 'u.name',
+            // 'u.email',
+            // 'g.course_name as course_name',
+            // 's.level',
+            // 's.session as semester'
+            //  ])
+            // // ->where('s.course_id', $courseID)
+            // ->when($courseID, function ($query, $courseID) {
+            //     return $query->where('s.course_id', $courseID);
+            // })
+            // ->when($level, function ($query, $level) {
+            //     return $query->where('s.level', $level);
+            // })
+            // ->when($semester, function ($query, $semester) {
+            //     return $query->where('s.session', $semester);
+            // })
+            // ->orderBy('u.name')
+            // ->get();
 
+            $query = DB::table('students')
+                ->join('users', 'students.user_id', '=', 'users.id')
+                ->leftJoin('grades', 'students.course_id', '=', 'grades.id')
+                ->select(
+                    'students.*',
+                    'users.name as user_name',
+                    'grades.course_name as course_name'
+                )
+                ->where('students.student_category','Academic');
+            
+            if (!empty($courseID)) {
+                $query->where('course_id', $courseID);
+            }
 
+            if (!empty($level)) {
+                $query->where('level', $level);
+            }
 
-            $students = Student::with(['user', 'course'])
-            ->when($courseID, function ($query, $courseID) {
-                return $query->whereHas('course', function ($q) use ($courseID) {
-                    $q->where('id', $courseID); // Filter by subject ID
-                });
-            })
-            ->when($level, function ($query, $level) {
-                return $query->where('level', $level); // Filter by teacher's gender
-            })
-            ->when($semester, function ($query, $semester) {
-                return $query->where('session', $semester); // Filter by teacher's gender
-            })
-            ->when($academicyear, function ($query, $academicyear) {
-                return $query->where('academicyear', $academicyear); // Filter by teacher's gender
-            })
-            ->get();
+            if (!empty($semester)) {
+                $query->where('session', $semester);
+            }
 
-            // return $students;
+            $students = $query->get();
 
-            return view('backend.reports.studentsacademicreport',compact('courseID','academicyear','level','semester','students'));
-        } catch (\Exception $e) {
+            return [$students, $students->count()];
+
+            return view('backend.reports.studentsacademicreport',compact('level','semester','students'));
+        } catch (Exception $e) {
             //throw $th;
             Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 

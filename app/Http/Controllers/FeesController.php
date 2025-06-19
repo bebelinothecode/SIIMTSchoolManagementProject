@@ -7,6 +7,7 @@ use App\Level;
 use App\Session;
 use App\Student;
 use App\FeesPaid;
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -90,7 +91,7 @@ class  FeesController extends Controller
             // dd($validatedData);
             DB::beginTransaction();
 
-            $student = Student::where('index_number',$validatedData['student_index_number'])->first();
+            $student = Student::where('index_number',operator: $validatedData['student_index_number'])->first();
 
             $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
@@ -134,7 +135,7 @@ class  FeesController extends Controller
             DB::commit();
 
             return view('backend.fees.receipt', compact('feespaid'))->with('success', 'School Fees has been collected');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
             DB::rollBack();
             
@@ -192,9 +193,33 @@ class  FeesController extends Controller
     }
 
     public function feesHistory() {
-        $sessions = Session::all();
+        try {
+            //code...
+            $userId = Auth::id();
+            if (!$userId) {
+                throw new Exception('User not authenticated');
+            }
 
-        return view('backend.students.paymenthistory', compact('sessions'));
+            $user = Auth::user();
+
+            $student = DB::table('students')
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$student) {
+                throw new Exception('Student record not found');
+            }
+
+            // $payments = DB::table('collect_fees')->where('student_index_number',operator: $student->index_number)->get();
+            $payments = DB::table('collect_fees')->where('student_index_number', $student->index_number)->orderBy('created_at', 'desc')->paginate(10);
+            return view('backend.students.paymenthistory', compact('payments','student','user'));
+        } catch (\Throwable $e) {
+             Log::error('Error in getCourseOutlineForm: ' . $e->getMessage());
+            
+             // Redirect back with error message
+             return redirect()->back()->with('error', 'Failed to load course outline: ' . $e->getMessage());
+        }
+
     }
 
 
@@ -221,31 +246,45 @@ class  FeesController extends Controller
         return view('backend.fees.transactions');
     }
 
+    // public function getTransactions(Request $request) {
+    //     try {
+    //         $sort = $request->input('sort');
+            
+    //         $query = FeesPaid::query();
+
+    //         $transactions = FeesPaid::where('student_index_number', $sort )
+    //         ->orWhere('student_name', $sort)->get();
+
+    //         $transactions = $query->latest()->paginate(15);
+
+    //         return view('backend.fees.transactions', compact('transactions'));
+    //     } catch (Exception $e) {
+    //         //throw $th;
+    //         Log::error("Error executing query",["Error exceuting code"=>$e->getMessage()]);
+    //     }
+    // }
+
     public function getTransactions(Request $request) {
         try {
-            //code...
-            $request->all([
-                'start_date' => 'required|date',
-                'end_date' => 'required|date'
-            ]);
-            
+            $search = $request->input('search');
+    
             $query = FeesPaid::query();
-            
-            if ($request->has('start_date') && $request->has('end_date')) {
-                $query->whereBetween('created_at', [
-                    $request->start_date,
-                    $request->end_date
-                ]);
+    
+            if (!empty($search)) {
+                $query->where('student_index_number', 'like', "%{$search}%")
+                      ->orWhere('student_name', 'like', "%{$search}%");
             }
-
-            $transactions = $query->latest()->paginate(10);
-
+    
+            $transactions = $query->latest()->paginate(15);
+    
             return view('backend.fees.transactions', compact('transactions'));
-        } catch (\Exception $e) {
-            //throw $th;
-            Log::error("Error executing query",["Error exceuting code"=>$e->getMessage()]);
+        } catch (Exception $e) {
+            Log::error("Error executing query", ["message" => $e->getMessage()]);
+            
+            return redirect()->back()->with('error', 'An error occurred while fetching transactions.');
         }
     }
+    
 
     public function editTransactionForm($id) {
         $transaction = FeesPaid::findOrFail($id);
@@ -275,7 +314,7 @@ class  FeesController extends Controller
             $transaction->update($validatedData);
     
             return redirect()->back()->with("success","School Fees has been set successfully");
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error updating transaction:'. $e);
         }
     }

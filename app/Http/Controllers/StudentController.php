@@ -16,9 +16,11 @@ use App\Subject;
 use App\FeesType;
 use Carbon\Carbon;
 use App\AcademicYear;
+use App\Defer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Imports\StudentsImport;
+use App\RegisterCourse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -28,46 +30,44 @@ use Nette\Schema\ValidationException as SchemaValidationException;
 
 class StudentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $sort = $request->input('sort');
 
-        // Fetch students and handle search
         $query = Student::with('user', 'course', 'diploma')
-        ->where(function ($q) {
-            $q->whereNotNull('course_id')
-            ->orWhereNotNull('course_id_prof');
-        });
+            ->join('users', 'students.user_id', '=', 'users.id')
+            ->where(function ($q) {
+                $q->whereNotNull('course_id')
+                    ->orWhereNotNull('course_id_prof');
+            });
 
         if ($request->has('search') && $request->search != '') {
-            $query->where(function($q) use ($request) {
-                $q->whereHas('user', function ($q) use ($request) {
-                    $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%');
-                })
-                ->orWhere('index_number', 'like', '%' . $request->search . '%')
+        $query->where(function($q) use ($request) {
+            $q->where('users.name', 'like', '%' . $request->search . '%')
+                ->orWhere('users.email', 'like', '%' . $request->search . '%')
+                ->orWhere('students.index_number', 'like', '%' . $request->search . '%')
                 ->orWhereHas('course', function ($subQ) use ($request) {
                     $subQ->where('course_name', 'like', '%'. $request->search. '%');
                 })
                 ->orWhereHas('diploma', function ($qq) use ($request) {
                     $qq->where('name', 'like', '%'.$request->search. '%');
                 });
-            });
-        }
- 
+          });
+       }
+
         if ($sort === 'Academic' || $sort === 'Professional') {
-           $query->where('student_category', $sort);
+        $query->where('student_category', $sort);
         }
 
-        $students = $query->latest()->paginate(10); // Adjust pagination size as needed
+        $students = $query->orderBy('users.name', 'asc')
+        ->select('students.*') // Prevents column conflicts between students and users
+        ->paginate(10);
+
+        // return $students;
 
         return view('backend.students.index', compact('students'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -85,6 +85,8 @@ class StudentController extends Controller
         
         return view('backend.students.create', compact('courses','parents', 'diplomas','years'));
     }
+
+    
 
      /**
      * Store a newly created resource in storage.
@@ -498,6 +500,9 @@ class StudentController extends Controller
         try {
             // dd(Auth::user());
             // return Auth::user()->name;
+            $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
+
+            
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -507,12 +512,13 @@ class StudentController extends Controller
             'bought_forms' => 'nullable|in:Yes,No',
             'currency' => 'nullable|string',
             'amount_paid' => 'nullable|numeric',
-            'User' => 'nullable|string'
+            'User' => 'nullable|string',
+            'receipt_number'=> $receipt_number
         ]);
 
         // dd($validatedData);
 
-        Enquiry::create([
+        $enquiry = Enquiry::create([
             'name' => $validatedData['name'],
             'telephone_number' => $validatedData['telephone_number'],
             'interested_course' => $validatedData['course'],
@@ -523,6 +529,15 @@ class StudentController extends Controller
             'amount' => $validatedData['amount_paid'],
             'User' => Auth::user()->name
         ]);
+
+        if($validatedData['bought_forms'] === 'Yes') {
+            return view('backend.fees.enquiryreceipt',compact('enquiry','receipt_number'));
+            // return response()->json([
+            //     'status' => 'success',
+            //     'redirect_url' => route('enquiry.receipt', ['id' => $enquiry->id]),
+            //     'message' => 'Enquiry saved and receipt generated.'
+            // ]);
+        }
 
         return redirect()->back()->with('success', 'Enquiry created successfully');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -542,90 +557,264 @@ class StudentController extends Controller
         return view("backend.students.migration", compact('levels', 'semesters'));
     }
 
+//     public function updateStudent(Request $request, $id)
+// {
+//     try {
+//         // dd($request->all());
+//         $validatedData = $request->validate([
+//             'name' => 'required|string|max:255',
+//             'email' => 'required|email|max:255',
+//             'phone' => 'required|string|max:20',
+//             'gender' => 'required|in:male,female,other',
+//             'dateofbirth' => 'required|date',
+//             'current_address' => 'required|string',
+//             'fees' => 'required|numeric|min:0',
+//             'currency' => 'required|string|max:15',
+//             'balance' => 'required|numeric',
+//             'course_id' => 'required|integer',
+//             'parent_id' => 'required|exists:parents,id'
+//         ]);
+
+//         // dd($validatedData);
+
+//         $student = Student::findOrFail($id);
+
+//         // Try finding the course from Grade or Diploma
+//         // $item = Grade::find($validatedData['course_id']) ?? Diploma::find($validatedData['course_id']);
+
+//         // Handle file upload for profile picture
+//         if ($request->hasFile('profile_picture')) {
+//             $extension = $request->profile_picture->getClientOriginalExtension();
+//             $filename = uniqid(Str::slug($student->user->name) . '-' . $student->user->id . '-') . '.' . $extension;
+//             $request->profile_picture->move(public_path('images/profile'), $filename);
+//         } else {
+//             $filename = $student->user->profile_picture;
+//         }
+
+      
+
+//         DB::beginTransaction();
+
+//         // Update user info
+//         $student->user()->update([
+//             'name' => $validatedData['name'],
+//             'email' => $validatedData['email'],
+//             'profile_picture' => $filename
+//         ]);
+
+//         // Prepare update data
+//         $studentUpdateData = [
+//             'balance' => $validatedData['balance'],
+//             'fees' => $validatedData['fees'],
+//             'student_parent' => $validatedData['parent_id'],
+//             'gender' => $validatedData['gender'],
+//             'phone' => $validatedData['phone'],
+//             'dateofbirth' => $validatedData['dateofbirth'],
+//             'current_address' => $validatedData['current_address'],
+//         ];
+
+//         $student->update($studentUpdateData);
+
+//         DB::commit();
+
+//         return redirect()->back()->with('success', 'Student updated successfully');
+//     } catch (Exception $e) {
+//         DB::rollBack();
+
+//         Log::error('Validation failed', $e->errors());
+
+//         Log::error('Error occurred updating student: ' . $e->getMessage(), [
+//             'exception' => $e
+//         ]);
+
+//         return redirect()->back()->with('error', 'Error updating Student');
+//     }
+// }
+
+
+    // public function updateStudent(Request $request, $id) {
+    //     try {
+    //         // dd($request->all());
+    //         $validatedData = $request->validate([
+    //             'name' => 'required|string',
+    //             'email' => 'required|email',
+    //             'phone' => 'required',
+    //             'gender' => 'required',
+    //             'dateofbirth' => 'required|date',
+    //             'current_address' => 'required',
+    //             'fees' => 'required',
+    //             'currency' => 'required',
+    //             'balance' => 'required',
+    //             'course_id' => 'required',
+    //             'parent_id' => 'required' 
+    //         ]);
+
+    //         $student = Student::findOrFail($id);
+
+    //         $course = Grade::where('id', $validatedData['course_id'])->first();
+    //         $diploma = Diploma::where('id', $validatedData['course_id'])->first();
+
+    //         $item = $course ?? $diploma;
+
+    //         if ($request->hasFile('profile_picture')) {
+    //             $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
+    //             $request->profile_picture->move(public_path('images/profile'), $profile);
+    //         } else {
+    //             $profile = $student->user->profile_picture;
+    //         }
+
+    //         DB::beginTransaction();
+
+            // $student->user()->update([
+            //     'name'              => $validatedData['name'],
+            //     'email'             => $validatedData['email'],
+            //     'profile_picture'   => $profile
+            // ]);
+
+    //         $courseChanged = false;
+
+    //         if($student->student_category === 'Academic') {
+    //             if ($student->course_id != $validatedData['course_id']) {
+    //                 $courseChanged = true;
+    //             }
+    //             $student->update([
+    //                 'course_id' => $validatedData['course_id'],
+    //                 // 'balance'   => $courseChanged ? '0.0' : $validatedData['balance'],
+    //                 'balance' => $validatedData['balance'],
+    //                 'fees' => $validatedData['fees'],
+    //                 'currency' => $validatedData['currency']
+    //             ]);
+    //         } else {
+    //             if ($student->course_id_prof != $validatedData['course_id']) {
+    //                 $courseChanged = true;
+    //             }
+    //             $student->update([
+    //                 'course_id_prof' => $validatedData['course_id'],
+    //                 'fees' => $validatedData['fees'],
+    //                 'currency_prof' => $validatedData['currency'],
+    //                 'balance' =>  $validatedData['balance']
+    //             ]);
+    //         }
+
+    //         $student->update([
+    //             'student_parent'    => $validatedData['parent_id'],
+    //             'gender'            => $validatedData['gender'],
+    //             'phone'             => $validatedData['phone'],
+    //             'dateofbirth'       => $validatedData['dateofbirth'],
+    //             'current_address'   => $validatedData['current_address'],
+    //         ]);
+
+    //         DB::commit();
+
+    //         return redirect()->back()->with('success', 'Student updated successfully');    
+    //     } catch (Exception $e) {
+    //         //throw $th;
+    //         DB::rollBack();
+
+    //         Log::error(message: "Error occured updating student" .$e);
+
+    //         return redirect()->back()->with('error', 'Error updating Student');    
+    //     }
+    // }
+
+   
     public function updateStudent(Request $request, $id) {
         try {
+            //code...
             // dd($request->all());
             $validatedData = $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|email',
-                'phone' => 'required',
-                'gender' => 'required',
-                'dateofbirth' => 'required|date',
-                'current_address' => 'required',
-                'fees' => 'required',
-                'currency' => 'required',
-                'balance' => 'required',
-                'course_id' => 'required',
-                'parent_id' => 'required' 
-            ]);
-
+                            'name' => 'required|string|max:255',
+                            'email' => 'required|email|max:255',
+                            'phone' => 'required|string|max:20',
+                            'gender' => 'required|in:male,female,other',
+                            'dateofbirth' => 'required|date',
+                            'current_address' => 'required|string',
+                            'fees' => 'required|numeric|min:0',
+                            'currency' => 'required|string|max:15',
+                            'balance' => 'required|numeric',
+                            'course_id' => 'required|integer',
+                            'parent_id' => 'required|exists:parents,id'
+                        ]);
             $student = Student::findOrFail($id);
 
-            $course = Grade::where('id', $validatedData['course_id'])->first();
-            $diploma = Diploma::where('id', $validatedData['course_id'])->first();
-
-            $item = $course ?? $diploma;
-
+            // if ($request->hasFile('profile_picture')) {
+            //     $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
+            //     $request->profile_picture->move(public_path('images/profile'), $profile);
+            // } else {
+            //     $profile = $student->user->profile_picture;
+            // }
+            $profilePicture = $student->user->profile_picture;
             if ($request->hasFile('profile_picture')) {
-                $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
-                $request->profile_picture->move(public_path('images/profile'), $profile);
-            } else {
-                $profile = $student->user->profile_picture;
+                $extension = $request->file('profile_picture')->getClientOriginalExtension();
+                $profilePicture = Str::slug($student->user->name) . '-' . $student->user->id . '.' . $extension;
+                $request->file('profile_picture')->move(public_path('images/profile'), $profilePicture);
             }
 
-            DB::beginTransaction();
+            // $userFieldsToUpdate = [
+            //     'name' => $validatedData['name'],
+            //     'email' => $validatedData['email']
+            // ];
 
+            // $student->user()->update($userFieldsToUpdate);
             $student->user()->update([
-                'name'              => $validatedData['name'],
-                'email'             => $validatedData['email'],
-                'profile_picture'   => $profile
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'profile_picture' => $profilePicture
             ]);
 
-            $courseChanged = false;
+            $studentFields = [
+                'phone' => $validatedData['phone'],
+                'gender' => $validatedData['gender'],
+                'dateofbirth' => $validatedData['dateofbirth'],
+                'current_address' => $validatedData['current_address'],
+                'balance' => $validatedData['balance']
+            ];
 
-            if($student->student_category === 'Academic') {
-                if ($student->course_id != $validatedData['course_id']) {
-                    $courseChanged = true;
-                }
-                $student->update([
-                    'course_id' => $validatedData['course_id'],
-                    'balance'   => $courseChanged ? '0.0' : $validatedData['balance'],
-                    'fees' => $validatedData['fees'],
-                    'currency' => $validatedData['currency']
-                ]);
-            } else {
-                if ($student->course_id_prof != $validatedData['course_id']) {
-                    $courseChanged = true;
-                }
-                $student->update([
-                    'course_id_prof' => $validatedData['course_id'],
-                    'fees' => $validatedData['fees'],
-                    'currency_prof' => $validatedData['currency'],
-                    'balance' => $courseChanged ? '0.0' : $validatedData['balance']
-                ]);
+            if ($student->student_category === 'Academic') {
+                $studentFields['fees'] = $validatedData['fees'];
+                $studentFields['course_id'] = $validatedData['course_id'];
+            } elseif ($student->student_category === 'Professional') {
+                $studentFields['fees_prof'] = $validatedData['fees'];
+                $studentFields['course_id_prof'] = $validatedData['course_id'];
             }
 
-            $student->update([
-                'student_parent'    => $validatedData['parent_id'],
-                'gender'            => $validatedData['gender'],
-                'phone'             => $validatedData['phone'],
-                'dateofbirth'       => $validatedData['dateofbirth'],
-                'current_address'   => $validatedData['current_address'],
-            ]);
+            $student->update($studentFields);
 
-            DB::commit();
+            // $studentAcaFieldsToUpdate = [
+            //     'phone' => $validatedData['phone'],
+            //     'gender' => $validatedData['gender'],
+            //     'dateofbirth' => $validatedData['dateofbirth'],
+            //     'current_address' => $validatedData['current_address'],
+            //     'fees' => $validatedData['fees'],
+            //     'balance' => $validatedData['balance'],
+            //     'course_id' => $validatedData['course_id']
+            // ];
 
-            return redirect()->back()->with('success', 'Student updated successfully');    
+            // $studentProfFieldsToUpdate = [
+            //     'phone' => $validatedData['phone'],
+            //     'gender' => $validatedData['gender'],
+            //     'dateofbirth' => $validatedData['dateofbirth'],
+            //     'current_address' => $validatedData['current_address'],
+            //     'fees_prof' => $validatedData['fees'],
+            //     'balance' => $validatedData['balance'],
+            //     'course_id_prof' => $validatedData['course_id']
+            // ];
+
+            // if($student->student_category === 'Academic') {
+            //     $student->update($studentAcaFieldsToUpdate);
+            // }
+
+            // if($student->student_category === 'Professional') {
+            //     $student->update($studentProfFieldsToUpdate);
+            // }
+            return redirect()->back()->with('success', 'Student updated successfully');        
         } catch (Exception $e) {
-            //throw $th;
-            DB::rollBack();
+            Log::error(message: "Error occured updating student" .$e);
 
-            Log::error("Error occured updating student" .$e);
-
-            return redirect()->back()->with('error', 'Error updating Student');    
+            return redirect()->back()->with('error', 'Error updating Student');
         }
     }
-
+    
     public function payStudentFeesForm($id) {
         $student = Student::with('user')->findOrFail($id);
         $studentName = $student->user->name;
@@ -810,29 +999,376 @@ class StudentController extends Controller
         }
     }
 
-    public function getCourseOutlineForm() {
-        $userId = Auth::user()->id;
-        // $user = Auth::user();
+    // public function getCourseOutlineForm() {
+    //     $userId = Auth::user()->id;
+    //     // $user = Auth::user();
 
-        // return $user;
+    //     // return $user;
 
-        $student = Student::findOrFail($userId);
+    //     // $student = Student::findOrFail($userId);
+    //     $student = DB::table('students')->where('user_id',$userId)->first();
 
-        $courseId = $student->course_id ?? $student->course_id_prof;
-        // $course = Grade::findOrFail($courseId) ?? Diploma::findOrFail($courseId);
+    //     // return $student;
 
-        // $levels = [100, 200, 300, 400];  
+    //     $courseId = $student->course_id ?? $student->course_id_prof;
 
-        // $semesters = [1, 2];
+    //     $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
+    //         $query->withPivot('level_id', 'semester_id');
+    //     }])->findOrFail($courseId);
 
-        $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
-            $query->withPivot('level_id', 'semester_id');
-        }])->findOrFail($courseId);
+    //     $subjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
+    //         return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
+    //     });
 
-        $groupedSubjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
-            return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
-        });
+    //     // return $groupedSubjects;
 
-        return view('backend.students.getcourseoutline',compact('groupedSubjects'));
+    //     return view('backend.students.getcourseoutline',compact('subjects'));
+    // }
+
+    public function getCourseOutlineForm()
+    {
+        try {
+            // Get authenticated user
+            $userId = Auth::id();
+            if (!$userId) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Get student record
+            $student = DB::table('students')
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$student) {
+                throw new Exception('Student record not found');
+            }
+
+            // Determine course ID (handling both regular and professor cases)
+            $courseId = $student->course_id ?? $student->course_id_prof;
+            if (!$courseId) {
+                throw new Exception('No course assigned to student');
+            }
+
+            // Get course with subjects grouped by level and semester
+            $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
+                $query->withPivot('level_id', 'semester_id')
+                    ->orderBy('pivot_level_id')
+                    ->orderBy('pivot_semester_id');
+            }])->findOrFail($courseId);
+
+            // Group subjects by level and semester
+            $subjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
+                return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
+            });
+
+            return view('backend.students.getcourseoutline', compact('subjects','student'));
+
+        } catch (Exception $e) {
+            Log::error('Error in getCourseOutlineForm: ' . $e->getMessage());
+            
+            return redirect()->back()->with('error', 'Failed to load course outline: ' . $e->getMessage());
+        }
     }
+
+    public function getRegistrationForm() {
+        $studentId = Auth::user()->id;
+
+        $student = DB::table('students')
+                ->where('user_id', $studentId)
+                ->first();
+
+        $course = Grade::findOrFail($student->course_id);
+
+        $subjects = Subject::all();
+
+        return view('backend.students.registercourse',compact('course','subjects','student','studentId'));
+    }
+
+    public function registerCourses(Request $request, $id) {
+        try {
+            // dd($request->all());
+            $validatedData = $request->validate([
+                'level' => 'required',
+                'semester' => 'required',
+                'subjects_id' => 'required'
+            ]);
+
+            $studentId = Auth::user()->id;
+
+            $student = DB::table('students')
+            ->where('user_id', $studentId)
+            ->first();
+
+            $level = $validatedData['level'];
+            $semester = $validatedData['semester'];
+            $course_id = $student->course_id;
+            $subjects = $validatedData['subjects_id'];
+
+            foreach ($subjects as $subjectId) {
+                RegisterCourse::create([
+                    'student_id' => $id,
+                    'level' => $level,
+                    'semester' => $semester,
+                    'subjects_id' => $subjectId,
+                    'course_id' => $course_id 
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'You have registered the selected courses successfully');
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error("Error occured registering selected courses",['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return redirect()->back()->with('error','Error registering selected courses');
+        }
+    }
+
+    public function getCurrentSemesterCourses() {
+        $user_id = Auth::user()->id;
+
+        $studentInfo = DB::table('students')
+        ->where('user_id', $user_id )
+        ->first();
+
+        $currentCourses = RegisterCourse::with('subjects')
+        ->where('student_id',$studentInfo->id)
+        ->where('course_id',$studentInfo->course_id)
+        ->where('semester',$studentInfo->session)
+        ->where('level',$studentInfo->level)->get();
+
+        return view('dashboard.student',compact('currentCourses'));
+    }
+
+    public function showRegisteredCourses() {
+        return view('backend.students.showregisteredcourses');
+    }
+
+    public function getChangeStudentsStatusForm($id) {
+        return view('backend.students.changestatus',compact('id'));
+    }
+
+    // public function changeStudentsStatus(Request $request,$id) {
+    //     $validatedData = $request->validate([
+    //         'student_defer' => 'required|string|in:defer,withdrawn,expelled'
+    //     ]);
+
+    //     if($validatedData['student_defer'] === 'defer') {
+    //         DB::transaction(function () use ($id) {
+    //             $student = Student::findOrFail($id);
+
+    //             Defer::create($student->toArray());
+
+    //             DB::table('students')->where('id', $id)->delete();
+    //         });
+
+    //         return redirect()->back()->with('success', 'Student moved to defer list successfully');
+    //     }
+    // }
+
+    public function changeStudentsStatus(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'student_defer' => 'required|string|in:defer,withdrawn,expelled'
+        ]);
+
+        try {
+            if ($validatedData['student_defer'] === 'defer') {
+                DB::transaction(function () use ($id) {
+                    $student = Student::findOrFail($id);
+
+                    // Defer::create($student->toArray());
+                   Defer::create($student->toArray());
+                    
+                    $student->delete();
+                });
+
+                return redirect()->back()->with('success', 'Student moved to defer list successfully');
+            } else {
+                return redirect()->back()->with('error', 'Only defer action is implemented at the moment.');
+            }
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'Student not found.');
+        } catch (Exception $e) {
+            Log::error('Error changing student status: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    public function getDeferListForm() {
+        $courses = Grade::all();
+
+        $diplomas = Diploma::all();
+
+        return view('backend.students.getdeferlist',compact('courses','diplomas'));
+    }
+
+    public function getDeferList(Request $request) {
+        try {
+            $validatedData = $request->validate([
+                'student_category' => 'nullable|in:Academic,Professional',
+                'courseID_academic' => 'nullable|string',
+                'courseID_professional' => 'nullable|string',
+                'level' => 'nullable|in:100,200,300,400'
+            ]);
+
+            $query = DB::table('students_defer_list')
+                ->join('users', 'students_defer_list.user_id', '=', 'users.id')
+                ->leftJoin('grades', 'students_defer_list.course_id', '=', 'grades.id')
+                ->leftJoin('diploma', 'students_defer_list.course_id_prof', '=', 'diploma.id')
+                ->select(
+                    'students_defer_list.*',
+                    'users.name as user_name',
+                    'grades.course_name as grade_name',          // Replace `name` with actual field (e.g., title, program_name, etc.)
+                    'diploma.name as diploma_title'     // Replace `title` with actual field name
+                );
+
+            if (!empty($validatedData['student_category'])) {
+                $query->where('student_category', $validatedData['student_category']);
+            }
+
+            if (!empty($validatedData['courseID_academic'])) {
+                $query->where('course_id', $validatedData['courseID_academic']);
+            }
+    
+            if (!empty($validatedData['courseID_professional'])) {
+                $query->where('course_id_prof', $validatedData['courseID_professional']);
+            }
+    
+            if (!empty($validatedData['level'])) {
+                $query->where('level', $validatedData['level']);
+            }
+
+            $students = $query->get();
+
+            // return $students;
+
+            return view('backend.students.deferlisttable',compact('students'));
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error changing student status: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    public function getDefaultersReportForm() {
+        $courses = Grade::all();
+        $diplomas = Diploma::all();
+
+        return view('backend.students.getdefaultersreportform',compact('courses','diplomas'));
+    }
+
+    public function restoreDeferStudents($id) {
+        try {
+            //code...
+            DB::transaction(function () use ($id) {
+                $deferStudent = Defer::findOrFail($id);
+
+                // dd($deferStudent);
+
+                $data = $deferStudent->toArray();
+                unset($data['id'], $data['created_at'], $data['updated_at']);
+
+                // $user = User::create([
+                //     'name'  => 
+                // ]);
+
+                Student::create($data);
+                
+                $deferStudent->delete();
+            });
+
+            return redirect()->back()->with('success', 'Student moved out of defer list successfully.');
+
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error changing student status: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    public function getDefaulterList(Request $request) {
+        try {
+            // dd($request->all( ));
+            $validatedData = $request->validate([
+                'student_category' => 'nullable|in:Academic,Professional',
+                'courseID_academic' => 'nullable',
+                'courseID_professional' => 'nullable',
+                'level' => 'nullable|in:100,200,300,400'
+            ]);
+
+            $studentCategory = $validatedData['student_category'];
+            $academicCategory = $validatedData['courseID_academic'];
+            $profCategory = $validatedData['courseID_professional'];
+            $level = $validatedData['level'];
+
+            $query = Student::with(relations:[ 'user','course','diploma'])->where('balance','>',0);
+
+            if (!empty($studentCategory)) {
+                $query->where('student_category', $validatedData['student_category']);
+            }
+
+            if (!empty($academicCategory)) {
+                $query->where('course_id', $academicCategory);
+            }
+
+            if (!empty($profCategory)) {
+                $query->where('course_id_prof', $profCategory);
+            }
+
+            if (!empty($level)) {
+                $query->where('level', $level);
+            }
+
+            $defaulterStudents = $query->get();
+
+            // return $defaulterStudents;
+
+            return view('backend.reports.defaultersreport',compact('defaulterStudents','studentCategory','academicCategory','profCategory','level'));
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+
+    }
+
+    public function retrieveSoftDeletedStudents() {
+        $students = Student::onlyTrashed()
+            ->with(['user' => function ($query) {
+                $query->withTrashed(); 
+            }, 'course', 'diploma']) 
+            ->get();
+
+        // return $students;
+
+        return view('backend.students.deletedstudentstable',compact('students'));
+    }
+
+    // public function restoreDeletedStudent($id) {
+
+    // }
+
+    public function restoreDeletedStudent($id)
+    {
+        $student = Student::withTrashed()->with('user')->findOrFail($id);
+
+        // return $student;
+        $student->restore();
+        // $student->assignRole('Student');
+
+        if ($student->user && $student->user->trashed()) {
+            $student->user->restore();
+        }
+
+        return response()->json([
+            'message' => 'Student and related user restored successfully.',
+            'student' => $student
+        ]);
+    }
+
 }

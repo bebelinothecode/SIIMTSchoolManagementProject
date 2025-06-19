@@ -1,112 +1,149 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="create">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h2 class="text-gray-700 uppercase font-bold">Fees History</h2>
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Student Information Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Fees Payment History</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Student Name</p>
+                    <p class="text-lg font-semibold text-gray-800">{{ $user->name ?? 'N/A' }}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Index Number</p>
+                    <p class="text-lg font-semibold text-gray-800">{{ $student->index_number ?? 'N/A' }}</p>
+                </div>
             </div>
-            <div class="flex flex-wrap items-center">
-                <a href="{{ route('home') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
-                    <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="long-arrow-alt-left" class="svg-inline--fa fa-long-arrow-alt-left fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path></svg>
-                    <span class="ml-2 text-xs font-semibold">Back</span>
-                </a>
-            </div>
         </div>
-        <div class="w-full mt-8 bg-white rounded">
-            <form action="{{ route('get.history') }}" method="POST" class="md:flex md:items-center md:justify-between px-6 py-6 pb-0">
-                @csrf
-                <div class="md:flex md:items-center mb-6 text-gray-700 uppercase font-bold">
-                    <div>
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Start Academic Year
-                        </label>
-                    </div>
-                    <div class="block text-gray-600 font-bold">
-                        <div class="relative">
-                            <div class="md:w-2/3">
-                                <input name="start_academic_year" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" placeholder="Enter the start academic year" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="md:flex md:items-center mb-6 text-gray-700 uppercase font-bold">
-                    <div>
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            End Academic Year
-                        </label>
-                    </div>
-                    <div class="block text-gray-600 font-bold">
-                        <div class="relative">
-                            <div class="md:w-2/3">
-                                <input name="end_academic_year" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" placeholder="Enter the end academic year" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Semester
-                        </label>
-                    </div>
-                    <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <div class="relative">
-                            <select name="semester" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
-                                <option value="">--Select Semester--</option>
-                                @foreach ($sessions as $session)
-                                    <option value="{{ $session->name }}">{{ $session->name }}</option>
-                                @endforeach
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="md:flex md:items-center mb-6 text-gray-700 uppercase font-bold p-4">
-                    <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">Generate</button>
-                </div>
-            </form>
-        </div>
-        @if(isset($records) && count($records) > 0)
-        <div class="mt-8">
-            <h3 class="text-gray-700 uppercase font-bold mb-4">Payment History</h3>
-            <table class="table-auto w-full bg-white rounded">
-                <thead>
-                    <tr class="text-gray-700 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left">Start Academic Year</th>
-                        <th class="py-3 px-6 text-left">End Academic Year</th>
-                        <th class="py-3 px-6 text-left">Semester</th>
-                        <th class="py-3 px-6 text-left">Method of Payment</th>
-                        <th class="py-3 px-6 text-left">Amount</th>
-                        <th class="py-3 px-6 text-left">Balance</th>
-                        <th class="py-3 px-6 text-left">Cheque Number</th>
-                        <th class="py-3 px-6 text-left">Momo Number</th>
-                        <th class="py-3 px-6 text-left">Date/Time</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 text-sm font-light">
-                    @foreach($records as $record)
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left">{{ $record->start_academic_year }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->end_academic_year }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->semester }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->method_of_payment }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->amount }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->balance }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->cheque_number}}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->Momo_number }}</td>
-                            <td class="py-3 px-6 text-left">{{ $record->created_at }}</td>1
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @elseif(isset($records) && count($records) == 0)
-        <p class="mt-4 text-red-500">No payment history.</p>
-    @endif
-</div>
 
+        <!-- Payment History Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Payment Records</h2>
+                @if(isset($payments) && $payments->count() > 0)
+                    <span class="text-sm text-gray-500">
+                        Showing {{ $payments->firstItem() }} - {{ $payments->lastItem() }} of {{ $payments->total() }} records
+                    </span>
+                @endif
+            </div>
+@if(isset($payments) && $payments->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Receipt No.
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Fees Type
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Method
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Amount ({{ $currency ?? 'GHS' }})
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Balance
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Remarks
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($payments as $payment)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ $payment->receipt_number }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ \Carbon\Carbon::parse($payment->created_at)->format('M d, Y h:i A') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $payment->fees_type }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $payment->method_of_payment }}
+                                    @if($payment->method_of_payment === 'Momo')
+                                        <span class="block text-xs text-gray-400">{{ $payment->momo_number ?? "Not Found" }}</span>
+                                    @elseif($payment->method_of_payment === 'Cheque')
+                                        <span class="block text-xs text-gray-400">{{ $payment->cheque_number ?? "Not Found" }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ number_format($payment->amount, 2) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ number_format($payment->balance, 2) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+{{ $payment->remarks }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Print</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                @if($payments->hasPages())
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $payments->links() }}
+                </div>
+                @endif
+            @else
+                <!-- Empty state -->
+                <div class="px-6 py-12 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 class="mt-2 text-lg font-medium text-gray-900">No payment records found</h3>
+                    <p class="mt-1 text-sm text-gray-500">This student hasn't made any payments yet.</p>
+                    <!-- <div class="mt-6">
+                        <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                            </svg>
+                            Record New Payment
+                        </a>
+                    </div> -->
+                </div>
+            @endif
+        </div>
+
+        <!-- Summary Cards - Only show if there are payments -->
+        @if(isset($payments) && $payments->count() > 0)
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Total Paid</h3>
+                <p class="text-2xl font-semibold text-green-600">{{ $currency ?? 'GHS' }} {{ number_format($payments->sum('amount'), 2) }}</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Current Balance</h3>
+                <p class="text-2xl font-semibold {{ $payments->last()->balance > 0 ? 'text-red-600' : 'text-green-600' }}">
+                    {{ $currency ?? 'GHS' }} {{ number_format($payments->last()->balance, 2) }}
+                </p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Payment Count</h3>
+                <p class="text-2xl font-semibold text-blue-600">{{ $payments->count() }}</p>
+            </div>
+        </div>
+        @endif
     </div>
+</div>
 @endsection

@@ -4,9 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         // 'user_id',
         // 'parent_id',
@@ -35,6 +37,7 @@ class Student extends Model
         'Scholarship_amount',
         // 'permanent_address',
         'index_number',
+        'balance'
         // 'student_type',
     ];
 
@@ -42,6 +45,12 @@ class Student extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function deletedUsers() 
+    {
+        return $this->belongsTo(User::class)->withTrashed();
+    }
+
 
     public function parent() 
     {

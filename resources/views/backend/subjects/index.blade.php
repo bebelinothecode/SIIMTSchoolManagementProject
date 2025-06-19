@@ -37,19 +37,10 @@
                         <td class="py-2 px-4 text-left">{{ $course->course_description }}</td>
                         <td class="py-2 px-4 text-left">{{ $course->currency }}</td>
                         <td class="py-2 px-4 text-left">{{ $course->fees }}</td>
-
-                        {{-- <td class="py-3 px-6 text-left">
-                            @forelse ($teacher->subjects as $subject)
-                                {{ $subject->subject_name }}@if (!$loop->last), @endif
-                            @empty
-                                No subjects found
-                            @endforelse
-                        </td> --}}
                         <td class="py-3 px-6 text-center">
                             {{-- @hasanyrole('Admin|rector|frontdesk') --}}
                             {{-- <a href="{{ route('get.assignmentform', $course->id) }}" class="ml-4 text-green-600 hover:underline">Assign Subject</a> --}}
                             @hasrole('Admin|rector')
-                            {{-- <a href="{{ route('deleteassigned.subject', $course->id) }}" class="ml-4 text-red-600 hover:underline">Delete Assigned Subject(s)</a> --}}
                             <a href="{{ route('subject.edit', $course->id) }}" class="text-blue-600 hover:underline">Edit</a>
                             <a href="{{ route('course.overviewform', $course->id) }}" class="text-green-600 hover:underline mx-2">Assign Subjects to Course</a>
                             <form action="{{route('subject.destroy', $course->id)}}" method="POST" class="inline">

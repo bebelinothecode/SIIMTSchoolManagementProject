@@ -38,7 +38,6 @@
     </form>
 
     
-    
     <!-- Enquiry Table -->
     <div class="mt-6 bg-white rounded-lg shadow">
         <table class="w-full table-auto">
@@ -83,7 +82,7 @@
 
     <!-- Pagination -->
     <div class="mt-4">
-        {{ $enquiries->links() }}
-    </div>
+        {{ $enquiries->appends(request()->query())->links() }}
+    </div> 
 </div>
 @endsection

@@ -42,7 +42,7 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator']], function () 
+Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian']], function () 
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');
@@ -133,6 +133,18 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::put('/edit/transaction/{id}',[FeesController::class, 'updateTransaction'])->name('edit.transaction');
     Route::delete('/delete/transaction/{id}',[FeesController::class, 'deleteTransaction'])->name('delete.transaction');
     Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
+    Route::get('/get/change/students/status/form/{id}',[StudentController::class, 'getChangeStudentsStatusForm'])->name('change.studentstatusform');
+    Route::post('/change/student/status/{id}',[StudentController::class,'changeStudentsStatus'])->name('change.studentstatus');
+    Route::get('/get/defer/list/form',[StudentController::class,'getDeferListForm'])->name('get.deferlistform');
+    Route::get('/get/defer/list',[StudentController::class,'getDeferList'])->name('get.deferlist');
+    Route::get('/get/defaulters/list/form',[StudentController::class,'getDefaultersReportForm'])->name('get.defaultersreportform');
+    Route::get('/restore/defer/students/{id}',[StudentController::class,'restoreDeferStudents'])->name('restore.deferstudents');
+    Route::get('/get/defaulters',[StudentController::class,'getDefaulterList'])->name('get.defaulters');
+    Route::get('/get/deleted/students',[StudentController::class,'retrieveSoftDeletedStudents'])->name('get.deletedstudents');
+    Route::get('/restore/deleted/student/{id}',[StudentController::class, 'restoreDeletedStudent'])->name('restore.deletedstudent');
+    Route::delete('/delete/expense/{id}',[ExpensesController::class, 'deleteExpense'])->name('expense.destroy');
+    Route::get('/edit/expenses/form/{id}',[ExpensesController::class, 'editExpense'])->name('expense.edit');
+    Route::post('/expense/update/{id}',[ExpensesController::class, 'updateExpense'])->name('expense.update');
 
     // Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
 
@@ -191,6 +203,9 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::post("/gethistory", [FeesController::class, 'getFeeHistory'])->name('get.history');
     Route::post('/query/books', [BookController::class,'searchBooks'])->name('query.books');
     Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
+    Route::get('/get/registration/form',[StudentController::class, 'getRegistrationForm'])->name('registration.course');
+    Route::post('/register/courses/{id}',[StudentController::class, 'registerCourses'])->name('register.courses');
+    Route::get('/show/registered/courses',[StudentController::class, 'showRegisteredCourses'])->name('show.registeredcourses');
 });
 
 // Route::group(['middleware' => ['auth','role:frontdesk']], function () {
@@ -200,6 +215,6 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
 
 // });
 
-Route::get('/test4',[ReportsController::class,'example']);
-Route::get('/test22', [StudentController::class, 'all']);
+// Route::get('/test4',[ReportsController::class,'example']);
+// Route::get('/test22', [StudentController::class, 'all']);
 

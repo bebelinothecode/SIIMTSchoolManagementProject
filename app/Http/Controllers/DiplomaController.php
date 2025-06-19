@@ -161,8 +161,8 @@ class DiplomaController extends Controller
         $details = Grade::findOrFail($id);
 
         return response()->json([
-            'fees' => $details->fees,
             'currency' => $details->currency,
+            'amount' => $details->fees
         ]);
     }
 

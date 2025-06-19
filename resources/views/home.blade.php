@@ -15,9 +15,6 @@
         </div>
     </div>
 
-    {{-- @role('Admin')
-        @include('dashboard.admin')
-    @endrole --}}
     @hasanyrole('Admin|rector|AsstAccount|frontdesk|StudCoordinator')
         @include('dashboard.admin')
     @endhasanyrole
@@ -32,6 +29,9 @@
 
     @role('Student')
         @include('dashboard.student')
+    @endrole
+    @role('Librarian')
+        @include('dashboard.librarian')
     @endrole
 
 </div>

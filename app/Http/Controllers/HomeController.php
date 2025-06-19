@@ -6,6 +6,7 @@ use App\Expenses;
 use App\FeesPaid;
 use App\Grade;
 use App\Parents;
+use App\RegisterCourse;
 use App\Student;
 use App\Teacher;
 use Illuminate\Support\Str;
@@ -38,7 +39,7 @@ class HomeController extends Controller
 
         // return $user;
         
-        if ($user->hasRole('Admin') || $user->hasRole('StudCoordinator') || $user->hasRole('rector') || $user->hasRole('AsstAccount') || $user->hasRole('frontdesk')) {
+        if ($user->hasRole(['Admin','StudCoordinator','rector','AsstAccount','frontdesk','Librarian'])) {
 
             $parents = Parents::latest()->get();
             $teachers = Teacher::latest()->get();
@@ -64,8 +65,8 @@ class HomeController extends Controller
             return view('home', compact('parents'));
 
         } elseif ($user->hasRole('Student')) {
-            
-            $student = Student::with(['user','parent','attendances'])->findOrFail($user->id); 
+            $student = Student::with(['user','parent','attendances'])->findOrFail($user->student->id); 
+
 
             return view('home', compact('student'));
 

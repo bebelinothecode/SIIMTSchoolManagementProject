@@ -71,16 +71,16 @@
                 <tbody class="text-gray-600 text-sm font-light">
                     @forelse ($defaulters as $defaulter)
                         <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $defaulter->user->name }}</td>
+                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $defaulter->user->name ?? "N/A" }}</td>
                             {{-- <td class="py-3 px-6 text-left">{{ $defaulter->user->email }}</td> --}}
-                            <td class="py-3 px-6 text-left">{{ $defaulter->phone }}</td>
-                            <td class="py-3 px-6 text-left">{{ $defaulter->index_number }}</td>
-                            <td class="py-3 px-6 text-left">{{ $defaulter->level }}</td>
-                            <td class="py-3 px-6 text-left">{{ $defaulter->session }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->phone ?? "N/A" }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->index_number ?? "N/A" }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->level ?? "N/A" }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->session ?? "N/A"}}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->course->course_name ?? $defaulter->diploma->name ?? null }}</td>
-                            <td class="py-3 px-6 text-left">{{ $defaulter->student_category }}</td>
+                            <td class="py-3 px-6 text-left">{{ $defaulter->student_category ?? "N/A" }}</td>
                             <td class="py-3 px-6 text-left">{{ $defaulter->currency ?? $defaulter->currency_prof  }}</td>
-                            <td class="py-3 px-6 text-left">{{ number_format($defaulter->balance, 2) }}</td>
+                            <td class="py-3 px-6 text-left">{{ number_format($defaulter->balance ?? "N/A", 2) }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -91,8 +91,14 @@
             </table>
         </div>
 
-        <div class="mt-8">
+        <!-- <div class="mt-8">
             {{ $defaulters->links() }}
+        </div> -->
+        <!-- Pagination -->
+    @if($defaulters->hasPages())
+        <div class="mt-6">
+            {{ $defaulters->appends(request()->query())->links() }}
         </div>
+    @endif
     </div>
 @endsection

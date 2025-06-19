@@ -18,7 +18,8 @@ class Enquiry extends Model
         'bought_forms',
         'currency',
         'amount',
-        'User'
+        'User',
+        'receipt_number'
     ];
 
     use HasFactory;

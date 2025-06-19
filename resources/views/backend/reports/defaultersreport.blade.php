@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students Report(Academic)</title>
+    <title>Defaulters Report</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -84,33 +84,69 @@
                 <img src="{{asset('logo\SIIMT-logo.png')}}" alt="Institution Logo" class="logo">
             </div>
             <h2 class="report-title">SIIMT UNIVERSITY COLLEGE</h2>
-            <h5 class="report-title">STUDENTS REPORT (ACADEMIC)</h5>
+            <h5 class="report-title">DEFAULTERS REPORT</h5>
             <div class="report-date">
                 <i class="far fa-calendar-alt"></i> Generated on: {{ \Carbon\Carbon::now()->format('F j, Y h:i A') }}
             </div>
         </div>
 
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h4><i class="fas fa-filter"></i> Filters Applied</h4>
+            <div class="row">
+                @if ($studentCategory)
+                    <div class="col-md-3">
+                        <strong>Student Category:</strong><br>
+                        <span class="badge badge-primary">{{ $studentCategory }}</span>
+                    </div>
+                @endif
+                @if ($academicCategory)
+                    <div class="col-md-3">
+                        <strong>Course Name(Academic):</strong><br>
+                    </div>
+                @endif
+                @if ($level)
+                    <div class="col-md-3">
+                        <strong>Level:</strong><br>
+                        <span class="badge badge-success">{{ $level }}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <!-- Detailed Transactions -->
-        <h4 class="section-title"><i class="fas fa-list-ul"></i> Students Report List</h4>
+        <h4 class="section-title"><i class="fas fa-list-ul"></i> Defaulters List</h4>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Index No.</th>
                                 <th>Student Name</th>
+                                <th>Student Category</th>
                                 <th>Level</th>
-                                <th>Semester</th>
                                 <th>Balance</th>
+                                <th>Fees</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($students as $student)
+                            @foreach ($defaulterStudents as $defaulterStudent)
                                 <tr>
-                                    <td>{{ $student->index_number }}</td>
-                                    <td>{{ $student->user->name ?? "N/A" }}</td>
-                                    <td>{{ $student->level ?? "N/A" }}</td>
-                                    <td>{{ $student->session ?? "N/A" }}</td>
-                                    <td>{{ number_format($student->balance,2) }}</td>
+                                    <td>{{ $defaulterStudent->index_number }}</td>
+                                    <td>{{ $defaulterStudent->user->name ?? "N/A" }}</td>
+                                    <td>{{ $defaulterStudent->student_category }}</td>
+                                    <td>{{ $defaulterStudent->level }}</td>
+                                    <td>{{ number_format($defaulterStudent->balance,2) }}</td>
+                                    @if ($defaulterStudent->student_category === 'Academic')
+                                        <td>{{ number_format(num: $defaulterStudent->fees) }}</td>
+                                    @endif
+
+                                    @if ($defaulterStudent->student_category === 'Professional')
+                                         <td>{{ number_format(num: $defaulterStudent->fees_prof) }}</td>
+                                    @endif
+
+
+                                    <!-- <td>{{ number_format($defaulterStudent->fees, 2) ?? number_format($defaulterStudent->fees_prof, 2) }}</td> -->
+                                    <!-- <td>{{ $defaulterStudent->level }}</td> -->
                                 </tr>
                             @endforeach
                         </tbody>

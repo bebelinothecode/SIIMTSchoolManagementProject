@@ -98,6 +98,8 @@
                     <th class="py-3 px-6 text-left">Email</th>
                     <th class="py-3 px-6 text-left">Course/Diploma</th>
                     <th class="py-3 px-6 text-left">Index Number</th>
+                    <th class="py-3 px-6 text-left">Balance</th>
+                    <th class="py-3 px-6 text-left">Fees</th>
                     <th class="py-3 px-6 text-left">Phone Number</th>
                 </tr>
             </thead>
@@ -108,6 +110,9 @@
                         <td class="py-3 px-6 text-left">{{ $student->user->email }}</td>
                         <td class="py-3 px-6 text-left">{{ $student->course->course_name ?? $student->diploma->name ?? 'N/A' }}</td>
                         <td class="py-3 px-6 text-left">{{ $student->index_number }}</td>
+                        <td class="py-3 px-6 text-left">{{number_format($student->balance,2)  }}</td>
+                        <td class="py-3 px-6 text-left">{{ number_format($student->fees_prof,2) }}</td>
+
                         <td class="py-3 px-6 text-left">{{ $student->phone }}</td>
                     </tr>
                 @empty

@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('store.enquiry') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
+            <form action="{{ route('store.enquiry') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -168,7 +168,7 @@
                             Save Enquiry
                         </button>
                     </div>
-                </div>
+               </div>
             </form>  
             @if (session('success'))
             <script>
@@ -184,11 +184,8 @@
         <script>
             document.getElementById('bought_forms').addEventListener('change', function () {
                 const selectedMethod = this.value;
-                console.log(selectedMethod);
-                
-                // Hide all fields initially
-                // document.getElementById('balance_div').classList.add('hidden');
-                    
+                const amountDiv = document.getElementById('amount_paid_div');
+
                 if (selectedMethod === 'Yes') {
                     document.getElementById('amount_paid_div').classList.remove('hidden')
                 } else {
@@ -196,5 +193,45 @@
                 }
             });
         </script>
+        <script>
+        document.getElementById('enquiry-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: data.message,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    if (data.redirect_url) {
+                        window.open(data.redirect_url, '_blank');
+                    } else {
+                        location.reload();
+                    }
+                });
+            } else {
+                Swal.fire('Error!', 'An error occurred.', 'error');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            Swal.fire('Error!', 'An unexpected error occurred.', 'error');
+        });
+    });
+        </script>
+
     </div>
 @endsection

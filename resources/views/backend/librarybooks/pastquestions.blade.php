@@ -6,7 +6,7 @@
             <div>
                 <h2 class="text-gray-700 uppercase font-bold">Past Questions</h2>
             </div>
-            @role('Admin')
+            @role('Admin|Librarian')
             <div class="flex flex-wrap items-center">
                 <a href="{{ route('upload.pastquestions') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded hover:bg-gray-300 transition">
                     <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
