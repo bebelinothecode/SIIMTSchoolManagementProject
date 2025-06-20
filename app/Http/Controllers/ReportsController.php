@@ -209,7 +209,7 @@ class ReportsController extends Controller
 
             $students = $query->get();
 
-            return [$students, $students->count()];
+            // return [$students, $students->count()];
 
             return view('backend.reports.studentsacademicreport',compact('level','semester','students'));
         } catch (Exception $e) {

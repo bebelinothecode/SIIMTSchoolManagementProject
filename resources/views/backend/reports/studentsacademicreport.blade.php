@@ -107,7 +107,7 @@
                             @foreach ($students as $student)
                                 <tr>
                                     <td>{{ $student->index_number }}</td>
-                                    <td>{{ $student->user->name ?? "N/A" }}</td>
+                                    <td>{{ $student->user_name ?? "N/A" }}</td>
                                     <td>{{ $student->level ?? "N/A" }}</td>
                                     <td>{{ $student->session ?? "N/A" }}</td>
                                     <td>{{ number_format($student->balance,2) }}</td>
