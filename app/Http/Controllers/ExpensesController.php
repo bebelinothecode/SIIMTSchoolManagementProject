@@ -82,89 +82,58 @@ class ExpensesController extends Controller
     public function generateExpensesReport(Request $request)
 {
     try {
+        // dd($request->all());
         $validatedData = $request->validate([
             'current_date' => 'nullable|date',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer,Cheque',
-            'expense_category' => 'nullable|exists:expense_category,id',
+            'expense_category' => 'nullable',
         ]);
 
         $filters = [
             'currentDate' => $validatedData['current_date'] ?? null,
             'startDate' => $validatedData['start_date'] ?? null,
             'endDate' => $validatedData['end_date'] ?? null,
-            'categoryId' => $validatedData['expense_category'] ?? null,
+            'category' => $validatedData['expense_category'] ?? null,
             'modeOfPayment' => $validatedData['mode_of_payment'] ?? null,
         ];
 
+        // return $filters;
+
         // Build dynamic query based on filters
-        $buildQuery = function ($categoryId = null) use ($filters) {
-            $query = Expenses::query();
+        // $buildQuery = function ($categoryId = null) use ($filters) {
+        $query = Expenses::query();
 
-            if ($filters['startDate'] && $filters['endDate']) {
-                $query->whereBetween('created_at', [
-                    Carbon::parse($filters['startDate'])->startOfDay(),
-                    Carbon::parse($filters['endDate'])->endOfDay()
-                ]);
-            }
-
-            if ($filters['currentDate']) {
-                $query->whereDate('created_at', Carbon::parse($filters['currentDate']));
-            }
-
-            if ($categoryId) {
-                $query->where('expense_category', $categoryId);
-            }
-
-            if ($filters['modeOfPayment']) {
-                $query->where('mode_of_payment', $filters['modeOfPayment']);
-            }
-
-            return $query;
-        };
-
-        // Fetch all categories
-        $categoriesCollection = ExpenseCategory::all();
-        $categories = [];
-
-        if ($filters['categoryId']) {
-            $category = $categoriesCollection->firstWhere('id', $filters['categoryId']);
-            if ($category) {
-                $categories[$category->expense_category] = $buildQuery($category->id)->get();
-            }
-        } else {
-            foreach ($categoriesCollection as $category) {
-                $categories[$category->expense_category] = $buildQuery($category->id)->get();
-            }
+        if ($filters['startDate'] && $filters['endDate']) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($filters['startDate'])->startOfDay(),
+                Carbon::parse($filters['endDate'])->endOfDay()
+            ]);
         }
 
-        // Prepare summaries
-        $paymentSummaries = [];
-        $paymentMethods = ['Cash', 'Mobile Money', 'Bank Transfer', 'Cheque'];
-        $totalAmount = 0;
-
-        foreach ($categories as $categoryName => $expenses) {
-            $paymentSummaries[$categoryName] = [];
-
-            foreach ($paymentMethods as $method) {
-                $filtered = $expenses->where('mode_of_payment', $method);
-                $paymentSummaries[$categoryName][$method] = [
-                    'transactions' => $filtered,
-                    'total' => $filtered->sum('amount'),
-                ];
-            }
-
-            $totalAmount += $expenses->sum('amount');
+        if ($filters['currentDate']) {
+            $query->whereDate('created_at', Carbon::parse($filters['currentDate']));
         }
 
-        return view('backend.reports.expensesreport', [
-            'filters' => $filters,
-            'categories' => $categories,
-            'paymentSummaries' => $paymentSummaries,
-            'totalAmount' => $totalAmount,
-            'generatedAt' => now()->format('F j, Y h:i A'),
-        ]);
+        if ($filters['category']) {
+            $query->where('category', $filters['category']);
+        }
+
+        if ($filters['modeOfPayment']) {
+            $query->where('mode_of_payment', $filters['modeOfPayment']);
+        }
+
+        $datas = $query->get();
+
+        // return $data;
+
+        $totalAmount = collect($datas)->sum(function ($item) {
+            return (float) $item['amount'];
+        });
+
+        return view('backend.reports.expensesreport',compact('datas','totalAmount','filters'));
+    
     } catch (Exception $e) {
         Log::error("Error generating expenses report: " . $e->getMessage());
         return redirect()->back()->with('error', 'Error generating expenses report: ' . $e->getMessage());

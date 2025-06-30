@@ -28,6 +28,7 @@
                         <select name="type_of_course" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
                             <option value="">--Select an option--</option>
                             <option value="Diploma">Diploma</option>
+                            <option value="Certificate">Certificate</option>
                             <option value="Professional">Professional</option>
                         </select>                           
                         @error('type_of_course')
@@ -71,6 +72,7 @@
                         <select name="duration" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
                             <option value="">--Select an option--</option>
                             <option value="2 months">2 months</option>
+                            <option value="3 months">3 months</option>
                             <option value="6 months">6 months</option>
                             <option value="8 months">8 months</option>
                             <option value="12 months">12 months</option>

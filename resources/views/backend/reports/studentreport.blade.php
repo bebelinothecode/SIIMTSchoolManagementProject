@@ -86,6 +86,8 @@
         <div class="mt-2 text-sm text-gray-600">
             <p><strong>Date Range:</strong> {{ $start_date ?? 'N/A' }} - {{ $end_date ?? 'N/A' }}</p>
             <p><strong>Diploma:</strong> {{$diploma->code ?? "N/A"}}-{{$diploma->name ?? "N/A"}}</p>
+            <p><strong>Number of Students:</strong> {{$totalStudents ?? "N/A"}}</p>
+
         </div>
     </div>
 

@@ -145,6 +145,11 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::delete('/delete/expense/{id}',[ExpensesController::class, 'deleteExpense'])->name('expense.destroy');
     Route::get('/edit/expenses/form/{id}',[ExpensesController::class, 'editExpense'])->name('expense.edit');
     Route::post('/expense/update/{id}',[ExpensesController::class, 'updateExpense'])->name('expense.update');
+    Route::get('/all/books',[BookController::class, 'showAllBooks'])->name('books.index');
+    Route::get('/mature/students',[StudentController::class, 'matureStudentsIndex'])->name('mature.index');
+    Route::get('/create/mature/student/form',[StudentController::class, 'createMatureStudentForm'])->name('create.maturestudent');
+    Route::post('/store/mature/student',[StudentController::class, 'storeMatureStudent'])->name('store.maturestudent');
+    Route::delete('/delete/mature/student/{id}',[StudentController::class, 'deleteMatureStudent'])->name('delete.maturestudent');
 
     // Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
 

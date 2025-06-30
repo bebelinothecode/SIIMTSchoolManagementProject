@@ -74,7 +74,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('amount', $transaction->amount)}}">
+                        <input name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('amount', $transaction->amount)}}">
                         @error('amount')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -88,7 +88,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('balance', $transaction->balance)}}">
+                        <input name="balance" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('balance', $transaction->balance)}}" readonly>
                         @error('balance')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -158,7 +158,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="receipt_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('receipt_number', $transaction->receipt_number)}}">
+                        <input name="receipt_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('receipt_number', $transaction->receipt_number)}}" readonly>
                         @error('receipt_number')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -212,4 +212,35 @@
             </form>        
         </div>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const amountInput = document.getElementById('amount');
+        const balanceInput = document.getElementById('balance');
+
+        // Store initial values
+        const originalAmount = parseFloat(amountInput.value) || 0;
+        const originalBalance = parseFloat(balanceInput.value) || 0;
+
+        amountInput.addEventListener('input', function () {
+            const newAmount = parseFloat(amountInput.value) || 0;
+
+            // Calculate difference and new balance
+            const difference = originalAmount - newAmount;
+            const updatedBalance = originalBalance + difference;
+
+            if (updatedBalance < 0) {
+                alert("Balance cannot be negative. Please enter a valid amount.");
+                
+                // Revert to original values
+                amountInput.value = originalAmount.toFixed(2);
+                balanceInput.value = originalBalance.toFixed(2);
+            } else {
+                balanceInput.value = updatedBalance.toFixed(2);
+            }
+        });
+    });
+    </script>
+
+
+
 @endsection

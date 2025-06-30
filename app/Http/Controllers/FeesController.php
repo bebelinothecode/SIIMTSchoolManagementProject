@@ -289,7 +289,13 @@ class  FeesController extends Controller
     public function editTransactionForm($id) {
         $transaction = FeesPaid::findOrFail($id);
 
-        return view('backend.fees.edittransactionform', compact('transaction'));
+        $student = Student::where('index_number',$transaction->student_index_number)->get();
+
+        $balance = $student->first()->balance;
+
+        // return $balance;
+
+        return view('backend.fees.edittransactionform', compact('transaction','balance'));
     }
 
     public function updateTransaction(Request $request, $id) {

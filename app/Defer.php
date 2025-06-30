@@ -40,9 +40,24 @@ class Defer extends Model
         // 'student_type',
     ];
 
-    public function users() 
+    public function user() 
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function course() 
+    {
+        return $this->belongsTo(Grade::class, 'course_id');
+    }
+
+    public function diploma()
+    {
+        return $this->belongsTo(Diploma::class,'course_id_prof');
+    }
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
     }
 
 }

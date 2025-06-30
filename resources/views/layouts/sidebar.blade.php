@@ -91,7 +91,15 @@
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                             <path fill="currentColor" d="M288 0H128v128h160V0zM128 256h160V128H128V256zM288 128h160V0H288V128zM128 384h160V256H128V384zM288 256h160V128H288V256zM128 512h160V384H128V512zM288 384h160V256H288V384z"/>
                         </svg>
-                        <span class="ml-2 text-sm font-semibold">Student List</span>
+                        <span class="ml-2 text-sm font-semibold">Regular Student List</span>
+                    </a>
+                    <a href="{{ route('mature.index') }}"
+                    class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+                    >
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path fill="currentColor" d="M288 0H128v128h160V0zM128 256h160V128H128V256zM288 128h160V0H288V128zM128 384h160V256H128V384zM288 256h160V128H288V256zM128 512h160V384H128V512zM288 384h160V256H288V384z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Mature Student List</span>
                     </a>
                     <a href="#"
                     class="flex items-center text-gray-600 py-2 hover:text-blue-700"

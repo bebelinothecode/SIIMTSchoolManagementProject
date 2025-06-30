@@ -20,6 +20,7 @@ use App\Defer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Imports\StudentsImport;
+use App\MatureStudent;
 use App\RegisterCourse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -268,62 +269,6 @@ class StudentController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Student  $student
-     * @return \Illuminate\Http\Response
-     */
-    // public function update(Request $request, Student $student)
-    // {
-    //     $request->validate([
-    //         'name'              => 'required|string|max:255',
-    //         'email'             => 'required|string|email|max:255|unique:users,email,'.$student->user_id,
-    //         'parent_id'         => 'required|numeric',
-    //         'class_id'          => 'required|numeric',
-    //         'roll_number'       => [
-    //             'required',
-    //             'numeric',
-    //             Rule::unique('students')->ignore($student->id)->where(function ($query) use ($request) {
-    //                 return $query->where('class_id', $request->class_id);
-    //             })
-    //         ],
-    //         'gender'            => 'required|string',
-    //         'phone'             => 'required|string|max:255',
-    //         'dateofbirth'       => 'required|date',
-    //         'current_address'   => 'required|string|max:255',
-    //         'permanent_address' => 'required|string|max:255'
-    //         // 'academicyear'      => 'required|numeric',
-    //     ]);
-
-    //     if ($request->hasFile('profile_picture')) {
-    //         $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
-    //         $request->profile_picture->move(public_path('images/profile'), $profile);
-    //     } else {
-    //         $profile = $student->user->profile_picture;
-    //     }
-
-    //     $student->user()->update([
-    //         'name'              => $request->name,
-    //         'email'             => $request->email,
-    //         'profile_picture'   => $profile
-    //     ]);
-
-    //     $student->update([
-    //         'parent_id'         => $request->parent_id,
-    //         'class_id'          => $request->class_id,
-    //         'roll_number'       => $request->roll_number,
-    //         'gender'            => $request->gender,
-    //         'phone'             => $request->phone,
-    //         'dateofbirth'       => $request->dateofbirth,
-    //         'current_address'   => $request->current_address,
-    //         'permanent_address' => $request->permanent_address
-    //     ]);
-
-    //     return redirect()->route('student.index');
-    // }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Student  $student
@@ -556,167 +501,6 @@ class StudentController extends Controller
 
         return view("backend.students.migration", compact('levels', 'semesters'));
     }
-
-//     public function updateStudent(Request $request, $id)
-// {
-//     try {
-//         // dd($request->all());
-//         $validatedData = $request->validate([
-//             'name' => 'required|string|max:255',
-//             'email' => 'required|email|max:255',
-//             'phone' => 'required|string|max:20',
-//             'gender' => 'required|in:male,female,other',
-//             'dateofbirth' => 'required|date',
-//             'current_address' => 'required|string',
-//             'fees' => 'required|numeric|min:0',
-//             'currency' => 'required|string|max:15',
-//             'balance' => 'required|numeric',
-//             'course_id' => 'required|integer',
-//             'parent_id' => 'required|exists:parents,id'
-//         ]);
-
-//         // dd($validatedData);
-
-//         $student = Student::findOrFail($id);
-
-//         // Try finding the course from Grade or Diploma
-//         // $item = Grade::find($validatedData['course_id']) ?? Diploma::find($validatedData['course_id']);
-
-//         // Handle file upload for profile picture
-//         if ($request->hasFile('profile_picture')) {
-//             $extension = $request->profile_picture->getClientOriginalExtension();
-//             $filename = uniqid(Str::slug($student->user->name) . '-' . $student->user->id . '-') . '.' . $extension;
-//             $request->profile_picture->move(public_path('images/profile'), $filename);
-//         } else {
-//             $filename = $student->user->profile_picture;
-//         }
-
-      
-
-//         DB::beginTransaction();
-
-//         // Update user info
-//         $student->user()->update([
-//             'name' => $validatedData['name'],
-//             'email' => $validatedData['email'],
-//             'profile_picture' => $filename
-//         ]);
-
-//         // Prepare update data
-//         $studentUpdateData = [
-//             'balance' => $validatedData['balance'],
-//             'fees' => $validatedData['fees'],
-//             'student_parent' => $validatedData['parent_id'],
-//             'gender' => $validatedData['gender'],
-//             'phone' => $validatedData['phone'],
-//             'dateofbirth' => $validatedData['dateofbirth'],
-//             'current_address' => $validatedData['current_address'],
-//         ];
-
-//         $student->update($studentUpdateData);
-
-//         DB::commit();
-
-//         return redirect()->back()->with('success', 'Student updated successfully');
-//     } catch (Exception $e) {
-//         DB::rollBack();
-
-//         Log::error('Validation failed', $e->errors());
-
-//         Log::error('Error occurred updating student: ' . $e->getMessage(), [
-//             'exception' => $e
-//         ]);
-
-//         return redirect()->back()->with('error', 'Error updating Student');
-//     }
-// }
-
-
-    // public function updateStudent(Request $request, $id) {
-    //     try {
-    //         // dd($request->all());
-    //         $validatedData = $request->validate([
-    //             'name' => 'required|string',
-    //             'email' => 'required|email',
-    //             'phone' => 'required',
-    //             'gender' => 'required',
-    //             'dateofbirth' => 'required|date',
-    //             'current_address' => 'required',
-    //             'fees' => 'required',
-    //             'currency' => 'required',
-    //             'balance' => 'required',
-    //             'course_id' => 'required',
-    //             'parent_id' => 'required' 
-    //         ]);
-
-    //         $student = Student::findOrFail($id);
-
-    //         $course = Grade::where('id', $validatedData['course_id'])->first();
-    //         $diploma = Diploma::where('id', $validatedData['course_id'])->first();
-
-    //         $item = $course ?? $diploma;
-
-    //         if ($request->hasFile('profile_picture')) {
-    //             $profile = Str::slug($student->user->name).'-'.$student->user->id.'.'.$request->profile_picture->getClientOriginalExtension();
-    //             $request->profile_picture->move(public_path('images/profile'), $profile);
-    //         } else {
-    //             $profile = $student->user->profile_picture;
-    //         }
-
-    //         DB::beginTransaction();
-
-            // $student->user()->update([
-            //     'name'              => $validatedData['name'],
-            //     'email'             => $validatedData['email'],
-            //     'profile_picture'   => $profile
-            // ]);
-
-    //         $courseChanged = false;
-
-    //         if($student->student_category === 'Academic') {
-    //             if ($student->course_id != $validatedData['course_id']) {
-    //                 $courseChanged = true;
-    //             }
-    //             $student->update([
-    //                 'course_id' => $validatedData['course_id'],
-    //                 // 'balance'   => $courseChanged ? '0.0' : $validatedData['balance'],
-    //                 'balance' => $validatedData['balance'],
-    //                 'fees' => $validatedData['fees'],
-    //                 'currency' => $validatedData['currency']
-    //             ]);
-    //         } else {
-    //             if ($student->course_id_prof != $validatedData['course_id']) {
-    //                 $courseChanged = true;
-    //             }
-    //             $student->update([
-    //                 'course_id_prof' => $validatedData['course_id'],
-    //                 'fees' => $validatedData['fees'],
-    //                 'currency_prof' => $validatedData['currency'],
-    //                 'balance' =>  $validatedData['balance']
-    //             ]);
-    //         }
-
-    //         $student->update([
-    //             'student_parent'    => $validatedData['parent_id'],
-    //             'gender'            => $validatedData['gender'],
-    //             'phone'             => $validatedData['phone'],
-    //             'dateofbirth'       => $validatedData['dateofbirth'],
-    //             'current_address'   => $validatedData['current_address'],
-    //         ]);
-
-    //         DB::commit();
-
-    //         return redirect()->back()->with('success', 'Student updated successfully');    
-    //     } catch (Exception $e) {
-    //         //throw $th;
-    //         DB::rollBack();
-
-    //         Log::error(message: "Error occured updating student" .$e);
-
-    //         return redirect()->back()->with('error', 'Error updating Student');    
-    //     }
-    // }
-
    
     public function updateStudent(Request $request, $id) {
         try {
@@ -780,33 +564,6 @@ class StudentController extends Controller
 
             $student->update($studentFields);
 
-            // $studentAcaFieldsToUpdate = [
-            //     'phone' => $validatedData['phone'],
-            //     'gender' => $validatedData['gender'],
-            //     'dateofbirth' => $validatedData['dateofbirth'],
-            //     'current_address' => $validatedData['current_address'],
-            //     'fees' => $validatedData['fees'],
-            //     'balance' => $validatedData['balance'],
-            //     'course_id' => $validatedData['course_id']
-            // ];
-
-            // $studentProfFieldsToUpdate = [
-            //     'phone' => $validatedData['phone'],
-            //     'gender' => $validatedData['gender'],
-            //     'dateofbirth' => $validatedData['dateofbirth'],
-            //     'current_address' => $validatedData['current_address'],
-            //     'fees_prof' => $validatedData['fees'],
-            //     'balance' => $validatedData['balance'],
-            //     'course_id_prof' => $validatedData['course_id']
-            // ];
-
-            // if($student->student_category === 'Academic') {
-            //     $student->update($studentAcaFieldsToUpdate);
-            // }
-
-            // if($student->student_category === 'Professional') {
-            //     $student->update($studentProfFieldsToUpdate);
-            // }
             return redirect()->back()->with('success', 'Student updated successfully');        
         } catch (Exception $e) {
             Log::error(message: "Error occured updating student" .$e);
@@ -999,32 +756,6 @@ class StudentController extends Controller
         }
     }
 
-    // public function getCourseOutlineForm() {
-    //     $userId = Auth::user()->id;
-    //     // $user = Auth::user();
-
-    //     // return $user;
-
-    //     // $student = Student::findOrFail($userId);
-    //     $student = DB::table('students')->where('user_id',$userId)->first();
-
-    //     // return $student;
-
-    //     $courseId = $student->course_id ?? $student->course_id_prof;
-
-    //     $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
-    //         $query->withPivot('level_id', 'semester_id');
-    //     }])->findOrFail($courseId);
-
-    //     $subjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
-    //         return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
-    //     });
-
-    //     // return $groupedSubjects;
-
-    //     return view('backend.students.getcourseoutline',compact('subjects'));
-    // }
-
     public function getCourseOutlineForm()
     {
         try {
@@ -1147,24 +878,6 @@ class StudentController extends Controller
         return view('backend.students.changestatus',compact('id'));
     }
 
-    // public function changeStudentsStatus(Request $request,$id) {
-    //     $validatedData = $request->validate([
-    //         'student_defer' => 'required|string|in:defer,withdrawn,expelled'
-    //     ]);
-
-    //     if($validatedData['student_defer'] === 'defer') {
-    //         DB::transaction(function () use ($id) {
-    //             $student = Student::findOrFail($id);
-
-    //             Defer::create($student->toArray());
-
-    //             DB::table('students')->where('id', $id)->delete();
-    //         });
-
-    //         return redirect()->back()->with('success', 'Student moved to defer list successfully');
-    //     }
-    // }
-
     public function changeStudentsStatus(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -1262,28 +975,24 @@ class StudentController extends Controller
 
     public function restoreDeferStudents($id) {
         try {
-            //code...
             DB::transaction(function () use ($id) {
                 $deferStudent = Defer::findOrFail($id);
 
                 // dd($deferStudent);
 
-                $data = $deferStudent->toArray();
-                unset($data['id'], $data['created_at'], $data['updated_at']);
+                $user = User::findOrFail($deferStudent->user_id);
 
-                // $user = User::create([
-                //     'name'  => 
-                // ]);
-
-                Student::create($data);
-                
-                $deferStudent->delete();
+                if($user) {
+                    $data = $deferStudent->toArray();
+                    unset($data['id'], $data['created_at'], $data['updated_at']);
+                    $user->student()->create($data);
+                    $deferStudent->delete();
+                }
             });
 
             return redirect()->back()->with('success', 'Student moved out of defer list successfully.');
 
         } catch (Exception $e) {
-            //throw $th;
             Log::error('Error changing student status: ' . $e->getMessage());
 
             return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
@@ -1369,6 +1078,83 @@ class StudentController extends Controller
             'message' => 'Student and related user restored successfully.',
             'student' => $student
         ]);
+    }
+
+    public function matureStudentsIndex(Request $request) {
+        $query = MatureStudent::with('course');
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('mature_index_number', 'like', '%' . $request->search . '%');
+              });
+           }
+
+        $students = $query->orderBy('name', 'asc')
+        ->paginate(10);
+
+        return view('backend.students.maturestudentindex',compact('students'));
+    }
+
+    public function createMatureStudentForm() {
+        $grades = Grade::all();
+        
+        return view('backend.students.creatematurestudentsform',compact('grades'));
+    }
+
+    public function storeMatureStudent(Request $request) {
+        try {
+            //code...
+            // dd($request->all());
+            $matureIndexNumber = 'MAT'.'-'.Carbon::now()->format('y') . '-'  .Carbon::now()->format('m') .'-'.strtoupper(Str::random(8));
+    
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'date_of_birth' => 'required|date',
+                'amount_paid' => 'required',
+                'course_id' => 'required|exists:grades,id',
+                'phone' => 'required|string',
+                'gender' => 'required|in:Male,Female',
+                'currency' => 'required'
+            ]);
+
+            MatureStudent::create([
+                'name' => $validatedData['name'],
+                'date_of_birth' => $validatedData['date_of_birth'],
+                'amount_paid' => $validatedData['amount_paid'],
+                'course_id' => $validatedData['course_id'],
+                'phone' => $validatedData['phone'],
+                'gender' => $validatedData['gender'],
+                'currency' => $validatedData['currency'],
+                'mature_index_number' => $matureIndexNumber
+            ]);
+
+            return redirect()->back()->with('success', 'Mature student saved successfully');
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    public function deleteMatureStudent($id) {
+        try {
+            //code...
+            $matureStudent = MatureStudent::findOrFail($id);
+
+            $matureStudent->delete();
+
+            return redirect()->back()->with('success', 'Mature student deleted successfully');
+        } catch (Exception $e) {
+            //throw $th;
+              //throw $th;
+              Log::error('Error: ' . $e->getMessage());
+
+              return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+        
+
     }
 
 }

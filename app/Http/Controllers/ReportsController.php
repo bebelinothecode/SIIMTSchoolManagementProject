@@ -45,18 +45,11 @@ class ReportsController extends Controller
         try {
             // dd($request->all());
             $validatedData = $request->validate([
-                // 'start_date' => 'required|date',
-                // 'end_date' => 'required|date|after_or_equal:start_date',
                 'diplomaID' => 'required|integer|exists:diploma,id'
             ]);
 
             $diplomaID = $validatedData['diplomaID'];
-            // $end_date = $validatedData['end_date'];
-            // $start_date = $validatedData['start_date'];
-            // dd($request->all());                                                                                                                                                                                                                                    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]2)
-            // Retrieve parameters from the request
-        // $startDate = $request->input('start_date');
-        // $endDate = $request->input('end_date');
+    
         $diplomaID = $request->input('diplomaID');
 
         $students = Student::with(['user', 'diploma'])
@@ -64,16 +57,15 @@ class ReportsController extends Controller
                 // Ensure the student is associated with a diploma
                 $query->whereNotNull('id'); // Assuming 'id' is the primary key of the diplomas table
             })
-            // ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            //     // Filter students created within the date range
-            //     return $query->whereBetween('created_at', [$startDate, $endDate]);
-            // })
             ->when($diplomaID, function ($query, $diplomaID) {
                 return $query->whereHas('diploma', function ($q) use ($diplomaID) {
                     $q->where('id', $diplomaID); // Filter by subject ID
                 });
             })->get();
-        return view('backend.reports.studentreport', compact('students', 'diplomaID'));
+
+            
+        $totalStudents = $students->count();
+        return view('backend.reports.studentreport', compact('students', 'diplomaID','totalStudents'));
             
         } catch (Exception $e) {
             //throw $th;
@@ -161,29 +153,7 @@ class ReportsController extends Controller
             $level = $validatedData['level'];
             $semester = $validatedData['semester'];
 
-            // $students = DB::table('students as s')
-            // ->join('users as u', 's.user_id', '=', 'u.id')
-            // ->join('grades as g', 's.course_id', '=', 'g.id')
-            // ->select([
-            // 's.id as student_id',
-            // 'u.name',
-            // 'u.email',
-            // 'g.course_name as course_name',
-            // 's.level',
-            // 's.session as semester'
-            //  ])
-            // // ->where('s.course_id', $courseID)
-            // ->when($courseID, function ($query, $courseID) {
-            //     return $query->where('s.course_id', $courseID);
-            // })
-            // ->when($level, function ($query, $level) {
-            //     return $query->where('s.level', $level);
-            // })
-            // ->when($semester, function ($query, $semester) {
-            //     return $query->where('s.session', $semester);
-            // })
-            // ->orderBy('u.name')
-            // ->get();
+            $courseAcademic = Grade::findOrFail($courseID)->course_name;
 
             $query = DB::table('students')
                 ->join('users', 'students.user_id', '=', 'users.id')
@@ -208,10 +178,11 @@ class ReportsController extends Controller
             }
 
             $students = $query->get();
+            $totalCount = $students->count();
 
             // return [$students, $students->count()];
 
-            return view('backend.reports.studentsacademicreport',compact('level','semester','students'));
+            return view('backend.reports.studentsacademicreport',compact('level','semester','students','totalCount','courseAcademic'));
         } catch (Exception $e) {
             //throw $th;
             Log::error('Error occurred', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);

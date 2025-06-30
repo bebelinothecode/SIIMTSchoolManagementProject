@@ -25,18 +25,22 @@ class BookController extends Controller
     public function uploadBook(Request $request) {
         try {
             //code...
-            $request->validate([
+            // dd($request->all());
+            $validatedData = $request->validate([
                 'title' => 'required|string|max:255',
+                'author' => 'required|string|max:255',
+                'isbn_number' => 'nullable|string',
+                'publisher' => 'nullable|string',
                 'file' => 'required|file|mimes:pdf,doc,docx,txt',
             ]);
     
             $filePath = $request->file('file')->store('books', 'public');
     
             Book::create([
-                'title' => $request->title,
-                'author' => $request->author,
-                'publisher' => $request->publisher,
-                'isbn_number' => $request->isbn_number,
+                'title' => $validatedData['title'],
+                'author' => $validatedData['author'],
+                'publisher' => $validatedData['publisher'],
+                'isbn_number' => $validatedData['isbn_number'],
                 'file_path' => $filePath,
             ]);
     
@@ -44,9 +48,6 @@ class BookController extends Controller
         } catch (\Exception $e) {
             //throw $th;
             Log::error("Error occured uploading book".$e);
-
-            // Log::error("Error occured updating student" .$e);
-
 
             return redirect()->back()->with('error', 'Book uploaded unsuccessful!');
         }
@@ -176,43 +177,6 @@ class BookController extends Controller
         return view('backend.librarybooks.pastquestions', compact('results'));
     }
 
-    // public function viewQuestionsOnline($id) {
-    //     $question = PastQuestions::findOrFail($id);
-
-    //     return response()->file(storage_path('app/public/' . $question->file_path));
-    // }
-
-    // public function viewQuestionsOnline($id) {
-    //     $question = PastQuestions::findOrFail($id);
-        
-    //     $filePath = storage_path('app/public/' . $question->file_path);
-        
-    //     if (!file_exists($filePath)) {
-    //         abort(404, 'The requested file does not exist.');
-    //     }
-        
-    //     return response()->file($filePath, [
-    //         'Content-Type' => 'application/pdf',
-    //         'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"'
-    //     ]);
-    // }
-
-    // public function viewQuestionsOnline($id)
-    // {
-    //     $question = PastQuestions::findOrFail($id);
-        
-    //     return Storage::disk('public')->download(
-    //         $question->file_path, 
-    //         $question->original_filename ?? 'past_question.pdf'
-    //     );
-    // }
-
-    // public function viewQuestionsOnline($id) {
-    //     $question = PastQuestions::findOrFail($id);
-
-    //     return response()->download(storage_path('app/public/' . $question->file_path));
-    // }
-
     public function viewQuestionsOnline($id)
     {
         $pastQuestion = PastQuestions::findOrFail($id);
@@ -228,21 +192,9 @@ class BookController extends Controller
         );
     }
 
-    // public function viewQuestionsOnline($id)
-    //     {
-    //         $question = PastQuestions::findOrFail($id);
-            
-    //         // Check if file exists in storage
-    //         if (!Storage::disk('public')->exists($question->file_path)) {
-    //             abort(404, 'The requested file does not exist.');
-    //         }
-            
-    //         // Get the original filename or default
-    //         $filename = $question->original_filename ?? basename($question->file_path);
-            
-    //         // Return the file download
-    //         return Storage::disk('public')->download($question->file_path, $filename, [
-    //             'Content-Type' => 'application/pdf',
-    //         ]);
-    //     }
+    public function showAllBooks() {
+        $books = Book::paginate(10);
+
+        return view('backend.librarybooks.index',compact('books'));
     }
+}

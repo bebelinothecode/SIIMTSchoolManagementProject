@@ -27,31 +27,9 @@
 
         <div class="flex flex-col sm:flex-row gap-3">
             <div class="flex-1 relative">
-                <!-- <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                    </svg>
-                </div> -->
-                <!-- Search  -->
-                <!-- <input 
-                    type="text" 
-                    name="search" 
-                    id="search"
-                    placeholder="Search by name, email or index number" 
-                    value="{{ request('search') }}"
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                > -->
-                <!-- <script>
-                    document.getElementById('search').addEventListener('input', function(e) {
-                        this.value = this.value.toUpperCase();
-                    })
-                </script> -->
+               
             </div>
-            <!-- <div class="flex flex-col sm:flex-row gap-2">
-                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
-                    Search
-                </button>
-            </div> -->
+           
         </div>
         
     </form>

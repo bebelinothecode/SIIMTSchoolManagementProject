@@ -90,6 +90,37 @@
             </div>
         </div>
 
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h4><i class="fas fa-filter"></i> Filters Applied</h4>
+            <div class="row">
+                @if ($level)
+                    <div class="col-md-3">
+                        <strong>Level :</strong><br>
+                        <span class="badge badge-primary">{{ $level }}</span>
+                    </div>
+                @endif
+                @if ($semester)
+                    <div class="col-md-3">
+                        <strong>Semester:</strong><br>
+                        <span class="badge badge-primary">{{ $semester }}</span>
+                    </div>
+                @endif
+                @if ($courseAcademic)
+                    <div class="col-md-3">
+                        <strong>Course:</strong><br>
+                        <span class="badge badge-primary">{{ $courseAcademic }}</span>
+                    </div>
+                @endif
+                @if ($totalCount)
+                    <div class="col-md-3">
+                        <strong>Total Student Count:</strong><br>
+                        <span class="badge badge-primary">{{ $totalCount }}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <!-- Detailed Transactions -->
         <h4 class="section-title"><i class="fas fa-list-ul"></i> Students Report List</h4>
                 <div class="table-responsive">
