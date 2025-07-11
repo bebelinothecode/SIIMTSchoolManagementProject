@@ -79,7 +79,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Index Number</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -107,10 +107,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">{{ $student->index_number }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-block w-3 h-3 rounded-full animate-pulse 
+                            <!-- <span class="inline-block w-3 h-3 rounded-full animate-pulse 
                                 {{ $student->status === 'active' ? 'bg-green-500' : 'bg-red-500' }}" 
                                 title="{{ ucfirst($student->status ?? 'Unknown') }}">
-                            </span>
+                            </span> -->
+                            {{ $student->branch }}
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -22,7 +22,8 @@ class Expenses extends Model
         'cash_details',
         'bank_details',
         'cash_details',
-        'BackDate'
+        'BackDate',
+        'branch'
     ];
 
 }

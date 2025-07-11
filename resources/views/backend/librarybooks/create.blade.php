@@ -62,7 +62,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="publisher" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('email') }}">
+                        <input name="publisher" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('email') }}" required>
                         @error('publisher')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -74,7 +74,7 @@
                             Book
                         </label>
                     </div>
-                    <input type="file" name="file" id="file" required>
+                    <input type="file" name="book_name" id="book_name" required>
                 </div>
                 <div class="md:flex md:items-center">
                     <div class="md:w-1/3"></div>

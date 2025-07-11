@@ -8,6 +8,7 @@ use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\FeesController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\ParentsController;
+use App\Http\Controllers\ProfitAndLossController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
@@ -42,7 +43,7 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian']], function () 
+Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian|HR']], function () 
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');
@@ -150,10 +151,15 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/create/mature/student/form',[StudentController::class, 'createMatureStudentForm'])->name('create.maturestudent');
     Route::post('/store/mature/student',[StudentController::class, 'storeMatureStudent'])->name('store.maturestudent');
     Route::delete('/delete/mature/student/{id}',[StudentController::class, 'deleteMatureStudent'])->name('delete.maturestudent');
-
-    // Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
-
-    // Route::get('/expenses/table',[ExpensesController::class, 'searchExpensesTable'])->name('search.expenses');
+    Route::get('/edit/mature/student/{id}',[StudentController::class, 'editMatureStudentForm'])->name('edit.maturestudentform');
+    Route::put('/edit/mature/student/{id}',[StudentController::class,'editMatureStudent'])->name('edit.maturestudent');
+    Route::get('/move/maturestudent/student/form/{id}',[StudentController::class,'moveMatureStudentToStudentForm'])->name('movemature.studentform');
+    Route::post('maturestudent/student/{id}',[StudentController::class,'moveMatureStudentToStudent'])->name('movemature.tostudent');
+    Route::delete('/delete/book/{id}',[BookController::class, 'deleteLibraryBook'])->name('books.delete');
+    Route::delete('/delete/pastquestion/{id}',[BookController::class, 'deletePastQuestion'])->name('pastquestions.delete');
+    Route::get('/profit/and/loss',[ProfitAndLossController::class, 'index'])->name('profit.andloss');
+    Route::post('/generate/profit/and/loss',[ProfitAndLossController::class,'generateProfitAndLossReport'])->name('generate.profitandloss');
+    
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');

@@ -121,48 +121,24 @@
         </div>
 
         <div class="details">
-            <h3>Student Details</h3>
-            <p><strong>Index Number:</strong> {{ $feespaid->student_index_number }}</p>
-            <p><strong>Name:</strong> {{ $feespaid->student_name }}</p>
+            <h3>Mature Student Details</h3>
+            <p><strong>Index Number:</strong> {{ $matureIndexNumber }}</p>
+            <p><strong>Name:</strong> {{ $validatedData['name'] }}</p>
 
             <h3>Payment Details</h3>
             <table>
                 <tr>
                     <th>Fees Type</th>
-                    <td>{{ $feespaid->fees_type }}</td>
+                    <td>Mature Student Exams Fee</td>
                 </tr>
                 <tr>
                     <th>Amount Paid</th>
-                    <td>{{ $feespaid->currency }} {{ number_format($feespaid->amount, 2) }}</td>
+                    <td>{{ $validatedData['currency'] }} {{ number_format($validatedData['amount_paid'], 2) }}</td>
                 </tr>
-                @if($feespaid->fees_type === 'School Fees')
-                <tr>
-                    <th>Balance</th>
-                    <td>{{ $feespaid->currency }} {{ number_format($feespaid->balance, 2) }}</td>
-                </tr>
-                @endif
-                <tr>
-                    <th>Method of Payment</th>
-                    <td>{{ $feespaid->method_of_payment }}</td>
-                </tr>
-                @if ($feespaid->cheque_number)
-                <tr>
-                    <th>Cheque Number</th>
-                    <td>{{ $feespaid->cheque_number }}</td>
-                </tr>
-                @endif
-                @if ($feespaid->Momo_number)
-                <tr>
-                    <th>MoMo Number</th>
-                    <td>{{ $feespaid->Momo_number }}</td>
-                </tr>
-                @endif
             </table>
         </div>
 
-        <div class="receipt-number">
-            <strong>Receipt Number:</strong> {{ $feespaid->receipt_number }}
-        </div>
+       
 
         <div class="footer">
             <p>Thank you for your payment!</p>

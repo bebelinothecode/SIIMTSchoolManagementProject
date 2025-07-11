@@ -26,7 +26,7 @@
 
     {{-- Search Form --}}
     <div class="w-full mt-8 bg-white rounded">
-        <form action="{{ route('search.books.admin') }}" method="POST" class="md:flex md:items-center px-6 py-6 pb-0">
+        <form action="{{ route('search.books.admin') }}" method="POST" class="md:flex md:items-center px-6 py-6 pb-0" >
             @csrf
             <div class="md:flex md:items-center mb-6 text-gray-700 uppercase font-bold">
                 <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -85,6 +85,16 @@
                             class="inline-block px-2 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
                             View Online
                         </a>
+                    </td>
+                    <td class="py-3 px-2">
+                        <form action="{{ route('books.delete', $book->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="inline-block px-2 py-2 bg-red-600 text-white rounded hover:bg-green-700 transition">
+                                Delete
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach

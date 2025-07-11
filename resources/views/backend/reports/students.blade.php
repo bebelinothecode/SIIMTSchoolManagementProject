@@ -9,26 +9,6 @@
         <form action="{{ route('reports.generate') }}" method="GET" class="space-y-4">
             <!-- Date Range and Professional Courses -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- <div>
-                    <label for="start_date" class="block p-2 text-xl font-medium text-gray-700">Start Date</label>
-                    <input 
-                        type="date" 
-                        name="start_date" 
-                        id="start_date" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        required
-                    >
-                </div> -->
-                <!-- <div>
-                    <label for="end_date" class="block p-2 text-xl font-medium text-gray-700">End Date</label>
-                    <input 
-                        type="date" 
-                        name="end_date" 
-                        id="end_date" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        required
-                    >
-                </div> -->
                 <div>
                     <label for="diploma" class="block text-xl p-2 font-medium text-gray-700">Diploma/Professional Course</label>
                     <select 
@@ -43,7 +23,23 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Branch
+                        </label>
+                    </div>
+                    <div class="md:w-2/3 block text-gray-600 font-bold">
+                        <select name="branch" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="branch" required>
+                            <option value="">--Select Branch--</option>
+                            <option value="Kasoa">Kasoa</option>
+                            <option value="Kanda">Kanda</option>
+                            <option value="Spintex">Spintex</option>
+                        </select>
+                    </div>
+                </div>
             </div>
+            
             <!-- Submit Button -->
             <div>
                 <button 

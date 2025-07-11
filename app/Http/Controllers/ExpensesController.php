@@ -89,12 +89,14 @@ class ExpensesController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer,Cheque',
             'expense_category' => 'nullable',
+            'branch' => 'nullable|in:Kasoa,Kanda,Spintex'
         ]);
 
         $filters = [
             'currentDate' => $validatedData['current_date'] ?? null,
             'startDate' => $validatedData['start_date'] ?? null,
             'endDate' => $validatedData['end_date'] ?? null,
+            'branch' => $validatedData['branch'] ?? null,
             'category' => $validatedData['expense_category'] ?? null,
             'modeOfPayment' => $validatedData['mode_of_payment'] ?? null,
         ];
@@ -122,6 +124,10 @@ class ExpensesController extends Controller
 
         if ($filters['modeOfPayment']) {
             $query->where('mode_of_payment', $filters['modeOfPayment']);
+        }
+
+        if($filters['branch']) {
+            $query->where('branch',$filters['branch']);
         }
 
         $datas = $query->get();

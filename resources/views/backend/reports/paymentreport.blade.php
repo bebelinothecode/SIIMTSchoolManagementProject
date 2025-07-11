@@ -112,6 +112,7 @@
                         <span class="badge badge-info">{{ \Carbon\Carbon::parse($endDate)->format('M j, Y') }}</span>
                     </div>
                 @endif
+                
                 @if ($aca_prof)
                     <div class="col-md-3">
                         <strong>Category:</strong><br>

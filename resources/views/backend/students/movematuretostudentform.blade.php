@@ -4,7 +4,7 @@
 <div class="roles">
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h2 class="text-gray-700 uppercase font-bold">Create Student</h2>
+            <h2 class="text-gray-700 uppercase font-bold">Move Mature Student to Regular Student</h2>
         </div>
         <div class="flex flex-wrap items-center">
             <a href="{{ route('student.index') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
@@ -15,9 +15,8 @@
     </div>
 
     <div class="table w-full mt-8 bg-white rounded">
-        <form action="{{ route('student.store') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
+        <form action="{{ route('movemature.tostudent',$matureStudent->id) }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
             @csrf
-
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -26,23 +25,7 @@
                         @endforeach
                     </ul>
                 </div>
-            @endif
-            
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                        Branch
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <select name="branch" id="branch" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
-                        <option value="">--Select Branch--</option>
-                        <option value="Spintex">Spintex</option>
-                        <option value="Kanda">Kanda</option>
-                        <option value="Kasoa">Kasoa</option>
-                    </select>
-                </div>
-            </div>
+            @endif 
 
             <!-- Student Category Field -->
             <div class="md:flex md:items-center mb-6">
@@ -483,7 +466,7 @@
             icon: "error",
             title: "Oops...",
             text: '{{ session('error') }}',
-            footer: '<a href="#">Why do I have this issue?</a>'
+            // footer: '<a href="#">Why do I have this issue?</a>'
           });
         </script>
         @endif

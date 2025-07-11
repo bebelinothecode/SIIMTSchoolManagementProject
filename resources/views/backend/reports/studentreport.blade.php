@@ -84,8 +84,9 @@
     <div class="mt-4 p-6 bg-white rounded-lg shadow">
         <h2 class="text-lg font-semibold text-gray-700">Report Parameters</h2>
         <div class="mt-2 text-sm text-gray-600">
-            <p><strong>Date Range:</strong> {{ $start_date ?? 'N/A' }} - {{ $end_date ?? 'N/A' }}</p>
-            <p><strong>Diploma:</strong> {{$diploma->code ?? "N/A"}}-{{$diploma->name ?? "N/A"}}</p>
+            <!-- <p><strong>Date Range:</strong> {{ $start_date ?? 'N/A' }} - {{ $end_date ?? 'N/A' }}</p> -->
+            <p><strong>Diploma:</strong> {{$diploma->name ?? "N/A"}}</p>
+            <p><strong>Branch:</strong> {{$branch ?? "N/A"}}</p>
             <p><strong>Number of Students:</strong> {{$totalStudents ?? "N/A"}}</p>
 
         </div>
@@ -108,14 +109,14 @@
             <tbody class="text-gray-600 text-sm font-light">
                 @forelse ($students as $student)
                     <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $student->user->name }}</td>
-                        <td class="py-3 px-6 text-left">{{ $student->user->email }}</td>
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $student->user->name ?? "N/A" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $student->user->email ?? "N/A" }}</td>
                         <td class="py-3 px-6 text-left">{{ $student->course->course_name ?? $student->diploma->name ?? 'N/A' }}</td>
-                        <td class="py-3 px-6 text-left">{{ $student->index_number }}</td>
+                        <td class="py-3 px-6 text-left">{{ $student->index_number ?? "N/A" }}</td>
                         <td class="py-3 px-6 text-left">{{number_format($student->balance,2)  }}</td>
                         <td class="py-3 px-6 text-left">{{ number_format($student->fees_prof,2) }}</td>
 
-                        <td class="py-3 px-6 text-left">{{ $student->phone }}</td>
+                        <td class="py-3 px-6 text-left">{{ $student->phone ?? "N/A" }}</td>
                     </tr>
                 @empty
                     <tr>

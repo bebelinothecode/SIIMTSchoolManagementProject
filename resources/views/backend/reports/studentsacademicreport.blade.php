@@ -112,6 +112,13 @@
                         <span class="badge badge-primary">{{ $courseAcademic }}</span>
                     </div>
                 @endif
+                @if ($branch)
+                    <div class="col-md-3">
+                        <strong>Branch:</strong><br>
+                        <span class="badge badge-primary">{{ $branch }}</span>
+                    </div>
+                @endif
+                
                 @if ($totalCount)
                     <div class="col-md-3">
                         <strong>Total Student Count:</strong><br>

@@ -51,12 +51,16 @@
                         </button>
                     </div>
                 </div>
-            </form>        
+            </form> 
+            <div class="px-6 pb-6">
+            <a href="{{ route('past.questions') }} " class="text-sm text-blue-500 hover:underline">
+                View All Past Questions
+            </a>
+        </div>       
         </div>
 
         <!-- Results Section -->
-        @if(isset($results))
-            @if(count($results) > 0)
+        @if(isset($pastQuestions) && count($pastQuestions) > 0)
                 <div class="bg-white rounded shadow overflow-hidden">
                     <h3 class="text-gray-700 uppercase font-bold p-6">Search Results</h3>
                     <table class="w-full">
@@ -68,30 +72,39 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 text-sm font-light">
-                            @foreach($results as $result)
+                            @foreach($pastQuestions as $pastQuestion)
                                 <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                    <td class="py-3 px-6">{{ $result->year_of_exams }}</td>
-                                    <td class="py-3 px-6">{{ $result->course_name }}</td>
+                                    <td class="py-3 px-6">{{ $pastQuestion->year_of_exams }}</td>
+                                    <td class="py-3 px-6">{{ $pastQuestion->course_name }}</td>
                                     <td class="py-3 px-6">
-                                        <a href="{{ route('questions.view', $result->id) }}"
+                                        <a href="{{ route('questions.view', $pastQuestion->id) }}"
                                            class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm transition"
                                            target="_blank"
                                            aria-label="View past question">
                                             Download
                                         </a>
                                     </td>
+                                    <td class="py-3 px-2">
+                                        <form action="{{ route('pastquestions.delete', $pastQuestion->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-block px-2 py-2 bg-red-600 text-white rounded hover:bg-green-700 transition">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-            @else
+                @elseif(isset($pastQuestions))
                 <div class="bg-white rounded shadow p-6 text-center">
                     <p class="text-red-500">No past questions found for the selected criteria.</p>
                 </div>
-            @endif
-        @endif
-    </div>
-@endsection
+                @endif
+                </div>
+            @endsection
 
 

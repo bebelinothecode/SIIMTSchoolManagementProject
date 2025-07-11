@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    @hasanyrole('Admin|rector|AsstAccount|frontdesk|StudCoordinator')
+    @hasanyrole('Admin|rector|AsstAccount|frontdesk|StudCoordinator|HR')
         @include('dashboard.admin')
     @endhasanyrole
 

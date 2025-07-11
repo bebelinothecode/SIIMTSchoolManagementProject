@@ -45,6 +45,7 @@
                     <th class="py-3 px-6 text-left">Course</th>
                     <th class="py-3 px-6 text-left">Fees</th>
                     <th class="py-3 px-6 text-left">Balance</th>
+                    <th class="py-3 px-6 text-left">Branch</th>
                     <th class="py-3 px-6 text-left">Actions</th>
                 </tr>
             </thead>
@@ -67,6 +68,7 @@
                         <td class="py-3 px-6 text-left">{{ $student->fees_prof }}</td>
                      @endif
                     <td class="py-3 px-6 text-left">{{ $student->balance }}</td>
+                    <td class="py-3 px-6 text-left">{{ $student->branch }}</td>
                     <td class="py-3 px-6 text-center"> 
                         @hasanyrole('Admin|rector')
                              <a href="{{ url('/restore/defer/students/' . $student->id) }}" onclick="return confirm('Are you sure you want to restore this student?')" class="ml-4 text-green-600 hover:underline">Restore Student</a>

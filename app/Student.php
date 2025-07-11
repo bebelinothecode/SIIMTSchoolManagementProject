@@ -37,7 +37,8 @@ class Student extends Model
         'Scholarship_amount',
         // 'permanent_address',
         'index_number',
-        'balance'
+        'balance',
+        'branch'
         // 'student_type',
     ];
 

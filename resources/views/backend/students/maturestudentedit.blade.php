@@ -4,7 +4,7 @@
 <div class="roles">
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h2 class="text-gray-700 uppercase font-bold">Create Mature Student</h2>
+            <h2 class="text-gray-700 uppercase font-bold">Edit Mature Student</h2>
         </div>
         <div class="flex flex-wrap items-center">
             <a href="{{ route('mature.index') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
@@ -15,7 +15,7 @@
     </div>
 
     <div class="table w-full mt-8 bg-white rounded">
-        <form action="{{ route('store.maturestudent') }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
+        <form action=" " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
             @csrf
 
             @if ($errors->any())
@@ -94,7 +94,7 @@
                 <div class="md:w-2/3 block text-gray-600 font-bold">
                     <div class="relative">
                         <select name="currency" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
-                            <option value="">--Select currency--</option>
+                            <option value="">--Select batch--</option>
                             <option value="Ghana Cedi">Ghana Cedi</option>
                             <option value="Dollar">Dollar</option>                                
                         </select>
@@ -139,33 +139,6 @@
                     @enderror
                 </div>
             </div>
-            <!-- <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
-                            Interested Course
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <div class="md:w-2/3">
-                            <select name="course" class="form-select select2-dropdown" id="choices-select">
-                                <option value="">-- Select Program --</option>
-                                @foreach($grades as $grade)
-                                    <option value="{{ $grade->id }}">{{ $grade->course_name }}</option>
-                                @endforeach
-                               
-                            </select>
-                        </div>
-                    </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const choices = new Choices('#choices-select', {
-                                removeItemButton: true,
-                                searchEnabled: true,
-                                searchPlaceholderValue: 'Search for a course...'
-                            });
-                        });
-                    </script>
-            </div> -->
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -190,7 +163,7 @@
                 <div class="md:w-1/3"></div>
                 <div class="md:w-2/3">
                     <button type="submit" class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
-                        Create Student
+                        Edit Student
                     </button>
                 </div>
             </div>

@@ -7,11 +7,14 @@ use App\Grade;
 use App\Diploma;
 use App\Student;
 use App\PastQuestions;
+use Dotenv\Exception\ValidationException;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\Compilers\Concerns\CompilesRawPhp;
 
 
 class BookController extends Controller
@@ -22,37 +25,128 @@ class BookController extends Controller
         return view('dashboard.admin', ['books' => $books]);
     }
 
-    public function uploadBook(Request $request) {
-        try {
-            //code...
-            // dd($request->all());
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'author' => 'required|string|max:255',
-                'isbn_number' => 'nullable|string',
-                'publisher' => 'nullable|string',
-                'file' => 'required|file|mimes:pdf,doc,docx,txt',
-            ]);
-    
-            $filePath = $request->file('file')->store('books', 'public');
-    
-            Book::create([
-                'title' => $validatedData['title'],
-                'author' => $validatedData['author'],
-                'publisher' => $validatedData['publisher'],
-                'isbn_number' => $validatedData['isbn_number'],
-                'file_path' => $filePath,
-            ]);
-    
-            return redirect()->back()->with('success', 'Book uploaded successfully!');
-        } catch (\Exception $e) {
-            //throw $th;
-            Log::error("Error occured uploading book".$e);
+    // public function uploadBook(Request $request) {
+    //     try {
+           
+    //             //code...
+    //             // dd($request->all());
+    //             $validatedData = $request->validate([
+    //                 'title' => 'required|string|max:255',
+    //                 'author' => 'required|string|max:255',
+    //                 'isbn_number' => 'nullable|string',
+    //                 'publisher' => 'required|string',
+    //                 'file' => 'required|file|mimes:pdf,doc,docx,txt'
+    //             ]);
 
-            return redirect()->back()->with('error', 'Book uploaded unsuccessful!');
-        }
-        
+    //         $filePath = $request->file('file')->store('books', 'public');
+    
+    //         Book::create([
+    //             'title' => $validatedData['title'],
+    //             'author' => $validatedData['author'],
+    //             'publisher' => $validatedData['publisher'],
+    //             'isbn_number' => $validatedData['isbn_number'],
+    //             'file_path' => $filePath,
+    //         ]);
+    
+    //         return redirect()->back()->with('success', 'Book uploaded successfully!');
+    //     } catch (\Exception $e) {
+    //         //throw $th;
+    //         Log::error("Error occured uploading book".$e);
+
+    //         return redirect()->back()->with('error', 'Book uploaded unsuccessful!');
+    //     } 
+    // }
+
+    // public function uploadBook(Request $request) {
+    //     try {
+    //         //code...
+    //         $validatedData = $request->validate([
+    //             'title' => 'required|string|max:255',
+    //             'author' => 'required|string|max:255',
+    //             'isbn_number' => 'nullable|string',
+    //             'publisher' => 'nullable|string',
+    //             'file' => 'required|file|mimes:pdf,doc,docx,txt'
+    //         ]);
+
+    //     } catch (ValidationException $e) {
+    //         //throw $th;
+    //         Log::error('Validation failed:',$e->errors());
+    //         throw $e;
+    //     }
+            
+    //     $filePath = $request->file('file')->store('books', 'public');
+
+    //     Book::create([
+    //         'title' => $validatedData['title'],
+    //         'author' => $validatedData['author'],
+    //         'publisher' => $validatedData['publisher'],
+    //         'isbn_number' => $validatedData['isbn_number'],
+    //         'file_path' => $filePath,
+    //     ]);
+
+    //     return redirect()->back()->with('success', 'Book uploaded successfully!');
+    // }
+
+
+    public function uploadBook(Request $request)
+{
+    try {
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
+            'isbn_number' => 'nullable|string',
+            'publisher' => 'required|string',
+            'book_name' => 'required|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png,csv|max:45000',
+        ]);
+
+        // return $validatedData;
+
+        // Only proceed if the file exists and passed validation
+        $file = $request->file('book_name'); // This is now guaranteed to exist
+        $filePath = $file->store('books', 'public');
+
+        Book::create([
+            'title' => $validatedData['title'],
+            'author' => $validatedData['author'] ?? null,
+            'publisher' => $validatedData['publisher'],
+            'isbn_number' => $validatedData['isbn_number'] ?? null,
+            'file_path' => $filePath,
+        ]);
+
+        Log::info('Book uploaded and saved successfully', ['file_path' => $filePath]);
+
+        return redirect()->back()->with('success', 'Book uploaded successfully!');
+    } catch (ValidationException $e) {
+        // Catch validation failures separately and log them nicely
+        return redirect()->back()
+            ->withErrors($e )
+            ->withInput()
+            ->with('error', 'Validation failed. Please check your input.');
+    } catch (Exception $e) {
+        Log::error('Error occurred uploading book: '.$e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return redirect()->back()->with('error', 'Book upload unsuccessful!');
     }
+}
+
+    
+
+    public function deleteLibraryBook($id)
+    {
+        $book = Book::findOrFail($id);
+
+        // Optionally delete file from storage
+        if ($book->file_path && Storage::disk('public')->exists($book->file_path)) {
+            Storage::disk('public')->delete($book->file_path);
+        }
+
+        $book->delete();
+
+        return redirect()->back()->with('success', 'Book deleted successfully.');
+    }
+    
 
     public function displayBooks() {
         return view('backend.librarybooks.index');
@@ -103,18 +197,24 @@ class BookController extends Controller
         ]);
     }
 
-    public function pastQuestions() {
-        $courses = Grade::all();
+    // public function pastQuestions() {
+    //     $courses = Grade::all();
 
-        $diplomas = Diploma::all();
+    //     $diplomas = Diploma::all();
         
-        $dropdownItems = $courses->map(function ($course) {
-            return ['id' => $course->id, 'name' => $course->course_name];
-        })->merge($diplomas->map(function ($diploma) {
-            return ['id' => $diploma->id, 'name' => $diploma->name];
-        }));
+    //     $dropdownItems = $courses->map(function ($course) {
+    //         return ['id' => $course->id, 'name' => $course->course_name];
+    //     })->merge($diplomas->map(function ($diploma) {
+    //         return ['id' => $diploma->id, 'name' => $diploma->name];
+    //     }));
 
-        return view('backend.librarybooks.pastquestions', compact('dropdownItems'));
+    //     return view('backend.librarybooks.pastquestions', compact('dropdownItems'));
+    // }
+
+    public function pastQuestions() {
+        $pastQuestions = PastQuestions::paginate(10);
+
+        return view('backend.librarybooks.pastquestions',compact('pastQuestions'));
     }
 
     public function uploadPastQuestions() {
@@ -196,5 +296,19 @@ class BookController extends Controller
         $books = Book::paginate(10);
 
         return view('backend.librarybooks.index',compact('books'));
+    }
+
+    public function showAllPastQuestions() {
+        $pastQuestions = PastQuestions::paginate(10);
+
+        return view('backend.librarybooks.pastquestions', compact('pastQuestions'));
+    }
+
+    public function deletePastQuestion($id) {
+        $pastQuestion = PastQuestions::findOrFail($id);
+
+        $pastQuestion->delete();
+
+        return redirect()->back()->with('success', 'Book deleted successfully.');
     }
 }

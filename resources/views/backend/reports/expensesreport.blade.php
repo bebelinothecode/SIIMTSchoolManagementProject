@@ -96,9 +96,10 @@
                     <table class="table table-sm table-hover">
                         <thead class="thead-dark">
                             <tr>
-                                <th>Academic/Professional</th>
+                                <!-- <th>Academic/Professional</th> -->
                                 <th>Expense Category</th>
-                                <th>Currency</th>
+                                <th>Description</th>
+                                <th>Branch</th>
                                 <th>Amount</th>
                                 <th>Mode of Payment</th>
                                 <th>Created At</th>
@@ -107,9 +108,11 @@
                         <tbody>
                             @foreach ($datas as $data)
                                 <tr>
-                                    <td>{{ $data->source_of_expense }}</td>
+                                    <!-- <td>{{ $data->source_of_expense }}</td> -->
                                     <td>{{ $data->category ?? "N/A" }}</td>
-                                    <td>{{ $data->currency }}</td>
+                                    <td>{{ $data->description_of_expense ?? "N/A" }}</td>
+
+                                    <td>{{ $data->branch }}</td>
                                     <td>{{ number_format($data->amount,2) }}</td>
                                     <td>{{ $data->mode_of_payment }}</td>
                                     <td>{{ $data->created_at }}</td>

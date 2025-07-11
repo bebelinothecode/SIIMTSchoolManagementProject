@@ -9,6 +9,8 @@
                 <h1 class="text-2xl font-bold text-gray-900">Mature Students Management</h1>
                 <p class="text-sm text-gray-500 mt-1">Manage mature student records, payments, and information</p>
             </div>
+
+            @hasrole('Admin|rector')
             
             <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <a href="{{ route('create.maturestudent') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-medium text-sm text-white tracking-wide hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm">
@@ -17,15 +19,8 @@
                     </svg>
                     Add New Mature Student
                 </a>
-
-                <!-- <form action="{{ route('student.index') }}" method="GET" class="w-full sm:w-auto">
-                    <select name="sort" onchange="this.form.submit()" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                        <option value="All">All Students</option>
-                        <option value="Academic" {{ request('sort') === 'Academic' ? 'selected' : '' }}>Academic</option>
-                        <option value="Professional" {{ request('sort') === 'Professional' ? 'selected' : '' }}>Professional</option>
-                    </select>
-                </form> -->
             </div>
+            @endhasrole
         </div>
     </div>
 
@@ -80,7 +75,9 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interested Program</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Index Number</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount(GHS)</th>
+                        @hasrole('Admin|rector')
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        @endhasrole
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -103,7 +100,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $student->amount_paid ?? 'N/A' }}
                         </td>
-
+                        @hasrole('Admin|rector')
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="relative inline-block text-left dropdown-container">
                                 <div>
@@ -120,21 +117,14 @@
     
                                 <div class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 dropdown-menu" data-menu-for="{{ $student->id }}">
                                     <div class="py-1" role="none">
-                                        <!-- <a href="{{ route('student.show', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                                            <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View Details
-                                        </a> -->
                                         @hasanyrole('Admin|rector')
-                                        <a href="{{ route('student.edit', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                                        <a href="{{ route('edit.maturestudentform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                                             <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                             Edit
                                         </a>
-                                        <a href="{{ route('change.studentstatusform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                                        <a href="{{ route('movemature.studentform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                                             <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
@@ -159,6 +149,7 @@
                                 </div>
                             </div>
                         </td>
+                        @endhasrole
                     </tr>
                     @empty
                     <tr>

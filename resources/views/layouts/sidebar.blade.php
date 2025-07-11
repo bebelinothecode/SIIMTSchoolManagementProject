@@ -8,7 +8,7 @@
             </svg>
             <span class="ml-2 text-sm font-semibold">Dashboard</span>
         </a>
-        @hasrole('Admin|rector|StudCoordinator')
+        @hasrole('Admin|rector|StudCoordinator|HR')
         <div>
             <a href="#"
                 class="flex items-center text-gray-600 py-2 hover:text-blue-700"
@@ -238,30 +238,11 @@
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Expenses</span>
                     </a>
-                    <a href="{{ route('payments.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <a href="{{ route('profit.andloss') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                             <path fill="currentColor" d="M512 80c8.8 0 16 7.2 16 16v32H48V96c0-8.8 7.2-16 16-16H512zm16 144V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V224H528zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm56 304c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H248z"/>
                         </svg>
-                        <span class="ml-2 text-sm font-semibold">Payments Reports</span>
-                    </a>
-                    <a href="{{ route('form.expenses') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                            <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
-                        </svg>
-                        <span class="ml-2 text-sm font-semibold">Expenses Reports</span>
-                    </a>
-                    <a href="{{ route('get.balanceform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                            <path fill="currentColor" d="M0 96C0 60.7 28.7 32 64 32H512c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zm64 64V416H512V160H64zm96 64c0-17.7 14.3-32 32-32H384c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H192c-17.7 0-32-14.3-32-32V224zm32-16c-8.8 0-16 7.2-16 16v64c0 8.8 7.2 16 16 16H384c8.8 0 16-7.2 16-16V224c0-8.8-7.2-16-16-16H192zM144 352a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
-                        </svg>
-                        <span class="ml-2 text-sm font-semibold">Balance Reports</span>
-                    </a>
-
-                    <a href="{{ route('get.defaultersreportform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                            <path fill="currentColor" d="M512 80c8.8 0 16 7.2 16 16v32H48V96c0-8.8 7.2-16 16-16H512zm16 144V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V224H528zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm56 304c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H248z"/>
-                        </svg>
-                        <span class="ml-2 text-sm font-semibold">Defaulters Reports</span>
+                        <span class="ml-2 text-sm font-semibold">Profits & Loss</span>
                     </a>
                 </div>
             </div>
@@ -409,6 +390,7 @@
                     </svg>
                     <span class="ml-2 text-sm font-semibold">Balance Reports</span>
                 </a>
+                
             </div>
         </div>
         <div>
@@ -455,6 +437,14 @@
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Migration</span>
                     </a>
+                    <!-- <a href="{{ route('student.migration') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                            <path fill="currentColor" d="M0 88C0 39.4 39.4 0 88 0h80c13.3 0 24 10.7 24 24v8h40c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v8c0 13.3-10.7 24-24 24s-24-10.7-24-24v-8h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V256h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V160h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V64h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V24c0-13.3-10.7-24-24-24H88C39.4 0 0 39.4 0 88zM344 0h80c13.3 0 24 10.7 24 24v464c0 13.3-10.7 24-24 24s-24-10.7-24-24V48H344c-13.3 0-24-10.7-24-24s10.7-24 24-24zM192 488c0 13.3 10.7 24 24 24h80c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24h-80c-13.3 0-24 10.7-24 24V488z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Groups & Ledgers</span>
+                    </a> -->
+                   
+
                     <a href="{{ route('attendance.index') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             <path fill="currentColor" d="M160 32V64H288V32c0-17.7-14.3-32-32-32H192c-17.7 0-32 14.3-32 32zM128 64V32c0-35.3 28.7-64 64-64H256c35.3 0 64 28.7 64 64V64h48c26.5 0 48 21.5 48 48v48H32V112c0-26.5 21.5-48 48-48h48zM32 192H416V464c0 26.5-21.5 48-48 48H80c-26.5 0-48-21.5-48-48V192zm144 80c0 8.8-7.2 16-16 16s-16-7.2-16-16s7.2-16 16-16s16 7.2 16 16zm128 16c-8.8 0-16-7.2-16-16s7.2-16 16-16s16 7.2 16 16s-7.2 16-16 16zM144 400c0 8.8-7.2 16-16 16s-16-7.2-16-16s7.2-16 16-16s16 7.2 16 16zm128 16c-8.8 0-16-7.2-16-16s7.2-16 16-16s16 7.2 16 16s-7.2 16-16 16z"/>
@@ -672,10 +662,44 @@
 
 
         @hasrole('AsstAccount')
-            <a href="{{ route('student.index') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+            <!-- <a href="{{ route('student.index') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                 <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-graduate" class="svg-inline--fa fa-user-graduate fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M319.4 320.6L224 416l-95.4-95.4C57.1 323.7 0 382.2 0 454.4v9.6c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-9.6c0-72.2-57.1-130.7-128.6-133.8zM13.6 79.8l6.4 1.5v58.4c-7 4.2-12 11.5-12 20.3 0 8.4 4.6 15.4 11.1 19.7L3.5 242c-1.7 6.9 2.1 14 7.6 14h41.8c5.5 0 9.3-7.1 7.6-14l-15.6-62.3C51.4 175.4 56 168.4 56 160c0-8.8-5-16.1-12-20.3V87.1l66 15.9c-8.6 17.2-14 36.4-14 57 0 70.7 57.3 128 128 128s128-57.3 128-128c0-20.6-5.3-39.8-14-57l96.3-23.2c18.2-4.4 18.2-27.1 0-31.5l-190.4-46c-13-3.1-26.7-3.1-39.7 0L13.6 48.2c-18.1 4.4-18.1 27.2 0 31.6z"></path></svg>
                 <span class="ml-2 text-sm font-semibold">Students</span>
+            </a> -->
+            <div>
+            <a href="#"
+            class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+            onclick="toggleSubMenu('librarySubmenu', 'libraryIcon')">
+                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/>
+                </svg>
+                <span class="ml-2">Student</span>
+                <svg id="libraryIcon" class="ml-auto h-4 w-4 transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
             </a>
+            <div id="librarySubmenu" class="hidden pl-6 mt-2">
+                <!-- Level 1 Submenu -->
+                <div>
+                    <a href="{{ route('student.index') }}"
+                    class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+                    >
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path fill="currentColor" d="M288 0H128v128h160V0zM128 256h160V128H128V256zM288 128h160V0H288V128zM128 384h160V256H128V384zM288 256h160V128H288V256zM128 512h160V384H128V512zM288 384h160V256H288V384z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Regular Student List</span>
+                    </a>
+                    <a href="{{ route('mature.index') }}"
+                    class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+                    >
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path fill="currentColor" d="M288 0H128v128h160V0zM128 256h160V128H128V256zM288 128h160V0H288V128zM128 384h160V256H128V384zM288 256h160V128H288V256zM128 512h160V384H128V512zM288 384h160V256H288V384z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Mature Student List</span>
+                    </a>
+                </div>
+            </div>
+            </div>
             <a href="{{ route('get.transactions') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                 <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-cog" class="svg-inline--fa fa-user-cog fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm201.2 226.5c-2.3-1.2-4.6-2.6-6.8-3.9l-7.9 4.6c-6 3.4-12.8 5.3-19.6 5.3-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-5.5-17.7 1.9-36.4 17.9-45.7l7.9-4.6c-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-16-9.2-23.4-28-17.9-45.7.9-2.9 2.2-5.8 3.2-8.7-3.8-.3-7.5-1.2-11.4-1.2h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c10.1 0 19.5-3.2 27.2-8.5-1.2-3.8-2-7.7-2-11.8v-9.2z"></path></svg>
                 <span class="ml-2 text-sm font-semibold">Transactions</span>
@@ -915,10 +939,44 @@
                 <span class="ml-2 text-sm font-semibold">Parents</span>
             </a>
 
-            <a href="{{ route('student.index') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+            <!-- <a href="{{ route('student.index') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                 <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-graduate" class="svg-inline--fa fa-user-graduate fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M319.4 320.6L224 416l-95.4-95.4C57.1 323.7 0 382.2 0 454.4v9.6c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-9.6c0-72.2-57.1-130.7-128.6-133.8zM13.6 79.8l6.4 1.5v58.4c-7 4.2-12 11.5-12 20.3 0 8.4 4.6 15.4 11.1 19.7L3.5 242c-1.7 6.9 2.1 14 7.6 14h41.8c5.5 0 9.3-7.1 7.6-14l-15.6-62.3C51.4 175.4 56 168.4 56 160c0-8.8-5-16.1-12-20.3V87.1l66 15.9c-8.6 17.2-14 36.4-14 57 0 70.7 57.3 128 128 128s128-57.3 128-128c0-20.6-5.3-39.8-14-57l96.3-23.2c18.2-4.4 18.2-27.1 0-31.5l-190.4-46c-13-3.1-26.7-3.1-39.7 0L13.6 48.2c-18.1 4.4-18.1 27.2 0 31.6z"></path></svg>
                 <span class="ml-2 text-sm font-semibold">Students</span>
+            </a> -->
+            <div>
+            <a href="#"
+            class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+            onclick="toggleSubMenu('librarySubmenu82', 'libraryIcon82')">
+                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/>
+                </svg>
+                <span class="ml-2">Student</span>
+                <svg id="libraryIcon82" class="ml-auto h-4 w-4 transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
             </a>
+            <div id="librarySubmenu82" class="hidden pl-6 mt-2">
+                <!-- Level 1 Submenu -->
+                <div>
+                    <a href="{{ route('student.index') }}"
+                    class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+                    >
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path fill="currentColor" d="M288 0H128v128h160V0zM128 256h160V128H128V256zM288 128h160V0H288V128zM128 384h160V256H128V384zM288 256h160V128H288V256zM128 512h160V384H128V512zM288 384h160V256H288V384z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Regular Student List</span>
+                    </a>
+                    <a href="{{ route('mature.index') }}"
+                    class="flex items-center text-gray-600 py-2 hover:text-blue-700"
+                    >
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path fill="currentColor" d="M288 0H128v128h160V0zM128 256h160V128H128V256zM288 128h160V0H288V128zM128 384h160V256H128V384zM288 256h160V128H288V256zM128 512h160V384H128V512zM288 384h160V256H288V384z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Mature Student List</span>
+                    </a>
+                </div>
+            </div>
+            </div>
             <a href="{{ route('student.enquires') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                 <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-graduate" class="svg-inline--fa fa-user-graduate fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M319.4 320.6L224 416l-95.4-95.4C57.1 323.7 0 382.2 0 454.4v9.6c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-9.6c0-72.2-57.1-130.7-128.6-133.8zM13.6 79.8l6.4 1.5v58.4c-7 4.2-12 11.5-12 20.3 0 8.4 4.6 15.4 11.1 19.7L3.5 242c-1.7 6.9 2.1 14 7.6 14h41.8c5.5 0 9.3-7.1 7.6-14l-15.6-62.3C51.4 175.4 56 168.4 56 160c0-8.8-5-16.1-12-20.3V87.1l66 15.9c-8.6 17.2-14 36.4-14 57 0 70.7 57.3 128 128 128s128-57.3 128-128c0-20.6-5.3-39.8-14-57l96.3-23.2c18.2-4.4 18.2-27.1 0-31.5l-190.4-46c-13-3.1-26.7-3.1-39.7 0L13.6 48.2c-18.1 4.4-18.1 27.2 0 31.6z"></path></svg>
                 <span class="ml-2 text-sm font-semibold">Enquiry</span>
