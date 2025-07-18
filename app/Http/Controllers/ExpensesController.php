@@ -24,7 +24,7 @@ class ExpensesController extends Controller
             $validatedData = $request->validate([
                 "source_of_expense" => 'required|string',
                 "description" => 'required|string|max:300',
-                "expense_category" => 'required|string',
+                'expense_category' => 'required|exists:expense_category,id',
                 "currency" => "required|string|in:Ghana Cedi,Dollar",
                 "mode_of_payment" => 'required|string',
                 'cheque_number' => 'nullable|string',
@@ -48,7 +48,7 @@ class ExpensesController extends Controller
                 ]);
 
             return redirect()->back()->with('success', 'Expense created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error creating student: ' . $e);
 
             return redirect()->back()->with('error', 'Error creating expense');

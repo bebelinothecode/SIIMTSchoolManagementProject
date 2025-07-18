@@ -99,7 +99,7 @@ class StudentController extends Controller
      */
 
     public function store(Request $request) {
-        try {
+        try { 
             // dd($request->all());
             //Validate common fields
             $rules = [
@@ -161,7 +161,17 @@ class StudentController extends Controller
                 $studentCount = Student::where('course_id_prof', $query['id'])->count();
                 $formattedCount = sprintf('%03d', $studentCount + 1);
                 $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
-                $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+                $branchPrefixes = [
+                    'Kasoa' => 'KS',
+                    'Kanda' => 'KD',
+                    'Spintex' => 'SP',
+                ];
+
+                $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
+                // return $branchCode;
+                $studentIndexNumber = $branchCode ."/". $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+               
+                // $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
                 // return $studentIndexNumber;
                 $user->student()->create([
                     'branch' => $validatedData['branch'],
@@ -939,8 +949,8 @@ class StudentController extends Controller
                 ->select(
                     'students_defer_list.*',
                     'users.name as user_name',
-                    'grades.course_name as grade_name',          // Replace `name` with actual field (e.g., title, program_name, etc.)
-                    'diploma.name as diploma_title'     // Replace `title` with actual field name
+                    'grades.course_name as grade_name',         
+                    'diploma.name as diploma_title'     
                 );
 
             if (!empty($validatedData['student_category'])) {
@@ -993,8 +1003,16 @@ class StudentController extends Controller
 
                 $user = User::findOrFail($deferStudent->user_id);
 
+                // dd($user);
+
                 if($user) {
                     $data = $deferStudent->toArray();
+                    // dd($data);
+                    if($data['branch'] === null) {
+                        $data['branch'] = 'Kanda';
+                    }
+
+                    // dd($data);
                     unset($data['id'], $data['created_at'], $data['updated_at']);
                     $user->student()->create($data);
                     $deferStudent->delete();

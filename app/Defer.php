@@ -36,7 +36,8 @@ class Defer extends Model
         'Scholarship',
         'Scholarship_amount',
         'index_number',
-        'balance'
+        'balance',
+        'branch'
         // 'student_type',
     ];
 

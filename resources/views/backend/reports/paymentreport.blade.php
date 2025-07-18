@@ -128,48 +128,6 @@
             </div>
         </div>
 
-        <!-- Payment Method Summary -->
-        <!-- <h4 class="section-title"><i class="fas fa-money-bill-wave"></i> Payment Method Summary</h4>
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Mobile Money</h5>
-                        <p class="card-text display-4">GHS{{ number_format($momoTotal,2) ?? "0.00" }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Cash</h5>
-                        <p class="card-text display-5">GHS{{ number_format($cashTotal, 2) ?? "0.00" }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-warning mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Cheque</h5>
-                        <p class="card-text display-4">{{ number_format($chequeTotal,2) ?? "0.00" }}</p>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Registration Forms Summary -->
-        <!-- <h4 class="section-title"><i class="fas fa-file-alt"></i> Registration Forms</h4>
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <div class="card bg-light">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Total Registration Forms Revenue</h5>
-                        <p class="card-text display-4 text-success">GHS {{ number_format($boughtFormsAmount, 2) ?? "0.00" }}</p>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <!-- Detailed Transactions -->
         <h4 class="section-title"><i class="fas fa-list-ul"></i> Detailed Transactions</h4>
         @foreach ($transactionsByCategoryAndCurrency as $category => $currencies)

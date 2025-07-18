@@ -26,4 +26,9 @@ class Expenses extends Model
         'branch'
     ];
 
+    // public function category()
+    // {
+    //     return $this->belongsTo(ExpenseCategory::class, 'expense_category'); // or 'category_id' if that's the column name
+    // }
+
 }

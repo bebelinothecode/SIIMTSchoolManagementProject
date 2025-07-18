@@ -67,8 +67,6 @@
                     <td class="py-3 px-6 text-left">{{ $expense->cheque_details ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->mobile_money_details ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-center">
-                            {{-- @hasanyrole('Admin|rector|frontdesk') --}}
-                            {{-- <a href="{{ route('get.assignmentform', $course->id) }}" class="ml-4 text-green-600 hover:underline">Assign Subject</a> --}}
                             @hasrole('Admin|rector')
                             <a href="{{ route('expense.edit', $expense->id) }}" class="text-blue-600 hover:underline">Edit</a> 
                             <form action="{{ route('expense.destroy', $expense->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');" class="inline">

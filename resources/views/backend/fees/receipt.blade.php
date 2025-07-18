@@ -7,15 +7,15 @@
     <style>
         @page {
             /* A5 size (half of A4) */
-            size: 148mm 210mm; 
-            margin: 0;
+            size: A5 portrait; 
+            margin: 10mm;
         }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            width: 148mm;
-            height: 210mm;
+            width: auto;
+            height: auto;
             box-sizing: border-box;
             font-size: 8pt; /* Reduced font size */
             display: flex;
@@ -25,6 +25,7 @@
         }
         .receipt-container {
             width: 135mm;
+            max-width: 128mm; 
             height: 195mm;
             border: 1px solid #ddd;
             padding: 10mm;

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\ExpenseCategory;
+use App\Expenses;
 use App\FeesPaid;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProfitAndLossController extends Controller
 {
@@ -23,13 +26,19 @@ class ProfitAndLossController extends Controller
         $startDate = $validatedData['start_date'];
         $endDate = $validatedData['end_date'];
 
+        $expenseCategory = ExpenseCategory::all();
+
         $queryIncome = FeesPaid::query();
 
-        if($currentDate) {
+        $queryExpense = Expenses::query();
 
-        }
-
-        return $validatedData;
+        $totals = DB::table('expenses')
+            ->join('expense_category', 'expenses.category', '=', 'expense_category.expense_ category')
+            ->select('expenses.category', DB::raw('SUM(expenses.amount) as total_amount'))
+            ->groupBy('expenses.category')
+            ->get();
+        
+        return $totals;
 
     }
     //

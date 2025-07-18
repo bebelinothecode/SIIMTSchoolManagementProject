@@ -10,7 +10,7 @@
                 <p class="text-sm text-gray-500 mt-1">Manage mature student records, payments, and information</p>
             </div>
 
-            @hasrole('Admin|rector')
+            @hasrole('Admin|rector|frontdesk')
             
             <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <a href="{{ route('create.maturestudent') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-medium text-sm text-white tracking-wide hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm">

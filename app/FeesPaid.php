@@ -28,7 +28,9 @@ class FeesPaid extends Model
         // 'Fees',
         'remarks',
         'receipt_number',
-        'fees_type'
+        'fees_type',
+        'other_fees',
+        'idempotency_key'
     ];
 }
 

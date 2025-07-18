@@ -90,6 +90,49 @@
             </div>
         </div>
 
+        <div class="filters-section">
+            <h4><i class="fas fa-filter"></i> Filters Applied</h4>
+            <div class="row">
+                @if ($filters['currentDate'])
+                    <div class="col-md-3">
+                        <strong>Current Date:</strong><br>
+                        <span class="badge badge-primary">{{ \Carbon\Carbon::parse($filters['currentDate'])->format('M j, Y') }}</span>
+                    </div>
+                @endif
+                @if ($filters['startDate'])
+                    <div class="col-md-3">
+                        <strong>Start Date:</strong><br>
+                        <span class="badge badge-info">{{ \Carbon\Carbon::parse($filters['startDate'])->format('M j, Y') }}</span>
+                    </div>
+                @endif
+                @if ($filters['endDate'])
+                    <div class="col-md-3">
+                        <strong>End Date:</strong><br>
+                        <span class="badge badge-info">{{ \Carbon\Carbon::parse($filters['endDate'])->format('M j, Y') }}</span>
+                    </div>
+                @endif
+                
+                @if ($filters['branch'])
+                    <div class="col-md-3">
+                        <strong>Branch:</strong><br>
+                        <span class="badge badge-success">{{ $filters['branch'] }}</span>
+                    </div>
+                @endif
+                @if ($filters['category'])
+                    <div class="col-md-3">
+                        <strong>Category:</strong><br>
+                        <span class="badge badge-success">{{ $filters['category'] }}</span>
+                    </div>
+                @endif
+                @if ($filters['modeOfPayment'])
+                    <div class="col-md-3">
+                        <strong>Method of Payment:</strong><br>
+                        <span class="badge badge-success">{{ $filters['modeOfPayment'] }}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <!-- Detailed Transactions -->
         <h4 class="section-title"><i class="fas fa-list-ul"></i> Expenses List</h4>
                 <div class="table-responsive">

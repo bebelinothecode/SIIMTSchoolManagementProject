@@ -86,6 +86,7 @@ class  FeesController extends Controller
                 'Momo_number' => 'nullable',
                 'cheque_number' => 'nullable',
                 'remarks'  => 'nullable|string',
+                'other_fees' => 'nullable'
             ]);
 
             // dd($validatedData);
@@ -93,38 +94,45 @@ class  FeesController extends Controller
 
             $student = Student::where('index_number',operator: $validatedData['student_index_number'])->first();
 
+            if (!$student) {
+                return back()->withErrors(['error' => 'Student not found.']);
+            }
+
+            $idempotencyKey = (string) Str::uuid();
+
+            $existingPayment = FeesPaid::where('student_index_number', $validatedData['student_index_number'])
+            ->where('student_name', $validatedData['student_name'])
+            ->where('amount', $validatedData['fees_type'] === 'School Fees' ? $validatedData['amount'] : $validatedData['amount_paid'])
+            ->where('method_of_payment', $validatedData['method_of_payment'])
+            ->where('currency', $validatedData['currency'])
+            ->where('fees_type', $validatedData['fees_type'])
+            ->whereDate('created_at', now()->toDateString()) // same day check
+            ->first();
+
+            if ($existingPayment) {
+                DB::rollBack();
+                // return view('backend.fees.receipt', compact('existingPayment'))
+                //     ->with('success', 'Payment already processed.');
+                return redirect()->back()->with("success","Payment already processed.");
+            }
+
             $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
-            if($validatedData['fees_type'] === 'School Fees') {
-                $feespaid = FeesPaid::create([
-                    'student_index_number' => $validatedData['student_index_number'],
-                    'student_name' => $validatedData['student_name'],
-                    'method_of_payment' => $validatedData['method_of_payment'],
-                    'amount' => $validatedData['amount'],
-                    'balance' => $validatedData['balance'],
-                    'currency' => $validatedData['currency'],
-                    'Momo_number' => $validatedData['Momo_number'],
-                    'cheque_number' => $validatedData['cheque_number'],
-                    'remarks' => $validatedData['remarks'],
-                    'receipt_number' => $receipt_number,
-                    'fees_type' => $validatedData['fees_type']
-                ]);
-            } else {
-                $feespaid = FeesPaid::create([
-                    'student_index_number' => $validatedData['student_index_number'],
-                    'student_name' => $validatedData['student_name'],
-                    'method_of_payment' => $validatedData['method_of_payment'],
-                    'amount' => $validatedData['amount_paid'],
-                    'balance' => 0,
-                    'currency' => $validatedData['currency'],
-                    'Momo_number' => $validatedData['Momo_number'],
-                    'cheque_number' => $validatedData['cheque_number'],
-                    'remarks' => $validatedData['remarks'],
-                    'receipt_number' => $receipt_number,
-                    'fees_type' => $validatedData['fees_type']
-                ]);
-            }
-            // dd($feespaid);
+            $feespaid = FeesPaid::create([
+                'student_index_number' => $validatedData['student_index_number'],
+                'student_name' => $validatedData['student_name'],
+                'method_of_payment' => $validatedData['method_of_payment'],
+                'amount' => $validatedData['fees_type'] === 'School Fees' ? $validatedData['amount'] : $validatedData['amount_paid'],
+                'balance' => $validatedData['fees_type'] === 'School Fees' ? $validatedData['balance'] : 0,
+                'currency' => $validatedData['currency'],
+                'Momo_number' => $validatedData['Momo_number'],
+                'cheque_number' => $validatedData['cheque_number'],
+                'remarks' => $validatedData['remarks'],
+                'receipt_number' => $receipt_number,
+                'fees_type' => $validatedData['fees_type'],
+                'other_fees' => $validatedData['other_fees'],
+                'idempotency_key' => $idempotencyKey
+            ]);
 
             if($feespaid) {
                 $student->balance = $validatedData['balance'];
@@ -146,17 +154,6 @@ class  FeesController extends Controller
             return back()->withInput()->withErrors(['error' => 'An error occurred while collecting the students fees. Please try again.']);
         }
     }
-
-    // public function  selectdefaulters() {
-    //     $defaulters = Student::with('user','course','diploma')
-    //     ->where('balance', '>', 0)
-    //     ->orderBy('balance', 'desc')
-    //     ->paginate(10);
-
-    //     // return $defaulters;
-
-    //     return view('backend.fees.defaulters', compact('defaulters'));
-    // }
 
     public function selectdefaulters(Request $request) {
         $sort = $request->input('sort');
@@ -245,24 +242,6 @@ class  FeesController extends Controller
     public function transactionsForm() {
         return view('backend.fees.transactions');
     }
-
-    // public function getTransactions(Request $request) {
-    //     try {
-    //         $sort = $request->input('sort');
-            
-    //         $query = FeesPaid::query();
-
-    //         $transactions = FeesPaid::where('student_index_number', $sort )
-    //         ->orWhere('student_name', $sort)->get();
-
-    //         $transactions = $query->latest()->paginate(15);
-
-    //         return view('backend.fees.transactions', compact('transactions'));
-    //     } catch (Exception $e) {
-    //         //throw $th;
-    //         Log::error("Error executing query",["Error exceuting code"=>$e->getMessage()]);
-    //     }
-    // }
 
     public function getTransactions(Request $request) {
         try {
