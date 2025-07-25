@@ -84,6 +84,7 @@
                                             Download
                                         </a>
                                     </td>
+                                    @hasrole('Admin|rector|Librarian')
                                     <td class="py-3 px-2">
                                         <form action="{{ route('pastquestions.delete', $pastQuestion->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');">
                                             @csrf
@@ -94,6 +95,7 @@
                                             </button>
                                         </form>
                                     </td>
+                                    @endhasrole
                                 </tr>
                             @endforeach
                         </tbody>

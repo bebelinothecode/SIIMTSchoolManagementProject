@@ -140,7 +140,7 @@
                         <thead class="thead-dark">
                             <tr>
                                 <!-- <th>Academic/Professional</th> -->
-                                <th>Expense Category</th>
+                                <!-- <th>Expense Category</th> -->
                                 <th>Description</th>
                                 <th>Branch</th>
                                 <th>Amount</th>
@@ -152,7 +152,7 @@
                             @foreach ($datas as $data)
                                 <tr>
                                     <!-- <td>{{ $data->source_of_expense }}</td> -->
-                                    <td>{{ $data->category ?? "N/A" }}</td>
+                                    <!-- <td>{{ $data->category ?? "N/A" }}</td> -->
                                     <td>{{ $data->description_of_expense ?? "N/A" }}</td>
 
                                     <td>{{ $data->branch }}</td>

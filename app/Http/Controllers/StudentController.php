@@ -615,15 +615,13 @@ class StudentController extends Controller
             $toSemester = $validatedData['target_semester'];
 
             if (($fromSemester === $toSemester) && ($fromLevel === $toLevel)) {
-                return redirect()->back()->with('duplicate', 'Cant migrate to the same semester or level');
+                return redirect()->back()->with('error', 'Cant migrate to the same semester or level');
             }
 
             // Find all students currently at level 100
-            $students = Student::where('level', $fromLevel)
+            $students = Student::with('user')->where('level', $fromLevel)
                                     ->where('session', $fromSemester)
                                     ->get();
-
-            // return $students;
 
         
             // Check if any students are found
@@ -635,17 +633,16 @@ class StudentController extends Controller
                 $student->level = $toLevel;
                 $student->session = $toSemester;
                 $student->save();
-
-                return redirect()->back()->with('success', 'Students migrated successfully');
             }
-    
-            // Return a error response
-            return redirect()->back()->with('error', 'Error saving students details');
+
+            return redirect()->back()->with('success', 'Students migrated successfully');
         } catch (Exception $e) {
             //throw $th;
             Log::error('An error occurred', [
                 'exception' => $e, // Include the exception in the context array
-            ]);        
+            ]);   
+            
+            return redirect()->back()->with('error', 'Error saving students details');
         }
     }
 
@@ -806,6 +803,8 @@ class StudentController extends Controller
             $subjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
                 return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
             });
+
+            // return $subjects;
 
             return view('backend.students.getcourseoutline', compact('subjects','student'));
 
@@ -1135,7 +1134,9 @@ class StudentController extends Controller
         try {
             //code...
             // dd($request->all());
-            $matureIndexNumber = 'MAT'.'-'.Carbon::now()->format('y') . '-'  .Carbon::now()->format('m') .'-'.strtoupper(Str::random(8));
+            $matureStudentCount = MatureStudent::count();
+            $formattedCount = sprintf('%03d', $matureStudentCount + 1);
+            $matureIndexNumber = 'MAT'.'-'.Carbon::now()->format('y') . '-'  .Carbon::now()->format('m') .'-'.$formattedCount;
     
             $validatedData = $request->validate([
                 'name' => 'required|string',

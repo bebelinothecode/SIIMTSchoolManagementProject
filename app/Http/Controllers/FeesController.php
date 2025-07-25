@@ -255,6 +255,8 @@ class  FeesController extends Controller
             }
     
             $transactions = $query->latest()->paginate(15);
+
+            // return $transactions;
     
             return view('backend.fees.transactions', compact('transactions'));
         } catch (Exception $e) {
@@ -331,6 +333,18 @@ class  FeesController extends Controller
             return redirect()->back()->with('error','Error deleting transaction');
         }
        
+    }
+
+    public function printReceiptFromTransaction($id) {
+        try {
+            //code...
+            $transaction = FeesPaid::findOrFail($id);
+
+            return view('backend.fees.transactionreceipt', compact('transaction'));
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error','Error generating receipt');
+        }
     }
 }
 

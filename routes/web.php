@@ -159,6 +159,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::delete('/delete/pastquestion/{id}',[BookController::class, 'deletePastQuestion'])->name('pastquestions.delete');
     Route::get('/profit/and/loss',[ProfitAndLossController::class, 'index'])->name('profit.andloss');
     Route::post('/generate/profit/and/loss',[ProfitAndLossController::class,'generateProfitAndLossReport'])->name('generate.profitandloss');
+    Route::get("/print/receipts/from/transactions/{id}",[FeesController::class, 'printReceiptFromTransaction'])->name('print.transactionreceipt');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

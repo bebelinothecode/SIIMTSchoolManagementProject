@@ -69,14 +69,17 @@
                     <td class="py-3 px-6 text-left">{{ $transaction->Momo_number ?? "Not Found" }}</td>
                     <td class="py-3 px-6 text-left">{{ $transaction->created_at->format('Y-m-d') }}</td>
                     <td class="py-3 px-6 text-center">
-                        @hasanyrole('Admin|rector')
-                             <a href="{{route('edit.transactionform',$transaction->id)}}" class="ml-4 text-green-600 hover:underline">Edit</a>
-                             <form action="{{route('delete.transaction',$transaction->id)}}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                        @role('Admin|rector')
+                            <a href="{{route('edit.transactionform',$transaction->id)}}" class="ml-4 text-green-600 hover:underline">Edit</a>
+                            <a href="{{route('print.transactionreceipt',$transaction->id)}}" target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>
+                            <form action="{{route('delete.transaction',$transaction->id)}}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
                             </form>
-                        @endhasanyrole
+                        @elserole('AsstAccount')
+                            <a href="{{route('print.transactionreceipt',$transaction->id)}}" target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>
+                        @endrole
                     </td>
                 </tr>
                 @empty

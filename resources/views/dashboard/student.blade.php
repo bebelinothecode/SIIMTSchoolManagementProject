@@ -11,6 +11,10 @@
                 <p class="text-lg font-bold text-gray-700">{{ $student->user->name }}</p>
             </div>
             <div>
+                <p class="text-sm text-gray-500 font-semibold">Course</p>
+                <p class="text-lg font-bold text-gray-700">{{ $student->course->course_name .":". $student->course->course_description }}</p>
+            </div>
+            <div>
                 <p class="text-sm text-gray-500 font-semibold">Email</p>
                 <p class="text-lg font-bold text-gray-700">{{ $student->user->email }}</p>
             </div>
@@ -19,24 +23,24 @@
                 <p class="text-lg font-bold text-gray-700">{{ $student->index_number ?? 'Index number not found' }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-semibold">Phone</p>
-                <p class="text-lg font-bold text-gray-700">{{ $student->phone }}</p>
+                <p class="text-sm text-gray-500 font-semibold">Level</p>
+                <p class="text-lg font-bold text-gray-700">{{ $student->level ?? "Level not found" }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-semibold">Gender</p>
-                <p class="text-lg font-bold text-gray-700">{{ $student->gender }}</p>
+                <p class="text-sm text-gray-500 font-semibold">Semester</p>
+                <p class="text-lg font-bold text-gray-700">{{ $student->session ??  "Semester not found" }}</p>
             </div>
-            <div>
+            <!-- <div>
                 <p class="text-sm text-gray-500 font-semibold">Date of Birth</p>
                 <p class="text-lg font-bold text-gray-700">{{ $student->dateofbirth }}</p>
-            </div>
+            </div> -->
             <div>
                 <p class="text-sm text-gray-500 font-semibold">Current Address</p>
                 <p class="text-lg font-bold text-gray-700">{{ $student->current_address }}</p>
             </div>
             <div>
                 <p class="text-sm text-gray-500 font-semibold">Student Type</p>
-                <p class="text-lg font-bold text-gray-700">{{ $student->student_type }}</p>
+                <p class="text-lg font-bold text-gray-700">{{ $student->student_type ?? "Not found" }}</p>
             </div>
             <div>
                 <p class="text-sm text-gray-500 font-semibold">Admission Date</p>

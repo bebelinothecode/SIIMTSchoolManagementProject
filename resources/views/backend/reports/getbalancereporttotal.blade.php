@@ -37,16 +37,24 @@
             border: 1px solid #dee2e6;
         }
         
-        .filter-group {
+        /* .filter-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
             margin-bottom: 10px;
+        } */
+        .filter-group {
+            display: flex;
+            flex-direction: row;  
+            gap: 20px;            
+            flex-wrap: wrap;      
         }
         
         .filter-item {
-            flex: 1;
-            min-width: 200px;
+            min-width: 200px;      
+            padding: 10px;
+            border: 1px solid #ddd; 
+            border-radius: 4px;
         }
         
         label {
@@ -170,26 +178,58 @@
 <body>
     <div class="container">
         <h3>Balance Report(Professional + Academic)</h3>
+        <!-- @if ($currentDate)
+         <h4>This report is on {{ $currentDate }}</h4>
+        @endif
+        @if ($startDate && $endDate)
+         <h4>This report is from {{ $startDate }} to {{ $endDate }}</h4>
+        @endif -->
         <!-- Summary Cards -->
         <div class="summary-card">
             <h4>Financial Summary</h4>
-            <div class="filter-group">
+            <!-- <div class="filter-group">
                 <div class="filter-item">
-                    <p>Total Collections(School Fees + Form Fees)</p>
+                    <p>Total Collections</p>
                     <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount, 2) }}</p>                </div>
+                <div class="filter-item">
+                <div class="filter-item">
+                    <p>Opening Balance </p>
+                    <p class="summary-value">GHS {{ number_format($openingBalance, 2) }}</p>                </div>
                 <div class="filter-item">
                     <p>Total Expenses</p>
                     <p class="summary-value">GHS {{ number_format($expensesTotalAmount,2) }}</p>
                 </div>
                 <div class="filter-item">
-                    <p>Net Balance</p>
+                    <p>Closing Balance</p>
                     <p class="summary-value">
-                        GHS {{ number_format(($feesPaymentsTotal + $formFeesAllAmount) - $expensesTotalAmount, 2) }}
+                        GHS {{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }}
                     </p>                
                 </div>
+              </div>
+            </div> -->
+            <div class="filter-group">
+                <div class="filter-item">
+                    <p>Total Collections that Day</p>
+                    <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount, 2) }}</p>
+                </div>
+                <div class="filter-item">
+                    <p>Opening Balance</p>
+                         <!-- {{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }} -->
+                    <p class="summary-value">GHS {{ number_format($openingBalance, 2) }}</p>
+                </div>
+                <div class="filter-item">
+                    <p>Total Expenses</p>
+                    <p class="summary-value">GHS {{ number_format($expensesTotalAmount, 2) }}</p>
+                </div>
+                <div class="filter-item">
+                    <p>Closing Balance</p>
+                    <p class="summary-value">
+                    <!-- {{ number_format(($feesPaymentsTotal + $formFeesAllAmount) - $expensesTotalAmount, 2) }} -->
+                        GHS {{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }}
+                    </p>
+                </div>
             </div>
-        </div>
-        
+
         <!-- Payments Table -->
         <div class="table-container">
             <table id="paymentsTable">
@@ -328,15 +368,37 @@
                     <tr>
                         <td class="border px-4 py-2 font-semibold">{{ $category }}</td>
                         <td class="border px-4 py-2">{{ number_format($modes['Cash'] ?? 0, 2) }}</td>
-                        <!-- <td class="border px-4 py-2">{{ number_format($modes['Mobile Money'] ?? 0, 2) }}</td>
-                        <td class="border px-4 py-2">{{ number_format($modes['Bank Transfer'] ?? 0, 2) }}</td> -->
-                        <td class="border px-4 py-2">{{ number_format($modes['Momo'] ?? 0, 2) }}</td>
-                        <td class="border px-4 py-2">{{ number_format($modes['Cheque'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Mobile Money'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Bank Transfer'] ?? 0, 2) }}</td>
+                        <!-- <td class="border px-4 py-2">{{ number_format($modes['Momo'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Cheque'] ?? 0, 2) }}</td> -->
                     </tr>
                 @endforeach
             </tbody>
         </table>
         </div>
+
+         <!-- =======Balance brought forward -->
+        <div class="overflow-x-auto">
+        <h3 class="text-lg font-bold mb-4">Opening & Closing Balance</h3>
+        <table class="table-auto w-full border border-gray-300 text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border px-4 py-2">Opening Balance</th>
+                    <th class="border px-4 py-2">Closing Balance</th>
+                    <!-- <th class="border px-4 py-2">Mobile Money</th>
+                    <th class="border px-4 py-2">Bank Transfer</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <!-- <td class="border px-4 py-2 font-semibold">{{ $category }}</td> -->
+                    <td class="border px-4 py-2">GHS{{ number_format($openingBalance ?? 0, 2) }}</td>
+                    <td class="border px-4 py-2">GHS{{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }}</td>
+                </tr>
+            </tbody>
+        </table>
+       </div> 
     </div>
 </body>
 </html>
