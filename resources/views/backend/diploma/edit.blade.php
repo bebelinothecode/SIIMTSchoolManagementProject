@@ -67,17 +67,22 @@
                             Duration
                         </label>
                     </div>
+                    @hasrole('Admin|retor')
                     <div class="md:w-2/3">
-                        <select name="duration" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                            <option value="">--Select an option--</option>
-                            <option value="6 months" {{ old('duration', $diploma->duration ?? '') == '6 months' ? 'selected' : '' }}>6 months</option>
-                            <option value="8 months" {{ old('duration', $diploma->duration ?? '') == '8 months' ? 'selected' : '' }}>8 months</option>
-                            <option value="12 months" {{ old('duration', $diploma->duration ?? '') == '12 months' ? 'selected' : '' }}>12 months</option>
-                        </select>                          
+                        <input 
+                            type="text" 
+                            name="duration" 
+                            id="duration" 
+                            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            value="{{ old('duration', $diploma->duration ?? '') }}"
+                            placeholder="e.g., 6 months, 8 months, 12 months"
+                        >
                         @error('duration')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
+                    @endhasrole
+
                 </div>
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">

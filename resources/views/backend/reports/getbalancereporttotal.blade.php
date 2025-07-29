@@ -178,56 +178,20 @@
 <body>
     <div class="container">
         <h3>Balance Report(Professional + Academic)</h3>
-        <!-- @if ($currentDate)
-         <h4>This report is on {{ $currentDate }}</h4>
-        @endif
-        @if ($startDate && $endDate)
-         <h4>This report is from {{ $startDate }} to {{ $endDate }}</h4>
-        @endif -->
+        <h3>{{ $currentDate }}</h3>
         <!-- Summary Cards -->
         <div class="summary-card">
             <h4>Financial Summary</h4>
-            <!-- <div class="filter-group">
-                <div class="filter-item">
-                    <p>Total Collections</p>
-                    <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount, 2) }}</p>                </div>
-                <div class="filter-item">
-                <div class="filter-item">
-                    <p>Opening Balance </p>
-                    <p class="summary-value">GHS {{ number_format($openingBalance, 2) }}</p>                </div>
-                <div class="filter-item">
-                    <p>Total Expenses</p>
-                    <p class="summary-value">GHS {{ number_format($expensesTotalAmount,2) }}</p>
-                </div>
-                <div class="filter-item">
-                    <p>Closing Balance</p>
-                    <p class="summary-value">
-                        GHS {{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }}
-                    </p>                
-                </div>
-              </div>
-            </div> -->
             <div class="filter-group">
                 <div class="filter-item">
                     <p>Total Collections that Day</p>
                     <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount, 2) }}</p>
                 </div>
                 <div class="filter-item">
-                    <p>Opening Balance</p>
-                         <!-- {{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }} -->
-                    <p class="summary-value">GHS {{ number_format($openingBalance, 2) }}</p>
-                </div>
-                <div class="filter-item">
                     <p>Total Expenses</p>
                     <p class="summary-value">GHS {{ number_format($expensesTotalAmount, 2) }}</p>
                 </div>
-                <div class="filter-item">
-                    <p>Closing Balance</p>
-                    <p class="summary-value">
-                    <!-- {{ number_format(($feesPaymentsTotal + $formFeesAllAmount) - $expensesTotalAmount, 2) }} -->
-                        GHS {{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }}
-                    </p>
-                </div>
+                
             </div>
 
         <!-- Payments Table -->
@@ -368,10 +332,8 @@
                     <tr>
                         <td class="border px-4 py-2 font-semibold">{{ $category }}</td>
                         <td class="border px-4 py-2">{{ number_format($modes['Cash'] ?? 0, 2) }}</td>
-                        <td class="border px-4 py-2">{{ number_format($modes['Mobile Money'] ?? 0, 2) }}</td>
-                        <td class="border px-4 py-2">{{ number_format($modes['Bank Transfer'] ?? 0, 2) }}</td>
-                        <!-- <td class="border px-4 py-2">{{ number_format($modes['Momo'] ?? 0, 2) }}</td>
-                        <td class="border px-4 py-2">{{ number_format($modes['Cheque'] ?? 0, 2) }}</td> -->
+                        <td class="border px-4 py-2">{{ number_format($modes['Momo'] ?? 0, 2) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($modes['Cheque'] ?? 0, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -379,26 +341,33 @@
         </div>
 
          <!-- =======Balance brought forward -->
-        <div class="overflow-x-auto">
-        <h3 class="text-lg font-bold mb-4">Opening & Closing Balance</h3>
-        <table class="table-auto w-full border border-gray-300 text-sm">
-            <thead class="bg-gray-100">
+         <div class="overflow-x-auto">
+    <h3 class="text-lg font-bold mb-4">Opening & Closing Balance</h3>
+    <table class="table-auto w-full border border-gray-300 text-sm">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="border px-4 py-2">Date</th>
+                <th class="border px-4 py-2">Opening Balance</th>
+                <th class="border px-4 py-2">Total Daily Income</th>
+                <th class="border px-4 py-2">Daily Expenses</th>
+                <th class="border px-4 py-2">Closing Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($dailyBalances as $date => $balance)
                 <tr>
-                    <th class="border px-4 py-2">Opening Balance</th>
-                    <th class="border px-4 py-2">Closing Balance</th>
-                    <!-- <th class="border px-4 py-2">Mobile Money</th>
-                    <th class="border px-4 py-2">Bank Transfer</th> -->
+                    <td class="border px-4 py-2 font-semibold">{{ $date }}</td>
+                    <td class="border px-4 py-2">GHS{{ number_format($balance['opening_balance'], 2) }}</td>
+                    <td class="border px-4 py-2">GHS{{ number_format($balance['total_daily_income'], 2) }}</td>
+                    <td class="border px-4 py-2">GHS{{ number_format($balance['daily_expenses'], 2) }}</td>
+                    <td class="border px-4 py-2">GHS{{ number_format($balance['closing_balance'], 2) }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <!-- <td class="border px-4 py-2 font-semibold">{{ $category }}</td> -->
-                    <td class="border px-4 py-2">GHS{{ number_format($openingBalance ?? 0, 2) }}</td>
-                    <td class="border px-4 py-2">GHS{{ number_format(($feesPaymentsTotal + $formFeesAllAmount + $openingBalance) - $expensesTotalAmount, 2) }}</td>
-                </tr>
-            </tbody>
-        </table>
-       </div> 
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+ 
     </div>
 </body>
 </html>

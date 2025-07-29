@@ -37,7 +37,7 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
-                    <th class="py-3 px-6 text-left">ID</th>
+                    <!-- <th class="py-3 px-6 text-left">ID</th> -->
                     <th class="py-3 px-6 text-left">Professional/Diploma</th>
                     <th class="py-3 px-6 text-left">Code</th>
                     <th class="py-3 px-6 text-left">Name</th>
@@ -52,7 +52,7 @@
             <tbody class="text-gray-600 text-sm font-light">
                 @forelse ($diplomas as $diploma)
                 <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-300">
-                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $diploma->id }}</td>
+                    <!-- <td class="py-3 px-6 text-left whitespace-nowrap">{{ $diploma->id }}</td> -->
                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $diploma->type_of_course }}</td>
                     <td class="py-3 px-6 text-left">{{ $diploma->code }}</td>
                     <td class="py-3 px-6 text-left">{{ $diploma->name ?? 'N/A' }}</td>

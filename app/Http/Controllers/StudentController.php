@@ -824,7 +824,29 @@ class StudentController extends Controller
 
         $course = Grade::findOrFail($student->course_id);
 
-        $subjects = Subject::all();
+        if($student->level == '100' && $student->session == '1') {
+            $subjects = Subject::where('level','100')
+            ->where('semester','2')
+            ->get();
+        } elseif($student->level == '100' && $student->session == '200') {
+            $subjects = Subject::where('level','200')
+            ->where('semester','1')
+            ->get();
+        } elseif($student->level == '200' && $student->session == '1') {
+            $subjects = Subject::where('level','200')
+            ->where('semester','2')
+            ->get();
+        } elseif($student->level == '200' && $student->session == '2') {
+            $subjects = Subject::where('level','300')
+            ->where('semester','1')
+            ->get();
+        }
+
+        $subjects = Subject::where('level',$student->level)
+                            ->where('semester',$student->session)
+                            ->get();
+
+        // return $student;
 
         return view('backend.students.registercourse',compact('course','subjects','student','studentId'));
     }

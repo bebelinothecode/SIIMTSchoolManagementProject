@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Diploma;
 use App\Grade;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
@@ -87,9 +88,12 @@ class DiplomaController extends Controller
     
             // Redirect back with a success message
             return redirect()->back()->with('success', 'Diploma/Certificate updated successfully!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //throw $th;
-            Log::error('Error updating diploma',[$e->getMessage()]);       
+            Log::error('Error updating diploma',[$e->getMessage()]);     
+            
+            return redirect()->back()->with('error', 'Error Updating Diploma/Certificate');
+
         }
     }
 
@@ -116,7 +120,7 @@ class DiplomaController extends Controller
             }
         
             // Paginate results
-            $diplomas = $query->latest()->paginate(5);
+            $diplomas = $query->latest()->paginate(10);
         
             return view('backend.diploma.index', compact('diplomas'));
         } catch (\Exception $e) {
