@@ -79,7 +79,7 @@
                             class="flex-1 px-4 py-2 m-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                             >
                             <option value="">--Select Diploma/Professional--</option>
-                            @foreach ($subjects as $subject)
+                            @foreach ($allSubjects as $subject)
                                 <option value="{{ $subject->id }}">{{ $subject->subject_code }} - {{ $subject->subject_name }}</option>
                             @endforeach
                         </select>

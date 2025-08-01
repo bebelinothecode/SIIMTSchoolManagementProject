@@ -76,8 +76,6 @@ class ExpensesController extends Controller
 
             $expenses = $query->latest()->paginate(10);
 
-            // return $expenses;
-
             return view('backend.expenses.index', compact('expenses'));
     }
 

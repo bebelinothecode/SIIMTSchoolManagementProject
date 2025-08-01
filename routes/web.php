@@ -160,6 +160,9 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/profit/and/loss',[ProfitAndLossController::class, 'index'])->name('profit.andloss');
     Route::post('/generate/profit/and/loss',[ProfitAndLossController::class,'generateProfitAndLossReport'])->name('generate.profitandloss');
     Route::get("/print/receipts/from/transactions/{id}",[FeesController::class, 'printReceiptFromTransaction'])->name('print.transactionreceipt');
+    Route::delete('/delete/enquiry/{id}',[StudentController::class, 'deleteEnquiry'])->name('delete.enquiry');
+    Route::get('/print/enquiry/receipt/{id}',[StudentController::class, 'printEnquiryReceipt'])->name('print.enquiryreceipt');
+    Route::get('/buy/forms/{id}',[StudentController::class, 'buyFormsLater'])->name('buy.forms');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

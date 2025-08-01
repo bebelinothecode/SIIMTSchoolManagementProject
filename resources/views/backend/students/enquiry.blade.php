@@ -52,6 +52,7 @@
                     <th class="py-3 px-6 text-left">Currency</th>
                     <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Created On</th>
+                    <th class="py-3 px-6 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
@@ -65,9 +66,18 @@
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->bought_forms }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->currency }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount }}</td>
-                    {{-- <td class="border border-gray-200 px-4 py-2">{{ $enquiry->interested_course }}</td> --}}
-
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->created_at)->format('M d, Y H:i A') }}</td>
+                    <td class="py-3 px-6 text-center">
+                        <a href="{{ route('print.enquiryreceipt',$enquiry->id) }}" class="ml-4 text-green-600 hover:underline" target="_blank">Print</a>
+                        @if ($enquiry->bought_forms === 'No')
+                             <a href="{{ route('buy.forms',$enquiry->id) }} " class="ml-4 text-blue-600 hover:underline">Buy Forms</a>
+                        @endif
+                        <form action="{{ route('delete.enquiry',$enquiry->id) }} " method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
 
@@ -79,6 +89,28 @@
             </tbody>
         </table>
     </div>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif 
+    
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif   
 
     <!-- Pagination -->
     <div class="mt-4">

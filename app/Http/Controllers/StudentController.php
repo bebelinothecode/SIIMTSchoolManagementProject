@@ -459,11 +459,9 @@ class StudentController extends Controller
 
     public function storeEnquiry(Request $request) {
         try {
-            // dd(Auth::user());
-            // return Auth::user()->name;
-            $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
 
-            
+        $receiptNumber = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
+       
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -474,10 +472,14 @@ class StudentController extends Controller
             'currency' => 'nullable|string',
             'amount_paid' => 'nullable|numeric',
             'User' => 'nullable|string',
-            'receipt_number'=> $receipt_number
+            'receipt_number'=> $receiptNumber
         ]);
 
-        // dd($validatedData);
+        $existingEnquiry = Enquiry::where('receipt_number', $receiptNumber)->first();
+
+        if ($existingEnquiry) {
+            return view('backend.fees.enquiryreceipt', compact('existingEnquiry', 'receiptNumber'));
+        }
 
         $enquiry = Enquiry::create([
             'name' => $validatedData['name'],
@@ -492,7 +494,7 @@ class StudentController extends Controller
         ]);
 
         if($validatedData['bought_forms'] === 'Yes') {
-            return view('backend.fees.enquiryreceipt',compact('enquiry','receipt_number'));
+            return view('backend.fees.enquiryreceipt',compact('enquiry','receiptNumber'));
             // return response()->json([
             //     'status' => 'success',
             //     'redirect_url' => route('enquiry.receipt', ['id' => $enquiry->id]),
@@ -507,8 +509,6 @@ class StudentController extends Controller
 
             return redirect()->back()->with('error', 'Error saving Enquiry');
         } 
-        // dd($request->all());
-
     }
 
     public function migration() {
@@ -824,31 +824,42 @@ class StudentController extends Controller
 
         $course = Grade::findOrFail($student->course_id);
 
-        if($student->level == '100' && $student->session == '1') {
-            $subjects = Subject::where('level','100')
-            ->where('semester','2')
-            ->get();
-        } elseif($student->level == '100' && $student->session == '200') {
-            $subjects = Subject::where('level','200')
-            ->where('semester','1')
-            ->get();
-        } elseif($student->level == '200' && $student->session == '1') {
-            $subjects = Subject::where('level','200')
-            ->where('semester','2')
-            ->get();
-        } elseif($student->level == '200' && $student->session == '2') {
-            $subjects = Subject::where('level','300')
-            ->where('semester','1')
-            ->get();
-        }
+        $query = Subject::query();
 
-        $subjects = Subject::where('level',$student->level)
-                            ->where('semester',$student->session)
-                            ->get();
+        
+        // if($student->level == '100' && $student->session == '1') {
+        //     $query = Subject::where('level','100')
+        //     ->whereIn('semester',["1", "2"]);
+        // } elseif($student->level == '100' && $student->session == '2') {
+        //     $query = Subject::where('level','200')
+        //     ->whereIn('semester',["1","2"]);
+        // } elseif($student->level == '300' && $student->session == '1') {
+        //     $query = Subject::where('level','300')
+        //     ->whereIn('semester',["1","2"]);
+        // } elseif($student->level == '400' && $student->session == '1') {
+        //     $query = Subject::where('level','400')
+        //     ->whereIn('semester',['1','2']);
+        // }
+
+
+
+        if(($student->level == '100' && $student->session == '1') || ($student->level == '200' && $student->session == '1')) {
+            $query = Subject::where('level',$student->level)
+            ->whereIn('semester',["1", "2"]);
+        } elseif($student->level == '100' && $student->session == '2') {
+            $query = Subject::where('level',$student->level)
+            ->where('semester', "2");
+        } else {
+            $query = Subject::where('level',$student->level)->where('semester',$student->session);
+        }
+        
+        $allSubjects = $query->get();
+
+        // return $allSubjects;
 
         // return $student;
 
-        return view('backend.students.registercourse',compact('course','subjects','student','studentId'));
+        return view('backend.students.registercourse',compact('course','allSubjects','student','studentId'));
     }
 
     public function registerCourses(Request $request, $id) {
@@ -1397,5 +1408,31 @@ class StudentController extends Controller
             // Return error response
             // return back()->withInput()->withErrors(['error' => 'An error occurred while creating the student. Please try again.']);
         }
+    }
+
+    public function deleteEnquiry($id) {
+        try {
+            //code...
+            $enquiry = Enquiry::findOrFail($id);
+
+            $enquiry->delete();
+
+            return redirect()->back()->with(key:'success',value:'Enquiry deleted successfully');
+        } catch (\Throwable $th) {
+
+            return redirect()->back()->with(key:'error',value:'Enquiry deleted unsuccessful');
+        }
+    }
+
+    public function printEnquiryReceipt($id) {
+        $enquiry = Enquiry::findOrFail($id);
+
+        return view('backend.fees.enquiryreceipt', compact('enquiry'));
+    }
+
+    public function buyFormsLater($id) {
+        $enquiry = Enquiry::findOrFail($id);
+
+        
     }
 }
