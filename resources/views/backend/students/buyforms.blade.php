@@ -24,7 +24,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('phone') }}">
+                        <input name="name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('name', $enquiry->name ?? '') }}">
                         @error('name')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -37,7 +37,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="telephone_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ old('email') }}">
+                        <input name="telephone_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ old('name', $enquiry->telephone_number ?? '') }}">
                         @error('telephone_number')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -51,11 +51,11 @@
                     </div>
                     <div class="md:w-2/3">
                         <div class="md:w-2/3">
-                            <select name="type_of_course" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="type_of_course" required>
-                                <option value="">-- Select type of course --</option>
-                                <option value="Academic">Academic</option>
-                                <option value="Professional">Professional</option>
-                            </select>
+                        <select name="type_of_course" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
+                            <option value="">-- Select type of course --</option>
+                            <option value="Academic" {{ old('type_of_course', $enquiry->type_of_course ?? '') == 'Academic' ? 'selected' : '' }}>Academic</option>
+                            <option value="Professional" {{ old('type_of_course', $enquiry->type_of_course ?? '') == 'Professional' ? 'selected' : '' }}>Professional</option>
+                        </select>
                         </div>
                         @error('type_of_course')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -70,10 +70,10 @@
                     </div>
                     <div class="md:w-2/3">
                         <div class="md:w-2/3">
-                            <select name="bought_forms" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="bought_forms" required>
+                            <select name="bought_forms" id="bought_forms" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
                                 <option value="">-- Select answer --</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
+                                <option value="Yes" {{ old('bought_forms', $enquiry->bought_forms ?? '') == 'Yes' ? 'selected' : '' }}>Yes</option>
+                                <option value="No" {{ old('bought_forms', $enquiry->bought_forms ?? '') == 'No' ? 'selected' : '' }}>No</option>
                             </select>
                         </div>
                         @error('type_of_course')
@@ -129,12 +129,14 @@
                     </div>
                     <div class="md:w-2/3">
                         <div class="md:w-2/3">
-                            <select name="course" class="form-select select2-dropdown" id="choices-select">
-                                <option value="">-- Select Program --</option>
-                                @foreach($dropdownItems as $item)
-                                    <option value="{{ $item['name'] }}">{{ $item['name'] }}</option>
-                                @endforeach
-                            </select>
+                            <div class="md:w-2/3">
+                                <select name="course" class="form-select select2-dropdown" id="choices-select">
+                                    <option value="">-- Select Program --</option>
+                                    @foreach($enquiry as $item)
+                                        <option value="{{ $item['name'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <script>

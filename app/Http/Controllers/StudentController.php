@@ -1433,6 +1433,6 @@ class StudentController extends Controller
     public function buyFormsLater($id) {
         $enquiry = Enquiry::findOrFail($id);
 
-        
+        return view('backend.students.buyforms',compact('enquiry'));   
     }
 }

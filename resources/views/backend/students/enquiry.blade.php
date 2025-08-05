@@ -68,7 +68,9 @@
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->created_at)->format('M d, Y H:i A') }}</td>
                     <td class="py-3 px-6 text-center">
-                        <a href="{{ route('print.enquiryreceipt',$enquiry->id) }}" class="ml-4 text-green-600 hover:underline" target="_blank">Print</a>
+                        @if ($enquiry->bought_forms === 'Yes')
+                            <a href="{{ route('print.enquiryreceipt',$enquiry->id) }}" class="ml-4 text-green-600 hover:underline" target="_blank">Print</a>
+                        @endif
                         @if ($enquiry->bought_forms === 'No')
                              <a href="{{ route('buy.forms',$enquiry->id) }} " class="ml-4 text-blue-600 hover:underline">Buy Forms</a>
                         @endif
