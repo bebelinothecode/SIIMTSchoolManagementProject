@@ -38,6 +38,8 @@ class Student extends Model
         // 'permanent_address',
         'index_number',
         'balance',
+        'last_level',
+        'last_semester',
         'branch'
         // 'student_type',
     ];

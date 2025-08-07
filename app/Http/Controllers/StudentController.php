@@ -590,18 +590,18 @@ class StudentController extends Controller
     
     public function payStudentFeesForm($id) {
         $student = Student::with('user')->findOrFail($id);
+        $levelChanged = $student->level !== $student->last_level;
+        $semesterChanged = $student->session !== $student->last_semester;
         $studentName = $student->user->name;
         $studentIndexNumber = $student->index_number;
         $student_balance = $student->balance;
         $feesTypes = FeesType::all();
-        // return $student;
-        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes'));
+        // return [$levelChanged, $semesterChanged];
+        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes','levelChanged','semesterChanged'));
     }
 
     public function promoteAll(Request $request) {
         try {
-            // dd($request->all());
-
             $validatedData = $request->validate([
                 'current_level' => 'required',
                 'current_semester' => 'required',
@@ -619,9 +619,13 @@ class StudentController extends Controller
             }
 
             // Find all students currently at level 100
+            // $students = Student::with('user')->where('level', $fromLevel)
+            //                         ->where('session', $fromSemester)
+            //                         ->get();
             $students = Student::with('user')->where('level', $fromLevel)
-                                    ->where('session', $fromSemester)
-                                    ->get();
+                                ->where('session', $fromSemester)
+                                ->whereNull('level_prof') // Only academic students
+                                ->get();
 
         
             // Check if any students are found
@@ -630,6 +634,8 @@ class StudentController extends Controller
             }
 
             foreach($students as $student) {
+                $student->last_level = $student->level;
+                $student->last_semester = $student->semester;
                 $student->level = $toLevel;
                 $student->session = $toSemester;
                 $student->save();

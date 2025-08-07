@@ -48,6 +48,8 @@ class  FeesController extends Controller
 
         $details = Student::with('user')->latest()->get();
 
+        // $getStudentLevel = Studen
+
         return view('backend.fees.collect', compact('sessions','details','fees','levels'));
     }
 
