@@ -438,6 +438,12 @@
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Roles &amp; Permissions</span>
                     </a>
+                    <a href="{{ route('create.userform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                            <path fill="currentColor" d="M512 64V352H128V64H512zM128 32C92.7 32 64 60.7 64 96V352c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H128zM480 96H160V320H480V96zM24 120c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v32c0 35.3 28.7 64 64 64h32V424H120c-13.3 0-24-10.7-24-24s10.7-24 24-24h40V312H120c-13.3 0-24-10.7-24-24s10.7-24 24-24h40V200H120c-13.3 0-24-10.7-24-24s10.7-24 24-24H64V96H24z"/>
+                        </svg>
+                        <span class="ml-2 text-sm font-semibold">Create Users</span>
+                    </a>
                     <a href="{{ route('student.migration') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <path fill="currentColor" d="M0 88C0 39.4 39.4 0 88 0h80c13.3 0 24 10.7 24 24v8h40c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v8c0 13.3-10.7 24-24 24s-24-10.7-24-24v-8h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V256h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V160h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V64h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V24c0-13.3-10.7-24-24-24H88C39.4 0 0 39.4 0 88zM344 0h80c13.3 0 24 10.7 24 24v464c0 13.3-10.7 24-24 24s-24-10.7-24-24V48H344c-13.3 0-24-10.7-24-24s10.7-24 24-24zM192 488c0 13.3 10.7 24 24 24h80c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24h-80c-13.3 0-24 10.7-24 24V488z"/>

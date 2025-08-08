@@ -1125,10 +1125,6 @@ class StudentController extends Controller
         return view('backend.students.deletedstudentstable',compact('students'));
     }
 
-    // public function restoreDeletedStudent($id) {
-
-    // }
-
     public function restoreDeletedStudent($id)
     {
         $student = Student::withTrashed()->with('user')->findOrFail($id);
@@ -1440,5 +1436,37 @@ class StudentController extends Controller
         $enquiry = Enquiry::findOrFail($id);
 
         return view('backend.students.buyforms',compact('enquiry'));   
+    }
+
+    public function createUsersForm() {
+        $roles = DB::select('Select * from roles');
+        return view('backend.settings.createuserform', compact('roles'));
+    }
+
+    public function createUser(Request $request) {
+        try {
+            // dd($request->all());
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'password' => 'required|string|min:8',
+                'role' => 'required'
+            ]);
+
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => Hash::make($validatedData['password'])
+            ]);
+
+            $user->assignRole($validatedData['role']);   
+
+            return redirect()->back()->with('success', 'User created and role ');
+        } catch (Exception $e) {
+            //throw $th;
+             Log::error('Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
     }
 }

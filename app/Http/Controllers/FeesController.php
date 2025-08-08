@@ -6,6 +6,7 @@ use App\Fees;
 use App\Level;
 use App\Session;
 use App\Student;
+use App\MatureStudent;
 use App\FeesPaid;
 use Exception;
 use Illuminate\Support\Str;
@@ -250,15 +251,24 @@ class  FeesController extends Controller
             $search = $request->input('search');
     
             $query = FeesPaid::query();
+
+            $matureQuery = MatureStudent::query();
     
             if (!empty($search)) {
                 $query->where('student_index_number', 'like', "%{$search}%")
                       ->orWhere('student_name', 'like', "%{$search}%");
             }
+
+            if(!empty($search)) {
+                $matureQuery->where('name', 'like', "%{$search}%")
+                ->orWhere('mature_index_number','like',"%{$search}%");
+            }
     
             $transactions = $query->latest()->paginate(15);
+            $matureTransactions = $matureQuery->latest()->paginate(15);
 
-            // return $transactions;
+            return $matureTransactions;
+
     
             return view('backend.fees.transactions', compact('transactions'));
         } catch (Exception $e) {
