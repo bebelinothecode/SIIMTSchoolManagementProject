@@ -43,7 +43,7 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian|HR']], function () 
+Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian|HR|registrar']], function () 
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');

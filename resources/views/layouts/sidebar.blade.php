@@ -8,7 +8,7 @@
             </svg>
             <span class="ml-2 text-sm font-semibold">Dashboard</span>
         </a>
-        @hasrole('Admin|rector|StudCoordinator|HR')
+        @hasrole('Admin|rector|StudCoordinator|HR|registrar')
         <div>
             <a href="#"
                 class="flex items-center text-gray-600 py-2 hover:text-blue-700"
@@ -209,7 +209,7 @@
             transform: rotate(180deg);
         }
         </style>
-        @hasanyrole('Admin|rector')
+        @hasanyrole('Admin|rector|registrar')
         <div>
             <a href="#"
             class="flex items-center text-gray-600 py-2 hover:text-blue-700"
@@ -306,13 +306,13 @@
                 }
             });
         </script>
-        @hasanyrole('Admin|rector|frontdesk')
+        @hasanyrole('Admin|rector|frontdesk|registrar')
         <a href="{{ route('student.enquires') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
             <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-graduate" class="svg-inline--fa fa-user-graduate fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M319.4 320.6L224 416l-95.4-95.4C57.1 323.7 0 382.2 0 454.4v9.6c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-9.6c0-72.2-57.1-130.7-128.6-133.8zM13.6 79.8l6.4 1.5v58.4c-7 4.2-12 11.5-12 20.3 0 8.4 4.6 15.4 11.1 19.7L3.5 242c-1.7 6.9 2.1 14 7.6 14h41.8c5.5 0 9.3-7.1 7.6-14l-15.6-62.3C51.4 175.4 56 168.4 56 160c0-8.8-5-16.1-12-20.3V87.1l66 15.9c-8.6 17.2-14 36.4-14 57 0 70.7 57.3 128 128 128s128-57.3 128-128c0-20.6-5.3-39.8-14-57l96.3-23.2c18.2-4.4 18.2-27.1 0-31.5l-190.4-46c-13-3.1-26.7-3.1-39.7 0L13.6 48.2c-18.1 4.4-18.1 27.2 0 31.6z"></path></svg>
             <span class="ml-2 text-sm font-semibold">Enquiry</span>
         </a>
         @endhasanyrole
-        @hasanyrole('Admin|rector')
+        @hasanyrole('Admin|rector|registrar')
         <div>
             <a href="#"
                class="flex items-center text-gray-600 py-2 hover:text-blue-700"
@@ -438,18 +438,22 @@
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Roles &amp; Permissions</span>
                     </a>
+                    @hasrole('Admin|rector')
                     <a href="{{ route('create.userform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <path fill="currentColor" d="M512 64V352H128V64H512zM128 32C92.7 32 64 60.7 64 96V352c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H128zM480 96H160V320H480V96zM24 120c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v32c0 35.3 28.7 64 64 64h32V424H120c-13.3 0-24-10.7-24-24s10.7-24 24-24h40V312H120c-13.3 0-24-10.7-24-24s10.7-24 24-24h40V200H120c-13.3 0-24-10.7-24-24s10.7-24 24-24H64V96H24z"/>
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Create Users</span>
                     </a>
+                    @endhasrole
+                    @hasrole('Admin|rector')
                     <a href="{{ route('student.migration') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <path fill="currentColor" d="M0 88C0 39.4 39.4 0 88 0h80c13.3 0 24 10.7 24 24v8h40c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v8c0 13.3-10.7 24-24 24s-24-10.7-24-24v-8h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V256h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V160h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V64h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V24c0-13.3-10.7-24-24-24H88C39.4 0 0 39.4 0 88zM344 0h80c13.3 0 24 10.7 24 24v464c0 13.3-10.7 24-24 24s-24-10.7-24-24V48H344c-13.3 0-24-10.7-24-24s10.7-24 24-24zM192 488c0 13.3 10.7 24 24 24h80c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24h-80c-13.3 0-24 10.7-24 24V488z"/>
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Migration</span>
                     </a>
+                    @endhasrole
                     <!-- <a href="{{ route('student.migration') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <path fill="currentColor" d="M0 88C0 39.4 39.4 0 88 0h80c13.3 0 24 10.7 24 24v8h40c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v48h8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8v8c0 13.3-10.7 24-24 24s-24-10.7-24-24v-8h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V256h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V160h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V64h-8c-13.3 0-24-10.7-24-24s10.7-24 24-24h8V24c0-13.3-10.7-24-24-24H88C39.4 0 0 39.4 0 88zM344 0h80c13.3 0 24 10.7 24 24v464c0 13.3-10.7 24-24 24s-24-10.7-24-24V48H344c-13.3 0-24-10.7-24-24s10.7-24 24-24zM192 488c0 13.3 10.7 24 24 24h80c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24h-80c-13.3 0-24 10.7-24 24V488z"/>

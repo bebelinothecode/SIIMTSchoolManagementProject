@@ -39,7 +39,7 @@ class HomeController extends Controller
 
         // return $user;
         
-        if ($user->hasRole(['Admin','StudCoordinator','rector','AsstAccount','frontdesk','Librarian','HR'])) {
+        if ($user->hasRole(['Admin','StudCoordinator','rector','AsstAccount','frontdesk','Librarian','HR','registrar'])) {
 
             $parents = Parents::latest()->get();
             $teachers = Teacher::latest()->get();

@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 use App\Imports\StudentsImport;
 use App\MatureStudent;
 use App\RegisterCourse;
-use Dotenv\Exception\ValidationException;
+use Illuminate\Validation\ValidationException;
 use Dotenv\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -618,10 +618,6 @@ class StudentController extends Controller
                 return redirect()->back()->with('error', 'Cant migrate to the same semester or level');
             }
 
-            // Find all students currently at level 100
-            // $students = Student::with('user')->where('level', $fromLevel)
-            //                         ->where('session', $fromSemester)
-            //                         ->get();
             $students = Student::with('user')->where('level', $fromLevel)
                                 ->where('session', $fromSemester)
                                 ->whereNull('level_prof') // Only academic students
@@ -645,7 +641,7 @@ class StudentController extends Controller
         } catch (Exception $e) {
             //throw $th;
             Log::error('An error occurred', [
-                'exception' => $e, // Include the exception in the context array
+                'exception' => $e 
             ]);   
             
             return redirect()->back()->with('error', 'Error saving students details');
