@@ -101,7 +101,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $student->balance < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                {{ number_format($student->balance, 2) }}
+                                {{ number_format((int)$student->balance, 2) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -254,7 +254,7 @@
                         <div>
                             <div class="text-xs font-medium text-gray-500">Balance</div>
                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $student->balance < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                {{ number_format($student->balance, 2) }}
+                                {{ number_format((int)$student->balance, 2) }}
                             </span>
                         </div>
                     </div>

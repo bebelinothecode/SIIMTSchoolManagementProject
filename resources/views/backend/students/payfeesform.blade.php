@@ -268,7 +268,7 @@
         </div>
     </div>
 
-    <!-- <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded',()=> {
             const amount = document.getElementById('amount');
             const balance = document.getElementById('balance');
@@ -279,19 +279,18 @@
             const semesterChanged = @json($semesterChanged);
             console.log(totalFees,levelChanged,semesterChanged);
 
-            let currentSemesterFee = parseFloat(student.fees) || parseFloat(student.fees_prof) || 0;
+            let currentSemesterFee = parseInt(student.fees) || parseInt(student.fees_prof) || 0;
 
 
-
-            let scholarshipAmount = parseFloat(student.Scholarship_amount) || 0;
+            let scholarshipAmount = parseInt(student.Scholarship_amount) || 0;
             function calculateBalance() {
-                const enteredAmount = parseFloat(amount.value) || 0;
+                const enteredAmount = parseInt(amount.value) || 0;
 
                 if(student.Scholarship === 'Yes' && !isNaN(scholarshipAmount)) {
                     totalFees -= scholarshipAmount;
                 }
 
-                let remainingBalance = parseFloat(student.balance);
+                let remainingBalance = parseInt(student.balance);
 
                 if (isNaN(remainingBalance)) {
                     // If no specific balance, use adjusted total fees
@@ -312,9 +311,10 @@
 
             amount.addEventListener('input', calculateBalance);
         })
-    </script> -->
-    
-    <!-- <script>
+    </script> 
+     --}}
+
+    {{-- <script>
     document.addEventListener('DOMContentLoaded', () => {
         const amount = document.getElementById('amount');
         const balance = document.getElementById('balance');
@@ -324,8 +324,8 @@
         const semesterChanged = @json($semesterChanged);
 
         // Get appropriate fee
-        let currentSemesterFee = parseFloat(student.fees) || parseFloat(student.fees_prof) || 0;
-        let scholarshipAmount = parseFloat(student.Scholarship_amount) || 0;
+        let currentSemesterFee = parseInt(student.fees) || parseInt(student.fees_prof) || 0;
+        let scholarshipAmount = parseInt(student.Scholarship_amount) || 0;
 
         // Apply scholarship if applicable
         if (student.Scholarship === 'Yes' && !isNaN(scholarshipAmount)) {
@@ -333,7 +333,7 @@
         }
         if (currentSemesterFee < 0) currentSemesterFee = 0;
 
-        let previousBalance = parseFloat(student.balance) || 0;
+        let previousBalance = parseInt(student.balance) || 0;
 
         // Only add semester fees if level or semester has changed
         let totalDue = previousBalance;
@@ -342,10 +342,10 @@
         }
 
         // Update balance field on load
-        balance.value = totalDue.toFixed(2);
+        balance.value = totalDue;
 
         function calculateBalance() {
-            const enteredAmount = parseFloat(amount.value) || 0;
+            const enteredAmount = parseInt(amount.value) || 0;
 
             let newBalance = totalDue - enteredAmount;
 
@@ -354,13 +354,15 @@
                 alert('Payment exceeds the remaining balance. Balance cannot be negative.');
             }
 
-            balance.value = newBalance.toFixed(2);
+            balance.value = newBalance;
         }
 
         amount.addEventListener('input', calculateBalance);
     });
-    </script> -->
-    <script>
+    </script>  --}}
+
+
+    {{-- <script>
     document.addEventListener('DOMContentLoaded', () => {
         const amount = document.getElementById('amount');
         const balance = document.getElementById('balance');
@@ -370,8 +372,8 @@
         const semesterChanged = @json($semesterChanged);
 
         // Get appropriate fee
-        let currentSemesterFee = parseFloat(student.fees) || parseFloat(student.fees_prof) || 0;
-        let scholarshipAmount = parseFloat(student.Scholarship_amount) || 0;
+        let currentSemesterFee = parseInt(student.fees) || parseInt(student.fees_prof) || 0;
+        let scholarshipAmount = parseInt(student.Scholarship_amount) || 0;
 
         // Apply scholarship if applicable
         if (student.Scholarship === 'Yes' && !isNaN(scholarshipAmount)) {
@@ -379,7 +381,7 @@
         }
         if (currentSemesterFee < 0) currentSemesterFee = 0;
 
-        let previousBalance = parseFloat(student.balance) || 0;
+        let previousBalance = parseInt(student.balance) || 0;
 
         // Only add semester fees if level or semester has changed
         let totalDue = previousBalance;
@@ -388,25 +390,79 @@
         }
 
         // Update balance field on load
-        balance.value = totalDue.toFixed(2);
+        balance.value = totalDue;
 
         function calculateBalance() {
-            const enteredAmount = parseFloat(amount.value) || 0;
+            const enteredAmount = parseInt(amount.value) || 0;
 
             if (enteredAmount > totalDue) {
                 alert('Payment exceeds the remaining balance. Amount has been reset to 0.');
                 amount.value = '0.00';
-                balance.value = totalDue.toFixed(2);
+                balance.value = totalDue;
                 return;
             }
 
             const newBalance = totalDue - enteredAmount;
-            balance.value = newBalance.toFixed(2);
+            balance.value = newBalance;
         }
 
         amount.addEventListener('input', calculateBalance);
     });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const amount = document.getElementById('amount');
+            const balance = document.getElementById('balance');
+
+            const student = @json($student);
+            const levelChanged = @json($levelChanged);
+            const semesterChanged = @json($semesterChanged);
+
+            // Get appropriate fee
+            let currentSemesterFee = parseInt(student.fees) || parseInt(student.fees_prof) || 0;
+            let scholarshipAmount = parseInt(student.Scholarship_amount) || 0;
+
+            // Apply scholarship if applicable
+            if (student.Scholarship === 'Yes' && !isNaN(scholarshipAmount)) {
+                currentSemesterFee -= scholarshipAmount;
+            }
+            if (currentSemesterFee < 0) currentSemesterFee = 0;
+
+            let previousBalance = parseInt(student.balance) || 0;
+
+            // Storage key specific to this student
+            let storageKey = `feesAdded-${student.id}`;
+
+            // Check if fees have already been added for this semester/level
+            let feesAlreadyAdded = localStorage.getItem(storageKey) === 'true';
+
+            let totalDue = previousBalance;
+
+            if ((levelChanged || semesterChanged) && !feesAlreadyAdded) {
+                totalDue += currentSemesterFee;
+                localStorage.setItem(storageKey, 'true');
+            }
+
+            // Update balance field on load
+            balance.value = totalDue;
+
+            function calculateBalance() {
+                const enteredAmount = parseInt(amount.value) || 0;
+                let newBalance = totalDue - enteredAmount;
+
+                if (newBalance < 0) {
+                    newBalance = 0;
+                    alert('Payment exceeds the remaining balance. Balance cannot be negative.');
+                }
+
+                balance.value = newBalance;
+            }
+
+            amount.addEventListener('input', calculateBalance);
+        });
     </script>
+
 
 
 

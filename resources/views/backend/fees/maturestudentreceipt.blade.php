@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Receipt</title>
+    <title>Mature Student Payment Receipt</title>
     <style>
         @page {
             /* A5 size (half of A4) */
@@ -117,61 +117,38 @@
         <div class="header">
             <img src="{{ asset('logo/SIIMT-logo.png') }}" alt="SIIMT University College Logo">
             <h1>SIIMT University College, Ghana</h1>
-            <h3>Payment Receipt</h3>
-            <p><strong>Date:</strong> {{ now()->format('F d, Y') }}</p>
+            <h3>Mature Student Payment Receipt</h3>
+            <p><strong>Date:</strong> {{ $matureStudent->created_at }}</p>
         </div>
 
         <div class="details">
-            <h3>Student Details</h3>
-            <p><strong>Index Number:</strong> {{ $feespaid->student_index_number }}</p>
-            <p><strong>Name:</strong> {{ $feespaid->student_name }}</p>
+            <h3>Mature Student Details</h3>
+            <p><strong>Index Number:</strong> {{ $matureStudent->mature_index_number }}</p>
+            <p><strong>Name:</strong> {{ $matureStudent->name }}</p>
 
             <h3>Payment Details</h3>
             <table>
+                
                 <tr>
-                    <th>Fees Type</th>
-                    <td>{{ $feespaid->fees_type }}</td>
+                    <th>Amount Paid</th>
+                    <td>{{ $matureStudent->currency }} {{ number_format($matureStudent->amount_paid, 2) }}</td>
                 </tr>
-                @if (($feespaid->amount ) && ($feespaid->amount !== '0'))
-                    <tr>
-                        <th>Amount Paid</th>
-                        <td>{{ $feespaid->currency }} {{ number_format($feespaid->amount, 2) }}</td>
-                    </tr>
-                @endif
-                @if(($feespaid->amount == '0') && ($feespaid->other_fees !== null))
-                <tr>
-                    <th>Other Fees Paid</th>
-                    <td>{{ $feespaid->currency }} {{ number_format($feespaid->other_fees, 2) }}</td>
-                </tr>
-                @endif
-                @if($feespaid->fees_type === 'School Fees')
-                <tr>
+              
+                {{-- <tr>
                     <th>Balance</th>
-                    <td>{{ $feespaid->currency }} {{ number_format($feespaid->balance, 2) }}</td>
-                </tr>
-                @endif
-                <tr>
+                    <td>{{ $transaction->currency }} {{ number_format($transaction->balance, 2) }}</td>
+                </tr> --}}
+                {{-- <tr>
                     <th>Method of Payment</th>
-                    <td>{{ $feespaid->method_of_payment }}</td>
-                </tr>
-                @if ($feespaid->cheque_number)
-                <tr>
-                    <th>Cheque Number</th>
-                    <td>{{ $feespaid->cheque_number }}</td>
-                </tr>
-                @endif
-                @if ($feespaid->Momo_number)
-                <tr>
-                    <th>MoMo Number</th>
-                    <td>{{ $feespaid->Momo_number }}</td>
-                </tr>
-                @endif
+                    <td>{{ $transaction->method_of_payment }}</td>
+                </tr> --}}
+                
             </table>
         </div>
 
-        <div class="receipt-number">
-            <strong>Receipt Number:</strong> {{ $feespaid->receipt_number }}
-        </div>
+        {{-- <div class="receipt-number">
+            <strong>Receipt Number:</strong> {{ $transaction->receipt_number }}
+        </div> --}}
 
         <div class="footer">
             <p>Thank you for your payment!</p>

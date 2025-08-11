@@ -181,6 +181,8 @@ class  FeesController extends Controller
 
         $totalAmount = $defaultersAcademicTotal + $defaultersAcademicProfessional;
 
+        // return $totalAmount;
+
         return view('backend.fees.defaulters', compact('defaulters','defaultersAcademicTotal','defaultersAcademicProfessional','totalAmount'));
     }
 
@@ -267,10 +269,10 @@ class  FeesController extends Controller
             $transactions = $query->latest()->paginate(15);
             $matureTransactions = $matureQuery->latest()->paginate(15);
 
-            return $matureTransactions;
+            // return $matureTransactions;
 
     
-            return view('backend.fees.transactions', compact('transactions'));
+            return view('backend.fees.transactions', compact('transactions','matureTransactions'));
         } catch (Exception $e) {
             Log::error("Error executing query", ["message" => $e->getMessage()]);
             

@@ -15,7 +15,6 @@ use App\Enquiry;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
-// use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
@@ -211,7 +210,6 @@ class ReportsController extends Controller
     // public function generatePaymentReport(Request $request)
     // {
     //     try {
-    //         // dd($request->all());
     //         $validatedData = $request->validate([
     //             'current_date' => 'nullable|date',
     //             'start_date' => 'nullable|date',
@@ -231,10 +229,7 @@ class ReportsController extends Controller
     //         // Step 1: Get unique student index numbers from the collect_fees table
     //         $uniqueIndexNumbers = FeesPaid::distinct()->pluck('student_index_number');
 
-    //         // Step 2: Fetch student categories for the unique index numbers
-    //         // $students = Student::whereIn('index_number', $uniqueIndexNumbers)
-    //         //     ->pluck('student_category', 'index_number');
-
+    //         // Step 2: Fetch student categories for the unique index numbers and apply branch filter
     //         $students = Student::whereIn('index_number',$uniqueIndexNumbers)
     //         ->select('index_number','student_category','branch')
     //         ->get()
@@ -247,7 +242,6 @@ class ReportsController extends Controller
     //             ];
     //         });
 
-    //         // return $students;
     //         // Step 3: Filter index numbers based on category selection
     //         $filteredIndexNumbers = $students->filter(function ($category) use ($aca_prof) {
     //             $categoryLower = strtolower($category);
@@ -257,6 +251,8 @@ class ReportsController extends Controller
     //                 ? in_array($categoryLower, ['academic', 'professional'])
     //                 : ($categoryLower === $acaProfLower);
     //         })->keys();
+
+    //         return $filteredIndexNumbers;
 
     //         // Step 4: Fetch all fee transactions with filters
     //         $feeTransactionsQuery = FeesPaid::whereIn('student_index_number', $filteredIndexNumbers);
@@ -351,160 +347,297 @@ class ReportsController extends Controller
     //     }
     // }
 
+    // public function generatePaymentReport(Request $request)
+    // {
+    //     try {
+    //         $validatedData = $request->validate([
+    //             'current_date' => 'nullable|date',
+    //             'start_date' => 'nullable|date',
+    //             'end_date' => 'nullable|date',
+    //             'aca_prof' => 'nullable|in:Academic,Professional,All',
+    //             'branch' => 'nullable|in:Kasoa,Kanda,Spintex',
+    //             'method_of_payment' => 'nullable|in:Cash,Momo,Cheque'
+    //         ]);
+
+    //         $currentDate = $validatedData['current_date'] ?? null;
+    //         $startDate = $validatedData['start_date'] ?? null;
+    //         $endDate = $validatedData['end_date'] ?? null;
+    //         $aca_prof = $validatedData['aca_prof'] ?? 'All';
+    //         $branch = $validatedData['branch'] ?? null;
+    //         $methodOfPayment = $validatedData['method_of_payment'] ?? null;
+
+    //         // Step 1: Get unique student index numbers from the collect_fees table
+    //         $uniqueIndexNumbers = FeesPaid::distinct()->pluck('student_index_number');
+
+    //         // Step 2: Fetch student categories for the unique index numbers and apply branch filter
+    //         $studentsQuery = Student::whereIn('index_number', $uniqueIndexNumbers)
+    //             ->select('index_number', 'student_category', 'branch');
+
+    //         if ($branch) {
+    //             $studentsQuery->where('branch', $branch);
+    //         }
+
+    //         $students = $studentsQuery->get()->mapWithKeys(function ($student) {
+    //             return [
+    //                 $student->index_number => [
+    //                     'student_category' => $student->student_category,
+    //                     'branch' => $student->branch,
+    //                 ]
+    //             ];
+    //         });
+
+    //         // Optional: Early return if no students match
+    //         if ($students->isEmpty()) {
+    //             return view('backend.reports.paymentreport', [
+    //                 'transactionsByCategoryAndCurrency' => [],
+    //                 'totalsByCategoryAndCurrency' => [],
+    //                 'currentDate' => $currentDate,
+    //                 'startDate' => $startDate,
+    //                 'endDate' => $endDate,
+    //                 'aca_prof' => $aca_prof,
+    //                 'boughtFormsAmount' => 0,
+    //                 'method_of_Payment_Total' => 0,
+    //                 'methodOfPayment' => $methodOfPayment,
+    //                 'cashTotal' => 0,
+    //                 'momoTotal' => 0,
+    //                 'chequeTotal' => 0
+    //             ])->with('info', 'No students found for the selected branch.');
+    //         }
+
+    //         // Step 3: Filter index numbers based on category selection
+    //         $filteredIndexNumbers = $students->filter(function ($info) use ($aca_prof) {
+    //             $category = strtolower($info['student_category']);
+    //             $acaProfLower = strtolower($aca_prof);
+
+    //             return ($acaProfLower === 'all') 
+    //                 ? in_array($category, ['academic', 'professional'])
+    //                 : ($category === $acaProfLower);
+    //         })->keys();
+
+    //         // Step 4: Fetch all fee transactions with filters
+    //         $feeTransactionsQuery = FeesPaid::whereIn('student_index_number', $filteredIndexNumbers);
+
+    //         // Apply date filters
+    //         if ($startDate && $endDate) {
+    //             $feeTransactionsQuery->whereBetween('created_at', [$startDate, $endDate]);
+    //         } elseif ($startDate) {
+    //             $feeTransactionsQuery->where('created_at', '>=', $startDate);
+    //         } elseif ($endDate) {
+    //             $feeTransactionsQuery->where('created_at', '<=', $endDate);
+    //         } elseif ($currentDate) {
+    //             $feeTransactionsQuery->whereDate('created_at', $currentDate);
+    //         }
+
+    //         if ($methodOfPayment) {
+    //             $feeTransactionsQuery->where('method_of_payment', $methodOfPayment);
+    //         }
+
+    //         $feeTransactions = $feeTransactionsQuery->get();
+
+    //         // Calculate payment method totals
+    //         $method_of_Payment_Total = $methodOfPayment ? $feeTransactions->where('method_of_payment', $methodOfPayment)->sum('amount') : 0;
+    //         $momoTotal = $feeTransactions->where('method_of_payment', 'Momo')->sum('amount');
+    //         $chequeTotal = $feeTransactions->where('method_of_payment', 'Cheque')->sum('amount');
+    //         $cashTotal = $feeTransactions->where('method_of_payment', 'Cash')->sum('amount');
+
+    //         // Step 5: Group transactions by student category and currency
+    //         $transactionsByCategoryAndCurrency = [
+    //             'academic' => [],
+    //             'professional' => [],
+    //             'total' => []
+    //         ];
+
+    //         foreach ($feeTransactions as $transaction) {
+    //             $indexNumber = $transaction->student_index_number;
+    //             $category = strtolower($students[$indexNumber]['student_category'] ?? 'unknown');
+    //             $currency = $transaction->currency;
+
+    //             if (array_key_exists($category, $transactionsByCategoryAndCurrency)) {
+    //                 if (!isset($transactionsByCategoryAndCurrency[$category][$currency])) {
+    //                     $transactionsByCategoryAndCurrency[$category][$currency] = [];
+    //                 }
+    //                 $transactionsByCategoryAndCurrency[$category][$currency][] = $transaction;
+    //             }
+    //         }
+
+    //         // Step 6: Calculate totals for each category and currency
+    //         $totalsByCategoryAndCurrency = [
+    //             'academic' => [],
+    //             'professional' => [],
+    //             'total' => []
+    //         ];
+
+    //         foreach ($transactionsByCategoryAndCurrency as $category => $currencies) {
+    //             foreach ($currencies as $currency => $transactions) {
+    //                 $totalsByCategoryAndCurrency[$category][$currency] = collect($transactions)->sum('amount');
+    //             }
+    //         }
+
+    //         // Calculate bought forms amount
+    //         $boughtFormsAmount = Enquiry::where('bought_forms', 'Yes')->sum(DB::raw('CAST(amount AS DECIMAL)'));
+
+    //         return view('backend.reports.paymentreport', [
+    //             'transactionsByCategoryAndCurrency' => $transactionsByCategoryAndCurrency,
+    //             'totalsByCategoryAndCurrency' => $totalsByCategoryAndCurrency,
+    //             'currentDate' => $currentDate,
+    //             'startDate' => $startDate,
+    //             'endDate' => $endDate,
+    //             'aca_prof' => $aca_prof,
+    //             'boughtFormsAmount' => $boughtFormsAmount,
+    //             'method_of_Payment_Total' => $method_of_Payment_Total,
+    //             'methodOfPayment' => $methodOfPayment,
+    //             'cashTotal' => $cashTotal,
+    //             'momoTotal' => $momoTotal,
+    //             'chequeTotal' => $chequeTotal,
+    //             'branch' => $branch
+    //         ]);
+
+    //     } catch (Exception $e) {
+    //         Log::error('Error generating payment report', [
+    //             'message' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString()
+    //         ]);
+
+    //         return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
+    //     }
+    // }
+
     public function generatePaymentReport(Request $request)
-    {
-        try {
-            $validatedData = $request->validate([
-                'current_date' => 'nullable|date',
-                'start_date' => 'nullable|date',
-                'end_date' => 'nullable|date',
-                'aca_prof' => 'nullable|in:Academic,Professional,All',
-                'branch' => 'nullable|in:Kasoa,Kanda,Spintex',
-                'method_of_payment' => 'nullable|in:Cash,Momo,Cheque'
-            ]);
+{
+    try {
+        // ✅ Validate request inputs
+        $validatedData = $request->validate([
+            'current_date'       => 'nullable|date',
+            'start_date'         => 'nullable|date',
+            'end_date'           => 'nullable|date',
+            'aca_prof'           => 'nullable|in:Academic,Professional,All',
+            'branch'             => 'nullable|in:Kasoa,Kanda,Spintex',
+            'method_of_payment'  => 'nullable|in:Cash,Momo,Cheque'
+        ]);
 
-            $currentDate = $validatedData['current_date'] ?? null;
-            $startDate = $validatedData['start_date'] ?? null;
-            $endDate = $validatedData['end_date'] ?? null;
-            $aca_prof = $validatedData['aca_prof'] ?? 'All';
-            $branch = $validatedData['branch'] ?? null;
-            $methodOfPayment = $validatedData['method_of_payment'] ?? null;
+        $currentDate      = $validatedData['current_date'] ?? null;
+        $startDate        = $validatedData['start_date'] ?? null;
+        $endDate          = $validatedData['end_date'] ?? null;
+        $aca_prof         = strtolower($validatedData['aca_prof'] ?? 'All');
+        $branch           = $validatedData['branch'] ?? null;
+        $methodOfPayment  = $validatedData['method_of_payment'] ?? null;
 
-            // Step 1: Get unique student index numbers from the collect_fees table
-            $uniqueIndexNumbers = FeesPaid::distinct()->pluck('student_index_number');
+        // ✅ Step 1: Get unique student index numbers
+        $uniqueIndexNumbers = FeesPaid::distinct()->pluck('student_index_number');
 
-            // Step 2: Fetch student categories for the unique index numbers and apply branch filter
-            $studentsQuery = Student::whereIn('index_number', $uniqueIndexNumbers)
-                ->select('index_number', 'student_category', 'branch');
-
-            if ($branch) {
-                $studentsQuery->where('branch', $branch);
-            }
-
-            $students = $studentsQuery->get()->mapWithKeys(function ($student) {
+        // ✅ Step 2: Fetch student data & map to [index_number => data]
+        $students = Student::whereIn('index_number', $uniqueIndexNumbers)
+            ->when($branch, fn($q) => $q->where('branch', $branch))
+            ->select('index_number', 'student_category', 'branch')
+            ->get()
+            ->mapWithKeys(function ($student) {
                 return [
                     $student->index_number => [
-                        'student_category' => $student->student_category,
-                        'branch' => $student->branch,
+                        'student_category' => strtolower($student->student_category),
+                        'branch'           => $student->branch,
                     ]
                 ];
             });
 
-            // Optional: Early return if no students match
-            if ($students->isEmpty()) {
-                return view('backend.reports.paymentreport', [
-                    'transactionsByCategoryAndCurrency' => [],
-                    'totalsByCategoryAndCurrency' => [],
-                    'currentDate' => $currentDate,
-                    'startDate' => $startDate,
-                    'endDate' => $endDate,
-                    'aca_prof' => $aca_prof,
-                    'boughtFormsAmount' => 0,
-                    'method_of_Payment_Total' => 0,
-                    'methodOfPayment' => $methodOfPayment,
-                    'cashTotal' => 0,
-                    'momoTotal' => 0,
-                    'chequeTotal' => 0
-                ])->with('info', 'No students found for the selected branch.');
-            }
+        // ✅ Step 3: Filter by academic/professional/all
+        $filteredIndexNumbers = $students->filter(function ($data) use ($aca_prof) {
+            return ($aca_prof === 'all')
+                ? in_array($data['student_category'], ['academic', 'professional'])
+                : $data['student_category'] === $aca_prof;
+        })->keys();
 
-            // Step 3: Filter index numbers based on category selection
-            $filteredIndexNumbers = $students->filter(function ($info) use ($aca_prof) {
-                $category = strtolower($info['student_category']);
-                $acaProfLower = strtolower($aca_prof);
+        // ✅ Step 4: Fetch transactions
+        $feeTransactionsQuery = FeesPaid::whereIn('student_index_number', $filteredIndexNumbers);
 
-                return ($acaProfLower === 'all') 
-                    ? in_array($category, ['academic', 'professional'])
-                    : ($category === $acaProfLower);
-            })->keys();
+        // return $feeTransactionsQuery->get();
 
-            // Step 4: Fetch all fee transactions with filters
-            $feeTransactionsQuery = FeesPaid::whereIn('student_index_number', $filteredIndexNumbers);
-
-            // Apply date filters
-            if ($startDate && $endDate) {
-                $feeTransactionsQuery->whereBetween('created_at', [$startDate, $endDate]);
-            } elseif ($startDate) {
-                $feeTransactionsQuery->where('created_at', '>=', $startDate);
-            } elseif ($endDate) {
-                $feeTransactionsQuery->where('created_at', '<=', $endDate);
-            } elseif ($currentDate) {
-                $feeTransactionsQuery->whereDate('created_at', $currentDate);
-            }
-
-            if ($methodOfPayment) {
-                $feeTransactionsQuery->where('method_of_payment', $methodOfPayment);
-            }
-
-            $feeTransactions = $feeTransactionsQuery->get();
-
-            // Calculate payment method totals
-            $method_of_Payment_Total = $methodOfPayment ? $feeTransactions->where('method_of_payment', $methodOfPayment)->sum('amount') : 0;
-            $momoTotal = $feeTransactions->where('method_of_payment', 'Momo')->sum('amount');
-            $chequeTotal = $feeTransactions->where('method_of_payment', 'Cheque')->sum('amount');
-            $cashTotal = $feeTransactions->where('method_of_payment', 'Cash')->sum('amount');
-
-            // Step 5: Group transactions by student category and currency
-            $transactionsByCategoryAndCurrency = [
-                'academic' => [],
-                'professional' => [],
-                'total' => []
-            ];
-
-            foreach ($feeTransactions as $transaction) {
-                $indexNumber = $transaction->student_index_number;
-                $category = strtolower($students[$indexNumber]['student_category'] ?? 'unknown');
-                $currency = $transaction->currency;
-
-                if (array_key_exists($category, $transactionsByCategoryAndCurrency)) {
-                    if (!isset($transactionsByCategoryAndCurrency[$category][$currency])) {
-                        $transactionsByCategoryAndCurrency[$category][$currency] = [];
-                    }
-                    $transactionsByCategoryAndCurrency[$category][$currency][] = $transaction;
-                }
-            }
-
-            // Step 6: Calculate totals for each category and currency
-            $totalsByCategoryAndCurrency = [
-                'academic' => [],
-                'professional' => [],
-                'total' => []
-            ];
-
-            foreach ($transactionsByCategoryAndCurrency as $category => $currencies) {
-                foreach ($currencies as $currency => $transactions) {
-                    $totalsByCategoryAndCurrency[$category][$currency] = collect($transactions)->sum('amount');
-                }
-            }
-
-            // Calculate bought forms amount
-            $boughtFormsAmount = Enquiry::where('bought_forms', 'Yes')->sum(DB::raw('CAST(amount AS DECIMAL)'));
-
-            return view('backend.reports.paymentreport', [
-                'transactionsByCategoryAndCurrency' => $transactionsByCategoryAndCurrency,
-                'totalsByCategoryAndCurrency' => $totalsByCategoryAndCurrency,
-                'currentDate' => $currentDate,
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'aca_prof' => $aca_prof,
-                'boughtFormsAmount' => $boughtFormsAmount,
-                'method_of_Payment_Total' => $method_of_Payment_Total,
-                'methodOfPayment' => $methodOfPayment,
-                'cashTotal' => $cashTotal,
-                'momoTotal' => $momoTotal,
-                'chequeTotal' => $chequeTotal,
-                'branch' => $branch
-            ]);
-
-        } catch (Exception $e) {
-            Log::error('Error generating payment report', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
+        // Date filters
+        if ($startDate && $endDate) {
+            $feeTransactionsQuery->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $feeTransactionsQuery->where('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $feeTransactionsQuery->where('created_at', '<=', $endDate);
+        } elseif ($currentDate) {
+            $feeTransactionsQuery->whereDate('created_at', $currentDate);
         }
+
+        // Payment method filter
+        if ($methodOfPayment) {
+            $feeTransactionsQuery->where('method_of_payment', $methodOfPayment);
+        }
+
+        $feeTransactions = $feeTransactionsQuery->get();
+
+        // ✅ Step 5: Totals per method
+        $method_of_Payment_Total = $feeTransactions
+            ->where('method_of_payment', $methodOfPayment)
+            ->sum('amount');
+
+        $momoTotal   = $feeTransactions->where('method_of_payment', 'Momo')->sum('amount');
+        $chequeTotal = $feeTransactions->where('method_of_payment', 'Cheque')->sum('amount');
+        $cashTotal   = $feeTransactions->where('method_of_payment', 'Cash')->sum('amount');
+
+        // ✅ Step 6: Group transactions by category & currency
+        $transactionsByCategoryAndCurrency = [
+            'academic'     => [],
+            'professional' => [],
+            'total'        => []
+        ];
+
+        foreach ($feeTransactions as $transaction) {
+            $indexNumber = $transaction->student_index_number;
+            $category    = $students[$indexNumber]['student_category'] ?? 'unknown';
+            $currency    = $transaction->currency;
+
+            if (array_key_exists($category, $transactionsByCategoryAndCurrency)) {
+                $transactionsByCategoryAndCurrency[$category][$currency][] = $transaction;
+            }
+        }
+
+        // ✅ Step 7: Calculate totals by category & currency
+        $totalsByCategoryAndCurrency = [
+            'academic'     => [],
+            'professional' => [],
+            'total'        => []
+        ];
+
+        foreach ($transactionsByCategoryAndCurrency as $category => $currencies) {
+            foreach ($currencies as $currency => $transactions) {
+                $totalsByCategoryAndCurrency[$category][$currency] = collect($transactions)->sum('amount');
+            }
+        }
+
+        // ✅ Step 8: Bought forms total
+        $boughtFormsAmount = Enquiry::where('bought_forms', 'Yes')
+            ->sum(DB::raw('CAST(amount AS DECIMAL)'));
+
+        // ✅ Return view
+        return view('backend.reports.paymentreport', [
+            'transactionsByCategoryAndCurrency' => $transactionsByCategoryAndCurrency,
+            'totalsByCategoryAndCurrency'       => $totalsByCategoryAndCurrency,
+            'currentDate'                       => $currentDate,
+            'startDate'                         => $startDate,
+            'endDate'                           => $endDate,
+            'aca_prof'                          => ucfirst($aca_prof),
+            'boughtFormsAmount'                 => $boughtFormsAmount,
+            'method_of_Payment_Total'           => $method_of_Payment_Total,
+            'methodOfPayment'                   => $methodOfPayment,
+            'cashTotal'                         => $cashTotal,
+            'momoTotal'                         => $momoTotal,
+            'chequeTotal'                       => $chequeTotal
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Error generating payment report', [
+            'message' => $e->getMessage(),
+            'trace'   => $e->getTraceAsString()
+        ]);
+
+        return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
     }
+}
+
 
 
 

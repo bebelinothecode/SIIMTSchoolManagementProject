@@ -1469,4 +1469,18 @@ class StudentController extends Controller
             return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
+
+    public function matureStudentReceipt($id) {
+        try {
+            //code...
+             $matureStudent = MatureStudent::findorFail($id);
+
+             return view('backend.fees.maturestudentreceipt', compact('matureStudent'));
+        } catch (\Throwable $th) {
+            //throw $th;
+
+            return redirect()->back()->with('error','Error generating receipt');
+        }
+       
+    }
 }

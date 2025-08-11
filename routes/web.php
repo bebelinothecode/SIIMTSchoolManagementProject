@@ -165,6 +165,8 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/buy/forms/{id}',[StudentController::class, 'buyFormsLater'])->name('buy.forms');
     Route::get('/create/user/form',[StudentController::class, 'createUsersForm'])->name('create.userform');
     Route::post('/create/user',[StudentController::class, 'createUser'])->name('create.user');
+    Route::delete('/delete/mature/transaction/{id}',[StudentController::class, 'deleteMatureTransaction'])->name('delete.maturetransaction');
+    Route::get('/mature/student/receipt/{id}',[StudentController::class, 'matureStudentReceipt'])->name('mature.receipt');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

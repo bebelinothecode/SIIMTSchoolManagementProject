@@ -82,6 +82,41 @@
                         @endrole
                     </td>
                 </tr>
+                @foreach ($matureTransactions as $matureTransaction)
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->name }}</td>
+                        <td class="py-3 px-6 text-left">Mature Payment</td>
+                        <td class="py-3 px-6 text-left">{{ number_format($matureTransaction->amount_paid, 2) }}</td>
+                        <td class="py-3 px-6 text-left">N/A</td>
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->currency }}</td>
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->cheque_number ?? "Not Found" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->Momo_number ?? "Not Found" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->created_at->format('Y-m-d') }}</td>
+                        <td class="py-3 px-6 text-center">
+                        @role('Admin|rector')
+                            {{-- <a href=" " class="ml-4 text-green-600 hover:underline">Edit</a> --}}
+                            <a href="{{route('mature.receipt',$matureTransaction->id)}}" target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>
+                            {{-- <form action=" " method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="ml-4 text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                            </form> --}}
+                        @elserole('AsstAccount')
+                            <a href=" " target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>
+                        @endrole
+                    </td>
+                    </tr>
+                @endforeach
+                {{-- <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left">{{ $matureTransaction->name }}</td>
+                    <td class="py-3 px-6 text-left">Mature Payment</td>
+                    <td class="py-3 px-6 text-left">{{ number_format($matureTransaction->amount_paid, 2) }}</td>
+                    <td class="py-3 px-6 text-left">N/A</td>
+                    <td class="py-3 px-6 text-left">{{ $matureTransaction->currency }}</td>
+                    <td class="py-3 px-6 text-left">{{ $matureTransaction->cheque_number ?? "Not Found" }}</td>
+                    <td class="py-3 px-6 text-left">{{ $matureTransaction->Momo_number ?? "Not Found" }}</td>
+                    <td class="py-3 px-6 text-left">{{ $matureTransaction->created_at->format('Y-m-d') }}</td>
+                </tr> --}}
                 @empty
                 <tr>
                     <td colspan="5" class="py-3 px-6 text-center text-gray-500">No transactions found.</td>
