@@ -408,13 +408,6 @@
     });
     </script>
 
-
-
-
-
-
-
-
     <script>
         document.getElementById('fees_type').addEventListener('change', function () {
             const selectedMethod = this.value;

@@ -4,6 +4,7 @@
 <div class="container mx-auto mt-6">
     <h1 class="text-2xl font-bold text-gray-700">Expenses List</h1>
 
+    @hasrole('Admin|rector|AsstAccount')
     <!-- Add Expense Button -->
     <div class="flex flex-wrap items-center mt-4">
         <a href="{{ route('get.expensesForm') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
@@ -13,6 +14,7 @@
             <span class="ml-2 text-xs font-semibold">Expense</span>
         </a>
     </div>
+    @endhasrole
 
     <!-- Search Form -->
     <form action="{{ route('expenses.table') }}" method="GET" class="flex items-center mt-4 space-x-4">

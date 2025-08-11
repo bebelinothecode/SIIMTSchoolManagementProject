@@ -6,6 +6,7 @@
     <h1 class="text-2xl font-bold text-gray-700">Professional/Diploma</h1>
 
     <!-- Add New Diploma Button -->
+     @hasrole('Admin|rector')
     <div class="flex flex-wrap items-center">
         <a href="{{ route('diploma.form') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded hover:bg-gray-300 transition duration-300">
             <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -14,6 +15,7 @@
             <span class="ml-2 text-xs font-semibold">Add Professional/Diploma</span>
         </a>
     </div>
+    @endhasrole
 
     <!-- Search Form -->
     <form action="{{ route('diploma.searchindex') }}" method="GET" class="flex items-center mt-4 space-x-4">

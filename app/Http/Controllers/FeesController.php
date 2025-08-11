@@ -267,7 +267,7 @@ class  FeesController extends Controller
             $transactions = $query->latest()->paginate(15);
             $matureTransactions = $matureQuery->latest()->paginate(15);
 
-            return $matureTransactions;
+            // return $matureTransactions;
 
     
             return view('backend.fees.transactions', compact('transactions'));
