@@ -380,15 +380,39 @@ class ExpensesController extends Controller
                 'mobile_money_details' => 'nullable',
                 'bank_details' => 'nullable'
             ]);
+
+            $sourseOfExpense = $validatedData['source_of_expense'] ?? null;
+            $description = $validatedData['description'] ?? null;
+            $category = $validatedData['category'] ?? null;
+            $currency = $validatedData['currency'] ?? null; 
+            $amount = $validatedData['amount'] ?? null;
+            $modeOfPayment = $validatedData['mode_of_payment'] ?? null;
+            $chequeNumber = $validatedData['cheque_number'] ?? null;
+            $cashAmountDetails = $validatedData['cash_amount_details'] ?? null;
+            $mobileMoneyDetails = $validatedData['mobile_money_details'] ?? null;
+            $bankDetails = $validatedData['bank_details'] ?? null;
     
             $expense = Expenses::findOrFail($id);
     
-            $expense->update($validatedData); 
-    
-            return redirect()->back()->with('success', 'Updated successfully');
+            $updated = $expense->update([
+                'source_of_expense' => $sourseOfExpense,
+                'description_of_expense' => $description,
+                'category' => $category,
+                'currency' => $currency,
+                'amount' => $amount,
+                'mode_of_payment' => $modeOfPayment,
+                'cheque_number' => $chequeNumber,
+                'cash_details' => $cashAmountDetails,
+                'mobile_money_details' => $mobileMoneyDetails,
+                'bank_details' => $bankDetails
+            ]); 
+
+            if($updated === true) {
+                return redirect()->back()->with('success', 'Updated successfully');
+            }
         } catch (Exception $e) {
             //throw $th;
-            Log::error('Error updating student: ' . $e);
+            Log::error('Error updating expense: ' . $e->getMessage());
 
             return redirect()->back()->with('error', 'Error updating expense');
         }
