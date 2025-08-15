@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/edit/transaction/form/{id}',[FeesController::class, 'editTransactionForm'])->name('edit.transactionform');
     Route::put('/edit/transaction/{id}',[FeesController::class, 'updateTransaction'])->name('edit.transaction');
     Route::delete('/delete/transaction/{id}',[FeesController::class, 'deleteTransaction'])->name('delete.transaction');
-    Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
+    Route::get('/show/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('show.course');
     Route::get('/get/change/students/status/form/{id}',[StudentController::class, 'getChangeStudentsStatusForm'])->name('change.studentstatusform');
     Route::post('/change/student/status/{id}',[StudentController::class,'changeStudentsStatus'])->name('change.studentstatus');
     Route::get('/get/defer/list/form',[StudentController::class,'getDeferListForm'])->name('get.deferlistform');
@@ -218,10 +218,10 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::get('/fees', [StudentController::class,'studentSchoolFees'])->name('see.fees');    // Route::get('/books/{book}/download', [BookController::class, 'download'])->name('books.download');
 
     Route::get('/history',[FeesController::class, 'feesHistory'])->name('fees.history');
-    Route::post('/get/course/overview/report/{id}', [StudentController::class, 'courseOverviewReport'])->name('courseoverview.report');
+    // Route::post('/get/course/overview/report/{id}', [StudentController::class, 'courseOverviewReport'])->name('courseoverview.report');
     Route::post("/gethistory", [FeesController::class, 'getFeeHistory'])->name('get.history');
     Route::post('/query/books', [BookController::class,'searchBooks'])->name('query.books');
-    Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
+    // Route::get('/get/courseoutline/form',[StudentController::class,'getCourseOutlineForm'])->name('course.outlineform');
     Route::get('/get/registration/form',[StudentController::class, 'getRegistrationForm'])->name('registration.course');
     Route::post('/register/courses/{id}',[StudentController::class, 'registerCourses'])->name('register.courses');
     Route::get('/show/registered/courses',[StudentController::class, 'showRegisteredCourses'])->name('show.registeredcourses');

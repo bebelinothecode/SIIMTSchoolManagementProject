@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-4 py-6">
+    <h2 class="text-3xl font-bold text-blue-700 mb-8">📚 Subjects Grouped by Level & Semester</h2>
+
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-800">Course Outline</h1>
         <div class="flex space-x-4">
@@ -13,83 +15,71 @@
         </div>
     </div>
 
-    @if($subjects->isEmpty())
-        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
-            <p>No subjects found for this course outline or you are offering a diploma/professional course.</p>
-        </div>
-    @else
-        @php
-            // Custom sorting function
-            $sortedSubjects = $subjects->sortBy(function($group, $key) {
-                // Extract level and semester from the group key
-                preg_match('/Level (\d+) - Semester (\d+)/', $key, $matches);
-                $level = $matches[1] ?? 0;
-                $semester = $matches[2] ?? 0;
-                
-                // Create a sort key where level is primary and semester is secondary
-                // Semester 4 (1st semester) comes before 2 (2nd semester)
-                return ($level * 10) + ($semester == 4 ? 0 : 1);
-            });
-        @endphp
+    @php
+        // Group data by level
+        $groupedByLevel = collect($formatted)->groupBy('level_name');
+    @endphp
 
-        <div class="space-y-12">
-            @foreach($sortedSubjects as $levelSemester => $subjectGroup)
-                @php
-                    // Extract level and semester from the group key
-                    preg_match('/Level (\d+) - Semester (\d+)/', $levelSemester, $matches);
-                    $level = $matches[1] ?? '';
-                    $semesterNumber = $matches[2] ?? '';
-                    
-                    // Map semester numbers to display names
-                    $semesterDisplay = [
-                        '4' => 'First Semester',
-                        '2' => 'Second Semester'
-                    ][$semesterNumber] ?? 'Semester ' . $semesterNumber;
-                @endphp
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-gray-800 text-white px-6 py-4">
-                        <h2 class="text-xl font-semibold">Level {{ $level }} - {{ $semesterDisplay }}</h2>
+    @foreach($groupedByLevel as $levelName => $semesters)
+        <!-- Level Card -->
+        <div class="bg-white shadow-xl rounded-2xl mb-10 overflow-hidden border border-gray-200">
+            <!-- Level Header -->
+            <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-6 py-5">
+                <h3 class="text-2xl font-semibold">Level: {{ $levelName }}</h3>
+            </div>
+
+            <!-- Semester Tables -->
+            <div class="p-6 space-y-8">
+                @foreach($semesters->groupBy('semester_name') as $semesterName => $courses)
+                    @php
+                        $allSubjects = collect($courses)->pluck('subjects')->flatten(1);
+                        $totalSubjects = $allSubjects->count();
+                        $totalCredits = $allSubjects->sum('credit_hours');
+                    @endphp
+
+                    <div class="border border-gray-100 rounded-xl shadow-sm overflow-hidden">
+                        <!-- Semester Header -->
+                        <div class="bg-gray-100 px-6 py-3 flex justify-between items-center">
+                            <h4 class="text-lg font-semibold text-gray-800">Semester: {{ $semesterName }}</h4>
+                            <div class="flex gap-2">
+                                <span class="bg-blue-200 text-blue-900 text-xs font-semibold px-3 py-1 rounded-full shadow">
+                                    {{ $totalSubjects }} Subjects
+                                </span>
+                                <span class="bg-green-200 text-green-900 text-xs font-semibold px-3 py-1 rounded-full shadow">
+                                    {{ $totalCredits }} Credits
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Subjects Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-700">
+                                <thead class="bg-gray-50 uppercase text-xs font-semibold text-gray-600">
+                                    <tr>
+                                        <th class="px-6 py-3">Level</th>
+                                        <th class="px-6 py-3">Course Name</th>
+                                        <th class="px-6 py-3">Subject Name</th>
+                                        <th class="px-6 py-3 text-center">Credit Hours</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($courses as $course)
+                                        @foreach($course['subjects'] as $subject)
+                                            <tr class="border-b last:border-none hover:bg-gray-50 transition">
+                                                <td class="px-6 py-3 font-medium text-gray-900">{{ $levelName }}</td>
+                                                <td class="px-6 py-3 font-medium text-gray-900">{{ $course['course_name'] }}</td>
+                                                <td class="px-6 py-3">{{ $subject['subject_name'] }}</td>
+                                                <td class="px-6 py-3 text-center">{{ $subject['credit_hours'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Credit Hours</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Level</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($subjectGroup as $subject)
-                                <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                                        {{ $subject->subject_code }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $subject->subject_name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-                                            {{ $subject->credit_hours }} CH
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $semesterDisplay }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        Level {{ $subject->level }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
-    @endif
+    @endforeach
 </div>
 @endsection

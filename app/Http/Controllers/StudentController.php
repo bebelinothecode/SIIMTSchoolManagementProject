@@ -679,8 +679,8 @@ class StudentController extends Controller
 
             foreach ($subjects_ids as $subjects_id) {
                 $grade->assignSubjectsToCourse()->attach($subjects_id, [
-                    'level_id' => $level_id,
-                    'semester_id' => $semester_id
+                    'level' => $level_id,
+                    'semester' => $semester_id
                 ]);
             }
 
@@ -770,52 +770,122 @@ class StudentController extends Controller
         }
     }
 
-    public function getCourseOutlineForm()
-    {
-        try {
-            // Get authenticated user
-            $userId = Auth::id();
-            if (!$userId) {
-                throw new Exception('User not authenticated');
-            }
+    public function getCourseOutlineForm() {
+        $userId = Auth::id();
+        if (!$userId) {
+            return redirect()->back()->with('error', 'User not authenticated');
+        }
+        // Get student record
+        $student = DB::table('students')
+            ->where('user_id', $userId)
+            ->first();
+        
+        if (!$student) {
+            return redirect()->back()->with('error', 'Student record not found');
+        }
 
-            // Get student record
-            $student = DB::table('students')
-                ->where('user_id', $userId)
-                ->first();
+        // return $student;
 
-            if (!$student) {
-                throw new Exception('Student record not found');
-            }
+        // Determine course ID (handling both regular and professor cases)
+        $courseId = $student->course_id ?? $student->course_id_prof;
 
-            // Determine course ID (handling both regular and professor cases)
-            $courseId = $student->course_id ?? $student->course_id_prof;
-            if (!$courseId) {
-                throw new Exception('No course assigned to student');
-            }
+        if($student->course_id_prof) {
+            return view('backend.students.getcourseoutline', compact('student'));
+        }
 
-            // Get course with subjects grouped by level and semester
-            $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
-                $query->withPivot('level_id', 'semester_id')
-                    ->orderBy('pivot_level_id')
-                    ->orderBy('pivot_semester_id');
-            }])->findOrFail($courseId);
+        if (!$courseId) {
+            return redirect()->back()->with('error', 'No course assigned to student');
+        }   
 
-            // Group subjects by level and semester
-            $subjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
-                return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
+        // Get course with subjects grouped by level and semester
+
+        $data = DB::table('subject_course as sc')
+            ->join('subjects as s', 'sc.subject_id', '=', 's.id')
+            ->join('grades as c', 'sc.course_id', '=', 'c.id')
+            ->join('level as l', DB::raw('sc.level::bigint'), '=', 'l.id')
+            ->join('session as sem', DB::raw('sc.semester::bigint'), '=', 'sem.id')
+            ->select(
+                'sc.id',
+                's.subject_name',
+                'c.course_name',
+                'l.name as level_name',
+                'sem.name as semester_name',
+                's.credit_hours'
+            )
+            ->orderBy('l.name')
+            ->orderBy('sem.name')
+            ->orderBy('s.subject_name')
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->level_name . '-' . $item->semester_name;
             });
 
-            // return $subjects;
+        // Format into desired structure
+        $formatted = $data->map(function ($group) {
+            return [
+                'course_name' => $group->first()->course_name,
+                'level_name' => $group->first()->level_name,
+                'semester_name' => $group->first()->semester_name,
+                'subjects' => $group->map(function ($row) {
+                    return [
+                        'subject_name' => $row->subject_name,
+                        'credit_hours' => $row->credit_hours
+                    ];
+                })->values()
+            ];
+        })->values();
 
-            return view('backend.students.getcourseoutline', compact('subjects','student'));
+        // return $formatted;
 
-        } catch (Exception $e) {
-            Log::error('Error in getCourseOutlineForm: ' . $e->getMessage());
-            
-            return redirect()->back()->with('error', 'Failed to load course outline: ' . $e->getMessage());
-        }
+        return view('backend.students.getcourseoutline',compact('formatted', 'student'));
     }
+
+    // public function getCourseOutlineForm()
+    // {
+    //     try {
+    //         // Get authenticated user
+    //         $userId = Auth::id();
+    //         if (!$userId) {
+    //             throw new Exception('User not authenticated');
+    //         }
+
+    //         // Get student record
+    //         $student = DB::table('students')
+    //             ->where('user_id', $userId)
+    //             ->first();
+
+    //         if (!$student) {
+    //             throw new Exception('Student record not found');
+    //         }
+
+    //         // Determine course ID (handling both regular and professor cases)
+    //         $courseId = $student->course_id ?? $student->course_id_prof;
+    //         if (!$courseId) {
+    //             throw new Exception('No course assigned to student');
+    //         }
+
+    //         // Get course with subjects grouped by level and semester
+    //         $course = Grade::with(['assignSubjectsToCourse' => function ($query) {
+    //             $query->withPivot('level_id', 'semester_id')
+    //                 ->orderBy('pivot_level_id')
+    //                 ->orderBy('pivot_semester_id');
+    //         }])->findOrFail($courseId);
+
+    //         // Group subjects by level and semester
+    //         $subjects = $course->assignSubjectsToCourse->groupBy(function ($subject) {
+    //             return 'Level ' . $subject->pivot->level_id . ' - Semester ' . $subject->pivot->semester_id;
+    //         });
+
+    //         return $subjects;
+
+           
+
+    //     } catch (Exception $e) {
+    //         Log::error('Error in getCourseOutlineForm: ' . $e->getMessage());
+            
+    //         return redirect()->back()->with('error', 'Failed to load course outline: ' . $e->getMessage());
+    //     }
+    // }
 
     public function getRegistrationForm() {
         $studentId = Auth::user()->id;
@@ -920,7 +990,38 @@ class StudentController extends Controller
     }
 
     public function showRegisteredCourses() {
-        return view('backend.students.showregisteredcourses');
+        $studentId = Auth::user()->id;
+
+        $userData = User::findOrFail($studentId);
+
+        // return $userData;
+
+        $studentData = DB::table('students')
+            ->where('user_id', $studentId)
+            ->first();
+
+        $students = DB::table('register_courses as scs')
+            ->join('students as s', 'scs.student_id', '=', 's.id')
+            ->join('users as u', 's.user_id', '=', 'u.id')
+            ->join('grades as c', 'scs.course_id', '=', 'c.id')
+            ->join('subjects as sub', 'scs.subjects_id', '=', 'sub.id')
+            ->select(
+                's.id as student_id',
+                'u.name as student_name',
+                'c.course_name',
+                'sub.subject_name',
+                'sub.credit_hours',
+                'scs.level',
+                'scs.semester'
+            )
+            ->where('s.user_id', Auth::id())
+            ->orderBy('s.id')
+            ->get();
+
+        // return $students;
+
+
+        return view('backend.students.showregisteredcourses',compact('students','studentData','userData'));
     }
 
     public function getChangeStudentsStatusForm($id) {

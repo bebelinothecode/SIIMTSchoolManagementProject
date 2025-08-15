@@ -107,6 +107,26 @@
                     </td>
                     </tr>
                 @endforeach
+                @foreach ($enquiryPayments as $enquiryPayment)
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left">{{ $enquiryPayment->name }}</td>
+                        <td class="py-3 px-6 text-left">Enquiry Payment</td>
+                        <td class="py-3 px-6 text-left">{{ number_format($enquiryPayment->amount, 2) }}</td>
+                        <td class="py-3 px-6 text-left">N/A</td>
+                        <td class="py-3 px-6 text-left">{{ $enquiryPayment->currency }}</td>
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->cheque_number ?? "Not Found" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $matureTransaction->Momo_number ?? "Not Found" }}</td>
+                        <td class="py-3 px-6 text-left">{{ $enquiryPayment->created_at->format('Y-m-d') }}</td>
+                        <td class="py-3 px-6 text-center">
+                        {{-- @role('Admin|rector')
+                            <a href="{{route('mature.receipt',$matureTransaction->id)}}" target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>
+                            
+                        @elserole('AsstAccount')
+                            <a href=" " target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>
+                        @endrole --}}
+                    </td>
+                    </tr>
+                @endforeach
                 {{-- <tr class="border-b border-gray-200 hover:bg-gray-100">
                     <td class="py-3 px-6 text-left">{{ $matureTransaction->name }}</td>
                     <td class="py-3 px-6 text-left">Mature Payment</td>

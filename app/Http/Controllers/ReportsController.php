@@ -176,6 +176,19 @@ class ReportsController extends Controller
                     'grades.course_name as course_name'
                 )
                 ->where('students.student_category','Academic');
+                //         $students = DB::table('students')
+                // ->join('users', 'students.user_id', '=', 'users.id')
+                // ->leftJoin('grades', 'students.course_id', '=', 'grades.id')
+                // ->select(
+                //     'students.*',
+                //     'users.name as user_name',
+                //     'grades.course_name as course_name'
+                // )
+                // ->where('students.student_category', 'Academic')
+                // ->get();
+
+                // return $students;
+
             
             if (!empty($courseID)) {
                 $query->where('course_id', $courseID);
@@ -195,6 +208,8 @@ class ReportsController extends Controller
 
             $students = $query->get();
             $totalCount = $students->count();
+
+            // return $students;
 
             // return [$students, $students->count()];
 

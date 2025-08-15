@@ -40,6 +40,6 @@ class Grade extends Model
 
     public function assignSubjectsToCourse()
     {
-        return $this->belongsToMany(Subject::class, 'subject_course','course_id', relatedPivotKey: 'subject_id')->withPivot('level_id','semester_id')->withTimestamps();;
+        return $this->belongsToMany(Subject::class, 'subject_course','course_id', relatedPivotKey: 'subject_id')->withPivot('level','semester')->withTimestamps();
     }
 }

@@ -6,6 +6,7 @@ use App\Fees;
 use App\Level;
 use App\Session;
 use App\Student;
+use App\Enquiry;
 use App\MatureStudent;
 use App\FeesPaid;
 use Exception;
@@ -255,6 +256,8 @@ class  FeesController extends Controller
             $query = FeesPaid::query();
 
             $matureQuery = MatureStudent::query();
+
+            $enquiryQuery = Enquiry::query();     
     
             if (!empty($search)) {
                 $query->where('student_index_number', 'like', "%{$search}%")
@@ -266,13 +269,14 @@ class  FeesController extends Controller
                 ->orWhere('mature_index_number','like',"%{$search}%");
             }
     
-            $transactions = $query->latest()->paginate(15);
-            $matureTransactions = $matureQuery->latest()->paginate(15);
+            $transactions = $query->latest()->paginate(5);
+            $matureTransactions = $matureQuery->latest()->paginate(5);
+            $enquiryPayments = $enquiryQuery->where('bought_forms', 'Yes')->paginate(2);
 
             // return $matureTransactions;
 
     
-            return view('backend.fees.transactions', compact('transactions','matureTransactions'));
+            return view('backend.fees.transactions', compact('transactions','matureTransactions','enquiryPayments'));
         } catch (Exception $e) {
             Log::error("Error executing query", ["message" => $e->getMessage()]);
             
