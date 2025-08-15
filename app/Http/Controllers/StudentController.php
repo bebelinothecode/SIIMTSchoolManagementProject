@@ -620,7 +620,7 @@ class StudentController extends Controller
 
             $students = Student::with('user')->where('level', $fromLevel)
                                 ->where('session', $fromSemester)
-                                ->whereNull('level_prof') // Only academic students
+                                // ->whereNull('level_prof') // Only academic students
                                 ->get();
 
         

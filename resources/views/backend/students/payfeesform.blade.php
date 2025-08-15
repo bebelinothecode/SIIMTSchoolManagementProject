@@ -429,7 +429,7 @@
             }
             if (currentSemesterFee < 0) currentSemesterFee = 0;
 
-            let previousBalance = parseInt(student.balance) || 0;
+            let previousBalance = parseInt(student.balance) || currentSemesterFee;
 
             // Storage key specific to this student
             let storageKey = `feesAdded-${student.id}`;
