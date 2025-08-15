@@ -135,7 +135,7 @@
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Current Balance</h3>
                 <p class="text-2xl font-semibold {{ $payments->last()->balance > 0 ? 'text-red-600' : 'text-green-600' }}">
-                    {{ $currency ?? 'GHS' }} {{ number_format($payments->last()->balance, 2) }}
+                    {{ $currency ?? 'GHS' }} {{ number_format($student->balance, 2) }}
                 </p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6">

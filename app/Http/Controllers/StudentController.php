@@ -775,6 +775,8 @@ class StudentController extends Controller
         if (!$userId) {
             return redirect()->back()->with('error', 'User not authenticated');
         }
+
+        $user = User::findOrFail($userId);
         // Get student record
         $student = DB::table('students')
             ->where('user_id', $userId)
@@ -835,9 +837,7 @@ class StudentController extends Controller
             ];
         })->values();
 
-        // return $formatted;
-
-        return view('backend.students.getcourseoutline',compact('formatted', 'student'));
+        return view('backend.students.getcourseoutline',compact('formatted', 'student','user'));
     }
 
     // public function getCourseOutlineForm()

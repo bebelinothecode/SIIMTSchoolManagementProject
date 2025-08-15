@@ -1,10 +1,20 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="max-w-7xl mx-auto px-4 py-6">
-    <h2 class="text-3xl font-bold text-blue-700 mb-8">📚 Subjects Grouped by Level & Semester</h2>
+@section('title', 'Course Curriculum - BSc Information Systems')
 
-    <div class="flex justify-between items-center mb-8">
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            {{ $user->name }}  - Course Outline
+        </h1>
+        @if(!empty($formatted) && $formatted->isNotEmpty())
+            <p class="text-gray-600">{{ $formatted->first()['course_name'] }} - Complete curriculum overview</p>
+        @else
+            <p class="text-gray-600">Course curriculum overview</p>
+        @endif
+
+        <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-800">Course Outline</h1>
         <div class="flex space-x-4">
             @if ($student->student_category === 'Academic')
@@ -14,72 +24,139 @@
             @endif
         </div>
     </div>
+    </div>
 
     @php
-        // Group data by level
-        $groupedByLevel = collect($formatted)->groupBy('level_name');
+        // Group the data by level for better organization
+        $groupedData = collect($formatted)->groupBy('level_name');
     @endphp
 
-    @foreach($groupedByLevel as $levelName => $semesters)
-        <!-- Level Card -->
-        <div class="bg-white shadow-xl rounded-2xl mb-10 overflow-hidden border border-gray-200">
+    @foreach($groupedData as $level => $semesters)
+        <div class="mb-12">
             <!-- Level Header -->
-            <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-6 py-5">
-                <h3 class="text-2xl font-semibold">Level: {{ $levelName }}</h3>
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg p-4">
+                <h2 class="text-2xl font-semibold">Level {{ $level }}</h2>
             </div>
 
-            <!-- Semester Tables -->
-            <div class="p-6 space-y-8">
-                @foreach($semesters->groupBy('semester_name') as $semesterName => $courses)
-                    @php
-                        $allSubjects = collect($courses)->pluck('subjects')->flatten(1);
-                        $totalSubjects = $allSubjects->count();
-                        $totalCredits = $allSubjects->sum('credit_hours');
-                    @endphp
-
-                    <div class="border border-gray-100 rounded-xl shadow-sm overflow-hidden">
+            <div class="bg-white border border-gray-200 rounded-b-lg shadow-lg">
+                @foreach($semesters as $index => $semesterData)
+                    @if($index > 0)
+                        <hr class="border-gray-200">
+                    @endif
+                    
+                    <div class="p-6">
                         <!-- Semester Header -->
-                        <div class="bg-gray-100 px-6 py-3 flex justify-between items-center">
-                            <h4 class="text-lg font-semibold text-gray-800">Semester: {{ $semesterName }}</h4>
-                            <div class="flex gap-2">
-                                <span class="bg-blue-200 text-blue-900 text-xs font-semibold px-3 py-1 rounded-full shadow">
-                                    {{ $totalSubjects }} Subjects
-                                </span>
-                                <span class="bg-green-200 text-green-900 text-xs font-semibold px-3 py-1 rounded-full shadow">
-                                    {{ $totalCredits }} Credits
-                                </span>
-                            </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold text-gray-700">
+                                Semester {{ $semesterData['semester_name'] }}
+                            </h3>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                {{ count($semesterData['subjects']) }} Subjects
+                            </span>
                         </div>
 
-                        <!-- Subjects Table -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-gray-700">
-                                <thead class="bg-gray-50 uppercase text-xs font-semibold text-gray-600">
-                                    <tr>
-                                        <th class="px-6 py-3">Level</th>
-                                        <th class="px-6 py-3">Course Name</th>
-                                        <th class="px-6 py-3">Subject Name</th>
-                                        <th class="px-6 py-3 text-center">Credit Hours</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($courses as $course)
-                                        @foreach($course['subjects'] as $subject)
-                                            <tr class="border-b last:border-none hover:bg-gray-50 transition">
-                                                <td class="px-6 py-3 font-medium text-gray-900">{{ $levelName }}</td>
-                                                <td class="px-6 py-3 font-medium text-gray-900">{{ $course['course_name'] }}</td>
-                                                <td class="px-6 py-3">{{ $subject['subject_name'] }}</td>
-                                                <td class="px-6 py-3 text-center">{{ $subject['credit_hours'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <!-- Subjects Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach($semesterData['subjects'] as $subject)
+                                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-medium text-gray-800 flex-1 pr-2">
+                                            {{ $subject['subject_name'] }}
+                                        </h4>
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium whitespace-nowrap">
+                                            {{ $subject['credit_hours'] }} Credits
+                                        </span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Semester Summary -->
+                        @php
+                            $totalCredits = collect($semesterData['subjects'])->sum(function($subject) {
+                                return (int) $subject['credit_hours'];
+                            });
+                        @endphp
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium">Total Credits for Semester {{ $semesterData['semester_name'] }}:</span>
+                                <span class="text-blue-600 font-semibold">{{ $totalCredits }} Credits</span>
+                            </p>
                         </div>
                     </div>
                 @endforeach
+
+                <!-- Level Summary -->
+                @php
+                    $levelTotalCredits = $semesters->sum(function($semester) {
+                        return collect($semester['subjects'])->sum(function($subject) {
+                            return (int) $subject['credit_hours'];
+                        });
+                    });
+                    $levelTotalSubjects = $semesters->sum(function($semester) {
+                        return count($semester['subjects']);
+                    });
+                @endphp
+                
+                <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">Level {{ $level }} Summary:</span>
+                        <div class="space-x-4">
+                            <span class="text-gray-600">{{ $levelTotalSubjects }} Total Subjects</span>
+                            <span class="text-blue-600 font-semibold">{{ $levelTotalCredits }} Total Credits</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     @endforeach
+
+    <!-- Overall Program Summary -->
+    @php
+        $programTotalCredits = collect($formatted)->sum(function($semester) {
+            return collect($semester['subjects'])->sum(function($subject) {
+                return (int) $subject['credit_hours'];
+            });
+        });
+        $programTotalSubjects = collect($formatted)->sum(function($semester) {
+            return count($semester['subjects']);
+        });
+    @endphp
+
+    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-6 shadow-lg">
+        <h3 class="text-xl font-semibold mb-3">Program Overview</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $groupedData->count() }}</div>
+                <div class="text-green-100">Academic Levels</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $programTotalSubjects }}</div>
+                <div class="text-green-100">Total Subjects</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ $programTotalCredits }}</div>
+                <div class="text-green-100">Total Credits</div>
+            </div>
+        </div>
+    </div>
 </div>
+@endsection
+
+@section('styles')
+<style>
+    .hover\:shadow-md:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .transition-shadow {
+        transition-property: box-shadow;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .duration-200 {
+        transition-duration: 200ms;
+    }
+</style>
 @endsection
