@@ -292,14 +292,17 @@ class  FeesController extends Controller
         $matureQuery = MatureStudent::query();
         $enquiryQuery = Enquiry::query();     
 
-        if (!empty($search)) {
+          if (!empty($search)) {
             $query->where('student_index_number', 'like', "%{$search}%")
                   ->orWhere('student_name', 'like', "%{$search}%");
-        }
 
-        if(!empty($search)) {
             $matureQuery->where('name', 'like', "%{$search}%")
                 ->orWhere('mature_index_number','like',"%{$search}%");
+
+            $enquiryQuery->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('telephone_number', 'like', "%{$search}%");
+            });
         }
 
         // Get all records without pagination first
