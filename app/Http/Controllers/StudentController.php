@@ -630,8 +630,13 @@ class StudentController extends Controller
             }
 
             foreach($students as $student) {
+                $oldBalance = $student->balance;
+                $newSemesterFee = $student->fees ?? 0; 
+                $student->balance = $oldBalance + $newSemesterFee;
+
+                // Update the student's last level and semester
                 $student->last_level = $student->level;
-                $student->last_semester = $student->semester;
+                $student->last_semester = $student->session;
                 $student->level = $toLevel;
                 $student->session = $toSemester;
                 $student->save();
@@ -639,7 +644,6 @@ class StudentController extends Controller
 
             return redirect()->back()->with('success', 'Students migrated successfully');
         } catch (Exception $e) {
-            //throw $th;
             Log::error('An error occurred', [
                 'exception' => $e 
             ]);   
