@@ -627,6 +627,7 @@ class StudentController extends Controller
             }
 
             foreach($students as $student) {
+<<<<<<< HEAD
                 // Carry forward old balance and add new semester fee
                 $oldBalance = $student->balance;
                 $newSemesterFee = $student->fees ?? $student->fees_prof ?? 0;
@@ -636,6 +637,13 @@ class StudentController extends Controller
                 // return [$student->balance, $oldBalance, $newSemesterFee];
 
                 // Update last_level and last_semester
+=======
+                $oldBalance = $student->balance;
+                $newSemesterFee = $student->fees ?? 0; 
+                $student->balance = $oldBalance + $newSemesterFee;
+
+                // Update the student's last level and semester
+>>>>>>> 122254cebadb9b001d8fab25c99d5c675700f316
                 $student->last_level = $student->level;
                 $student->last_semester = $student->session;
                 $student->level = $toLevel;

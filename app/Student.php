@@ -39,7 +39,7 @@ class Student extends Model
         'index_number',
         'balance',
         'last_level',
-        'last_semester',
+        'last_session',
         'branch'
         // 'student_type',
     ];

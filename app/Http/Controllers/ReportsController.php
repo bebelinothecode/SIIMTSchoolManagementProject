@@ -1596,7 +1596,10 @@ public function calculateBalanceTotal(Request $request)
 
         $feeCollectionTransactions = $feeCollectionsQuery
         ->select('collect_fees.*', 'students.student_category')
+        ->distinct('idempotency_key')
         ->get();
+
+        // return $feeCollectionTransactions;
 
         $feesPaymentsTotal = $feeCollectionTransactions->sum('amount');
 
