@@ -185,7 +185,7 @@
             <div class="filter-group">
                 <div class="filter-item">
                     <p>Total Collections that Day</p>
-                    <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount, 2) }}</p>
+                    <p class="summary-value">GHS {{ number_format($feesPaymentsTotal + $formFeesAllAmount + $matureTransactionsTotal, 2) }}</p>
                 </div>
                 <div class="filter-item">
                     <p>Total Expenses</p>
@@ -271,6 +271,43 @@
                     <tr>
                         <td colspan="3">Total Form Fees:</td>
                         <td colspan="2">GHS {{$formFeesAllAmount}}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        {{-- Mature Transactions Table --}}
+        <div class="table-container">
+            <table id="formFeesTable">
+                <caption>Mature Students Transactions</caption>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Mature Index Number</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($matureTransactions as $matureTransaction)
+                    <tr>
+                        <td>{{ $matureTransaction->name ?? "N/A" }}</td>
+                        <td>{{ $matureTransaction->currency ?? "N/A" }}</td>
+                        <td>{{ $matureTransaction->amount_paid ?? "N/A" }}</td>
+                        <td>{{ $matureTransaction->mature_index_number ?? "N/A" }}</td>
+                        <td>{{ $matureTransaction->created_at ?? "N/A" }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No mature fees payments found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Total Mature Payments:</td>
+                        <td colspan="2">GHS {{$matureTransactionsTotal}}</td>
                     </tr>
                 </tfoot>
             </table>

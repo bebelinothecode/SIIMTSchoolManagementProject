@@ -620,18 +620,24 @@ class StudentController extends Controller
 
             $students = Student::with('user')->where('level', $fromLevel)
                                 ->where('session', $fromSemester)
-                                // ->whereNull('level_prof') // Only academic students
                                 ->get();
 
-        
-            // Check if any students are found
             if ($students->isEmpty()) {
                 return redirect()->back()->with('error', 'No students found');
             }
 
             foreach($students as $student) {
+                // Carry forward old balance and add new semester fee
+                $oldBalance = $student->balance;
+                $newSemesterFee = $student->fees ?? $student->fees_prof ?? 0;
+                // return [$oldBalance, $newSemesterFee];
+                $student->balance = $oldBalance + $newSemesterFee;
+
+                // return [$student->balance, $oldBalance, $newSemesterFee];
+
+                // Update last_level and last_semester
                 $student->last_level = $student->level;
-                $student->last_semester = $student->semester;
+                $student->last_semester = $student->session;
                 $student->level = $toLevel;
                 $student->session = $toSemester;
                 $student->save();
@@ -639,11 +645,9 @@ class StudentController extends Controller
 
             return redirect()->back()->with('success', 'Students migrated successfully');
         } catch (Exception $e) {
-            //throw $th;
             Log::error('An error occurred', [
                 'exception' => $e 
             ]);   
-            
             return redirect()->back()->with('error', 'Error saving students details');
         }
     }

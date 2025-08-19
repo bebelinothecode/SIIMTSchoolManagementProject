@@ -1550,6 +1550,24 @@ public function calculateBalanceTotal(Request $request)
         
         $expensesProfessionalTotal = $expensesTotals['Professional'] ?? 0;
 
+        // ===============MATURE STUDENTS===========
+        $matureStudentsQuery = DB::table('mature_students');
+
+         if ($currentDate) {
+            $matureStudentsQuery->whereDate('created_at', $currentDate);
+        } elseif ($startDate && $endDate) {
+            $matureStudentsQuery->whereBetween('created_at', [$startDate,$endDate]);
+        } elseif ($startDate) {
+            $matureStudentsQuery->where('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $matureStudentsQuery->where('created_at', '<=', $endDate);
+        }
+
+        $matureTransactions = $matureStudentsQuery->get();
+
+        $matureTransactionsTotal = $matureTransactions->sum('amount');
+
+
         // ========== SCHOOL FEES ==========
         $feeCollectionsQuery = DB::table('collect_fees')
         ->join('students', 'collect_fees.student_index_number',
@@ -1658,6 +1676,8 @@ public function calculateBalanceTotal(Request $request)
         'collectionsByCategoryAndMode' => $collectionsByCategoryAndMode,
         'expensesByCategoryAndMode' => $expensesByCategoryAndMode,
         'balanceByCategoryAndMode' => $balanceByCategoryAndMode,
+        'matureTransactions' => $matureTransactions,
+        'matureTransactionsTotal' => $matureTransactionsTotal,
         ];
         // return $data;
         // View response
