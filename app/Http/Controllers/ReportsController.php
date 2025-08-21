@@ -1565,7 +1565,9 @@ public function calculateBalanceTotal(Request $request)
 
         $matureTransactions = $matureStudentsQuery->get();
 
-        $matureTransactionsTotal = $matureTransactions->sum('amount');
+        $matureTransactionsTotal = $matureTransactions->sum('amount_paid');
+
+        // return $matureTransactionsTotal;
 
 
         // ========== SCHOOL FEES ==========

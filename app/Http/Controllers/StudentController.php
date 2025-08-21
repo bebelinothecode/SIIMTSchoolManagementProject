@@ -530,6 +530,8 @@ class StudentController extends Controller
                             'dateofbirth' => 'required|date',
                             'current_address' => 'required|string',
                             'fees' => 'required|numeric|min:0',
+                            'level' => 'required|in:100,200,300,400',
+                            'session' => 'required|in:1,2',
                             'currency' => 'required|string|max:15',
                             'balance' => 'required|numeric',
                             'course_id' => 'required|integer',
@@ -567,12 +569,16 @@ class StudentController extends Controller
                 'gender' => $validatedData['gender'],
                 'dateofbirth' => $validatedData['dateofbirth'],
                 'current_address' => $validatedData['current_address'],
-                'balance' => $validatedData['balance']
+                'balance' => $validatedData['balance'],
+                'level' => $validatedData['level'],
+                'session' => $validatedData['session'],
             ];
 
             if ($student->student_category === 'Academic') {
                 $studentFields['fees'] = $validatedData['fees'];
                 $studentFields['course_id'] = $validatedData['course_id'];
+                $studentFields['level'] = $validatedData['level'];
+                $studentFields['session'] = $validatedData['session'];
             } elseif ($student->student_category === 'Professional') {
                 $studentFields['fees_prof'] = $validatedData['fees'];
                 $studentFields['course_id_prof'] = $validatedData['course_id'];
@@ -627,23 +633,11 @@ class StudentController extends Controller
             }
 
             foreach($students as $student) {
-<<<<<<< HEAD
-                // Carry forward old balance and add new semester fee
-                $oldBalance = $student->balance;
-                $newSemesterFee = $student->fees ?? $student->fees_prof ?? 0;
-                // return [$oldBalance, $newSemesterFee];
-                $student->balance = $oldBalance + $newSemesterFee;
-
-                // return [$student->balance, $oldBalance, $newSemesterFee];
-
-                // Update last_level and last_semester
-=======
                 $oldBalance = $student->balance;
                 $newSemesterFee = $student->fees ?? 0; 
                 $student->balance = $oldBalance + $newSemesterFee;
 
                 // Update the student's last level and semester
->>>>>>> 122254cebadb9b001d8fab25c99d5c675700f316
                 $student->last_level = $student->level;
                 $student->last_semester = $student->session;
                 $student->level = $toLevel;

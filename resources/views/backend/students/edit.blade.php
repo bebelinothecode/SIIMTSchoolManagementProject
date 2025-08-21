@@ -185,6 +185,39 @@
                         </div>
                     </div>
 
+                    @if ($student->student_category === 'Academic')
+                    
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/4">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                                Level
+                            </label>
+                        </div>
+                        <div class="md:w-3/4">
+                            <input name="level" id="fees-field" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('level', $student->level) }}">
+                            @error('level')
+                                <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/4">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                                Semester
+                            </label>
+                        </div>
+                        <div class="md:w-3/4">
+                            <input name="session" id="fees-field" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('semester', $student->session) }}">
+                            @error('semester')
+                                <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    @endif
+
+
                     <div class="md:flex md:items-center mb-6">
                         <div class="md:w-1/4">
                             <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
