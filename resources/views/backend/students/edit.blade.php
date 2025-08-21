@@ -333,7 +333,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<!-- <script>
     $(function() {
         // Initialize datepicker
         $("#datepicker-se").datepicker({ 
@@ -406,7 +406,7 @@
             }
         });
     });
-</script>
+</script> -->
 @endpush
 
 
