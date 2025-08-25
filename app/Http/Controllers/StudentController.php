@@ -586,20 +586,7 @@ class StudentController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Invalid student category');
             }
-
-            // if ($student->student_category === 'Academic') {
-            //     $studentFields['fees'] = $validatedData['fees'];
-            //     $studentFields['course_id'] = $validatedData['course_id'];
-            //     $studentFields['level'] = $validatedData['level'];
-            //     $studentFields['session'] = $validatedData['session'];
-            // } elseif ($student->student_category === 'Professional') {
-            //     $studentFields['fees_prof'] = $validatedData['fees'];
-            //     $studentFields['course_id_prof'] = $validatedData['course_id'];
-            // }
-
-            // $student->update($studentFields);
-
-            // return redirect()->back()->with('success', 'Student updated successfully');        
+      
         } catch (Exception $e) {
             Log::error(message: "Error occured updating student" .$e);
 

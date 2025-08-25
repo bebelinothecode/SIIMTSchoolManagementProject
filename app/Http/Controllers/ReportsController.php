@@ -1582,8 +1582,8 @@ public function calculateBalanceTotal(Request $request)
         'Bank Transfer' => 'Cheque'
         ];
 
-        if (isset($paymentMethodMap[$modeOfPayment])) {
-        $feeCollectionsQuery->where('method_of_payment',$paymentMethodMap[$modeOfPayment]);
+        if (!empty($modeOfPayment) && isset($paymentMethodMap[$modeOfPayment])) {
+            $feeCollectionsQuery->where('method_of_payment', $paymentMethodMap[$modeOfPayment]);
         }
 
         if ($currentDate) {
@@ -1598,7 +1598,7 @@ public function calculateBalanceTotal(Request $request)
 
         $feeCollectionTransactions = $feeCollectionsQuery
         ->select('collect_fees.*', 'students.student_category')
-        ->distinct('idempotency_key')
+        ->distinct()
         ->get();
 
         // return $feeCollectionTransactions;
