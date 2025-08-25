@@ -143,6 +143,7 @@
                                 <!-- <th>Expense Category</th> -->
                                 <th>Description</th>
                                 <th>Branch</th>
+                                <th>Expense Category</th>
                                 <th>Amount</th>
                                 <th>Mode of Payment</th>
                                 <th>Created At</th>
@@ -154,8 +155,8 @@
                                     <!-- <td>{{ $data->source_of_expense }}</td> -->
                                     <!-- <td>{{ $data->category ?? "N/A" }}</td> -->
                                     <td>{{ $data->description_of_expense ?? "N/A" }}</td>
-
                                     <td>{{ $data->branch }}</td>
+                                    <td>{{ $data->category }}</td>
                                     <td>{{ number_format($data->amount,2) }}</td>
                                     <td>{{ $data->mode_of_payment }}</td>
                                     <td>{{ $data->created_at }}</td>

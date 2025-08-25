@@ -101,8 +101,6 @@ class ExpensesController extends Controller
             'modeOfPayment' => $validatedData['mode_of_payment'] ?? null,
         ];
 
-        // return $filters;
-
         // Build dynamic query based on filters
         // $buildQuery = function ($categoryId = null) use ($filters) {
         $query = Expenses::query();
@@ -132,7 +130,7 @@ class ExpensesController extends Controller
 
         $datas = $query->get();
 
-        // return $data;
+        // return $datas;
 
         $totalAmount = collect($datas)->sum(function ($item) {
             return (float) $item['amount'];
