@@ -1031,13 +1031,16 @@ class StudentController extends Controller
     }
 
     public function getChangeStudentsStatusForm($id) {
-        return view('backend.students.changestatus',compact('id'));
+        $student = Student::findOrFail($id);
+
+        return view('backend.students.changestatus',compact('id','student'));
     }
 
     public function changeStudentsStatus(Request $request, $id)
     {
+        dd($request->all());
         $validatedData = $request->validate([
-            'student_defer' => 'required|string|in:defer,withdrawn,expelled'
+            'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
         ]);
 
         try {
