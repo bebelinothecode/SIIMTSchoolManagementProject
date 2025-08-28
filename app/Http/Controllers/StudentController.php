@@ -187,6 +187,7 @@ class StudentController extends Controller
                     'course_id_prof' => $validatedData['course_id_prof'],
                     'currency_prof' => $validatedData['currency_prof'],
                     'fees_prof' => $validatedData['fees_prof'],
+                    'balance' => $validatedData['fees_prof'],
                     'duration_prof' => $validatedData['duration_prof'],
                     'Scholarship' => $validatedData['scholarship'],
                     'Scholarship_amount' => $validatedData['scholarship_amount']
@@ -213,6 +214,7 @@ class StudentController extends Controller
                     'course_id' => $validatedData['course_id'],
                     'currency' => $validatedData['currency'],
                     'fees' => $validatedData['fees'],
+                    'balance' => $validatedData['fees'],
                     'level' => $validatedData['level'],
                     'session' => $validatedData['session'],
                     'academicyear' => $validatedData['academicyear'],
