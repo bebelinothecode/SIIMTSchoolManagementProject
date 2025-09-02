@@ -25,6 +25,9 @@
                         <option value="All">All Students</option>
                         <option value="Academic" {{ request('sort') === 'Academic' ? 'selected' : '' }}>Academic</option>
                         <option value="Professional" {{ request('sort') === 'Professional' ? 'selected' : '' }}>Professional</option>
+                        <option value="Kanda" {{ request('sort') === 'Kanda' ? 'selected' : '' }}>Kanda</option>
+                        <option value="Spintex" {{ request('sort') === 'Spintex' ? 'selected' : '' }}>Spintex</option>
+                        <option value="Kasoa" {{ request('sort') === 'Kasoa' ? 'selected' : '' }}>Kasoa</option>
                     </select>
                 </form>
             </div>

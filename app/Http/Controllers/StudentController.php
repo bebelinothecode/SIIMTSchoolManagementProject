@@ -65,6 +65,10 @@ class StudentController extends Controller
         $query->where('student_category', $sort);
         }
 
+        if($sort === 'Kasoa' || $sort === 'Kanda' || $sort === 'Spintex') {
+            $query->where('branch', $sort);
+        }
+
         $students = $query->orderBy('users.name', 'asc')
         ->select('students.*') // Prevents column conflicts between students and users
         ->paginate(10);
