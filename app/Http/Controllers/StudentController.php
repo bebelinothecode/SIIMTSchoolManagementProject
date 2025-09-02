@@ -170,9 +170,11 @@ class StudentController extends Controller
                 $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
                 // return $branchCode;
                 $studentIndexNumber = $branchCode ."/". $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+
+                if (Student::where('index_number', $studentIndexNumber)->exists()) {
+                    return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
+                }
                
-                // $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
-                // return $studentIndexNumber;
                 $user->student()->create([
                     'branch' => $validatedData['branch'],
                     'phone' => $validatedData['phone'],
@@ -200,6 +202,11 @@ class StudentController extends Controller
                 $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
                 $studentIndexNumber = $query['course_code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
                 // return $studentIndexNumber;
+
+                if (Student::where('index_number', $studentIndexNumber)->exists()) {
+                    return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
+                }
+                
                 $user->student()->create([
                     'branch' => $validatedData['branch'],
                     'phone' => $validatedData['phone'],

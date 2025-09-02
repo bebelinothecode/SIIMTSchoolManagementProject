@@ -396,6 +396,8 @@ class  FeesController extends Controller
     public function updateTransaction(Request $request, $id) {
 
         try {
+
+            // dd($request->all());
             $validatedData = $request->validate([
                 'student_name' => 'required',
                 'student_index_number' => 'required',
