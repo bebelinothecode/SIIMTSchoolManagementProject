@@ -10,7 +10,10 @@ use Exception;
 use App\Diploma;
 use App\Enquiry;
 use App\Parents;
+use App\LecturerEvaluationSubmission;
+use App\LecturerEvaluationDetail;
 use App\Session;
+use App\FeesPaid;
 use App\Student;
 use App\Subject;
 use App\FeesType;
@@ -258,7 +261,11 @@ class StudentController extends Controller
 
         // return $student;
 
-        return view('backend.students.show', compact('student'));
+        $transactions = FeesPaid::where('student_index_number', $student->index_number)->latest()->get();
+
+        // return $transactions;
+
+        return view('backend.students.show', compact('student', 'transactions'));
     }
 
     /**
@@ -1051,12 +1058,15 @@ class StudentController extends Controller
 
     public function changeStudentsStatus(Request $request, $id)
     {
-        dd($request->all());
+        // dd($request->all());
         $validatedData = $request->validate([
             'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
         ]);
 
         try {
+
+            $student = Student::findOrFail($id);
+
             if ($validatedData['student_defer'] === 'defer') {
                 DB::transaction(function () use ($id) {
                     $student = Student::findOrFail($id);
@@ -1064,14 +1074,20 @@ class StudentController extends Controller
                     // Defer::create($student->toArray());
                    Defer::create($student->toArray());
                     
-                    $student->delete();
+                   $student->delete();
                 });
 
                 return redirect()->back()->with('success', 'Student moved to defer list successfully');
-            } else {
-                return redirect()->back()->with('error', 'Only defer action is implemented at the moment.');
-            }
+            } elseif (($validatedData['student_defer'] === 'Completed') && ((int)$student->balance === 0) && ($student->student_category === 'Professional')) {
+                $student->status = 'Completed';
+                $student->save();
 
+                return redirect()->back()->with('success', 'Student status updated to Completed successfully');
+                // return redirect()->back()->with('error', 'Only defer action is implemented at the moment.');
+            } elseif($validatedData['student_defer'] === 'Completed' && (int)$student->balance > 0 && $student->student_category === 'Professional') {
+                return redirect()->back()->with('error', 'This professional student has an outstanding balance. Please clear the balance before marking as Completed.');
+            } 
+            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->back()->with('error', 'Student not found.');
         } catch (Exception $e) {
@@ -1601,5 +1617,95 @@ class StudentController extends Controller
             return redirect()->back()->with('error','Error generating receipt');
         }
        
+    }
+
+    public function lecturerEvaluationForm() {
+        $userId = Auth::user()->id;
+        $student = DB::table('students')
+                ->where('user_id', $userId)
+                ->first();
+
+        if($student->student_category === 'Academic') {
+            $course = Grade::findOrFail($student->course_id);
+
+            $courses = DB::table('register_courses as rc')
+                ->join('students as st', 'st.id', '=', 'rc.student_id')
+                ->join('grades as c', 'c.id', '=', 'rc.course_id')   
+                ->join('subjects as sub', 'sub.id', '=', 'rc.subjects_id')
+                ->where('st.id', $student->id)
+                ->select(
+                    'c.course_name as course_name',
+                    'sub.subject_name as subject_name',
+                    'sub.subject_code',
+                    'rc.level',
+                    'rc.semester',
+                    'sub.credit_hours'
+                )
+                ->orderBy('rc.level')
+                ->orderBy('rc.semester')
+                ->orderBy('c.course_name')
+                ->orderBy('sub.subject_name')
+                ->get();
+
+            $courseName = $courses[0]->course_name; 
+
+           return view('backend.students.lecturerevaluationform',compact('courseName','student','courses'));
+        } 
+    }
+
+    public function evaluateLecturer(Request $request) {
+        $validated = $request->validate([
+            'course' => 'required|string',
+            'evaluations.*.subject_name' => 'required|string|max:255',
+            'evaluations.*.lecturer'     => 'required|string|max:255',
+            'evaluations.*.clarity'      => 'required|integer|min:1|max:5',
+            'evaluations.*.knowledge'    => 'required|integer|min:1|max:5',
+            'evaluations.*.punctuality'  => 'required|integer|min:1|max:5',
+            'evaluations.*.comments'     => 'nullable|string|max:1000',
+        ]);
+
+        // return $validated;
+
+        $userId = Auth::user()->id;
+
+        $student = DB::table('students')
+                ->where('user_id', $userId)
+                ->first();
+
+        DB::beginTransaction();
+
+        try {
+            $submission = LecturerEvaluationSubmission::create([
+                'student_id' => $student->id, 
+                'course_name' => $validated['course'],
+                'semester' => $student->session,
+                'level' => $student->level,
+            ]);
+
+              foreach ($validated['evaluations'] as $subjectCode => $evaluation) {
+                LecturerEvaluationDetail::create([
+                    'submission_id' => $submission->id,
+                    'subject_code' => $subjectCode,
+                    'subject_name' => $evaluation['subject'] ?? '',
+                    'lecturer_name' => $evaluation['lecturer'] ?? '',
+                    'clarity' => $evaluation['clarity'],
+                    'knowledge' => $evaluation['knowledge'],
+                    'punctuality' => $evaluation['punctuality'],
+                    'comments' => $evaluation['comments'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Evaluation submitted successfully!');
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+
+            Log::error('Error: ' . $th->getMessage());
+
+            return redirect()->back()->with('error', 'Something went wrong: '.$th->getMessage());
+        }
     }
 }

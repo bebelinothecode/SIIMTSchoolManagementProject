@@ -415,4 +415,80 @@ class ExpensesController extends Controller
             return redirect()->back()->with('error', 'Error updating expense');
         }
     }
+
+    public function viewExpensesCategory() {
+        $categories = ExpenseCategory::latest()->paginate(10);
+
+        return view('backend.expenses.expensecategory', compact('categories'));
+    }
+
+    public function deleteExpenseCategory($id) {
+        $category = ExpenseCategory::findOrFail($id);
+
+        if (!$category) {
+            return redirect()->back()->with('error', 'Expense category not found.');
+        }
+
+        $category->delete();
+
+        return redirect()->back()->with('success', 'Expense category deleted successfully.');
+    }
+
+    public function editExpenseCategoryForm($id) {
+        $category = ExpenseCategory::findOrFail($id);
+
+        return view('backend.expenses.editexpensecategory', compact('category'));
+    }
+
+    public function updateExpenseCategory(Request $request, $id) {
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:100',
+            ]);
+
+            $name = $validatedData['name'];
+    
+            $category = ExpenseCategory::findOrFail($id);
+    
+            $updated = $category->update([
+                'expense_category' => $name,
+            ]); 
+
+            if($updated === true) {
+                return redirect()->back()->with('success', 'Updated successfully');
+            }
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error updating expense category: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Error updating expense category');
+        }
+    }
+
+    public function createExpenseCategoryForm() {
+        return view('backend.expenses.createexpensecategory');
+    }
+
+    public function createExpenseCategory(Request $request) {
+        try {
+            // dd($request->all());
+            $validatedData = $request->validate([
+                'expense_category' => 'required|string|max:100|unique:expense_category,expense_category',
+            ]);
+
+            $name = $validatedData['expense_category'];
+    
+            ExpenseCategory::create([
+                'expense_category' => $name,
+            ]); 
+
+            return redirect()->back()->with('success', 'Expense category created successfully');
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error creating expense category: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Error creating expense category');
+        }
+    }
 }

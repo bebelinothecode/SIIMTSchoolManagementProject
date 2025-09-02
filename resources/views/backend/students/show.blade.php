@@ -104,16 +104,6 @@
                         <span class="text-gray-600 font-bold">{{ $student->course->course_name ?? $student->diploma->name ?? '' }}</span>
                     </div>
                 </div>
-                {{-- <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Course Fee's:
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <span class="text-gray-600 font-bold">{{ $student->course->fees ?? $student->diploma->fees ?? 'Not Found' }}</span>
-                    </div>
-                </div> --}}
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -134,16 +124,6 @@
                         <span class="text-gray-600 font-bold">{{ $student->attendance_time }}</span>
                     </div>
                 </div>
-                {{-- <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Class :
-                        </label>
-                    </div>
-                    <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <span class="text-gray-600 font-bold">{{ $student->class->class_name }}</span>
-                    </div>
-                </div> --}}
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -194,16 +174,6 @@
                         <span class="text-gray-600 font-bold">{{ $student->session ?? "Semester not found" }}</span>
                     </div>
                 </div>
-                {{-- <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Parent Email :
-                        </label>
-                    </div>
-                    <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <span class="text-gray-600 font-bold">{{ $student->parents->email }}</span>
-                    </div>
-                </div> --}}
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -214,33 +184,68 @@
                         <span class="text-gray-600 font-bold">{{ $student->parent_phonenumber ?? "No phone number" }}</span>
                     </div>
                 </div>
-                {{-- <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Parent Address :
-                        </label>
-                    </div>
-                    <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <span class="text-gray-600 font-bold">{{ $student->parent->current_address ?? "Address not found" }}</span>
-                    </div>
-                </div> --}}
-
-                {{-- <div class="w-full px-0 md:px-6 py-12">
-                    <div class="flex items-center bg-gray-200">
-                        <div class="w-1/3 text-left text-gray-600 py-2 px-4 font-semibold">Code</div>
-                        <div class="w-1/3 text-left text-gray-600 py-2 px-4 font-semibold">Subject</div>
-                        <div class="w-1/3 text-right text-gray-600 py-2 px-4 font-semibold">Teacher</div>
-                    </div>
-                    @foreach ($class->subjects as $subject)
-                        <div class="flex items-center justify-between border border-gray-200 mb-px">
-                            <div class="w-1/3 text-left text-gray-600 py-2 px-4 font-medium">{{ $subject->subject_code }}</div>
-                            <div class="w-1/3 text-left text-gray-600 py-2 px-4 font-medium">{{ $subject->name }}</div>
-                            <div class="w-1/3 text-right text-gray-600 py-2 px-4 font-medium">{{ $subject->teacher->user->name }}</div>
-                        </div>
-                    @endforeach
-                </div> --}}
             </div>        
         </div>
+        <!-- Student Transactions -->
+<div class="mt-8 bg-white rounded shadow">
+    <div class="w-full px-6 py-6">
+        <h3 class="text-lg font-bold text-gray-700 mb-4">Student Transactions</h3>
+
+        @if(isset($transactions) && count($transactions) > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-200 divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Receipt No.</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Payment Method</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Amount</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Balance</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Currency</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Fees Type</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Remarks</th>
+                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach($transactions as $transaction)
+                            <tr>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $transaction->receipt_number }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $transaction->method_of_payment }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ number_format($transaction->amount, 2) }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ number_format($transaction->balance, 2) }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $transaction->currency }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $transaction->fees_type ?? 'N/A' }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $transaction->remarks ?? '-' }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ \Carbon\Carbon::parse($transaction->created_at)->format('d M, Y') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+
+                    <!-- Totals Row (per currency) -->
+                    <tfoot class="bg-gray-100">
+                        @foreach($transactions->groupBy('currency') as $currency => $group)
+                            <tr>
+                                <td colspan="2" class="px-4 py-2 text-right font-bold text-gray-700">
+                                    Totals ({{ $currency }}):
+                                </td>
+                                <td class="px-4 py-2 font-bold text-gray-700">
+                                    {{ number_format($group->sum('amount'), 2) }}
+                                </td>
+                                {{-- <td class="px-4 py-2 font-bold text-gray-700">
+                                    {{ number_format($group->sum('balance'), 2) }}
+                                </td> --}}
+                                <td colspan="4"></td>
+                            </tr>
+                        @endforeach
+                    </tfoot>
+                </table>
+            </div>
+        @else
+            <p class="text-gray-600">No transactions found for this student.</p>
+        @endif
+    </div>
+</div>
+
         
     </div>
 @endsection

@@ -14,6 +14,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\LecturerEvaluationController;
 use App\Teacher;
 use FontLib\Table\Type\name;
 use Illuminate\Support\Facades\Auth;
@@ -167,6 +168,13 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/create/user',[StudentController::class, 'createUser'])->name('create.user');
     Route::delete('/delete/mature/transaction/{id}',[StudentController::class, 'deleteMatureTransaction'])->name('delete.maturetransaction');
     Route::get('/mature/student/receipt/{id}',[StudentController::class, 'matureStudentReceipt'])->name('mature.receipt');
+    Route::get('evaluate/lecturer/admin/panel',[LecturerEvaluationController::class, 'index'])->name('admin.evaluations.index');
+    Route::get('expense/category/index',[ExpensesController::class, 'viewExpensesCategory'])->name('expensecategory.index');
+    Route::delete('expense/category/delete/{id}',[ExpensesController::class, 'deleteExpenseCategory'])->name('delete.expensecategory');
+    Route::get('expense/category/form/{id}',[ExpensesController::class, 'editExpenseCategoryForm'])->name('edit.expensecategoryform');
+    Route::post('expense/category/update/{id}',[ExpensesController::class, 'updateExpenseCategory'])->name('update.expensecategory');
+    Route::get('expense/category/create/form',[ExpensesController::class, 'createExpenseCategoryForm'])->name('create.expensecategoryform');
+    Route::post('expense/category/create',[ExpensesController::class, 'createExpenseCategory'])->name('create.expensecategory');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
@@ -225,6 +233,8 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::get('/get/registration/form',[StudentController::class, 'getRegistrationForm'])->name('registration.course');
     Route::post('/register/courses/{id}',[StudentController::class, 'registerCourses'])->name('register.courses');
     Route::get('/show/registered/courses',[StudentController::class, 'showRegisteredCourses'])->name('show.registeredcourses');
+    Route::get('/evalaute/lecturers/form',[StudentController::class, 'lecturerEvaluationForm'])->name('evaluate.lecturersform');
+    Route::post('/submit/evaluation',[StudentController::class, 'evaluateLecturer'])->name('submit.evaluation');
 });
 
 // Route::group(['middleware' => ['auth','role:frontdesk']], function () {
