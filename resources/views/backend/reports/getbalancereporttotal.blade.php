@@ -184,7 +184,7 @@
         .total-amount {
             font-size: 18px;
             font-weight: bold;
-            color: #2b6cb0;
+            color:rgb(254, 254, 255);
         }
 
         /* Status Indicators */
@@ -194,7 +194,7 @@
         }
 
         .status-negative {
-            color: #e53e3e;
+            color:rgb(245, 88, 88);
             font-weight: 600;
         }
 

@@ -173,9 +173,11 @@ class StudentController extends Controller
                 $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
                 // return $branchCode;
                 $studentIndexNumber = $branchCode ."/". $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
+
+                if (Student::where('index_number', $studentIndexNumber)->exists()) {
+                    return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
+                }
                
-                // $studentIndexNumber = $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
-                // return $studentIndexNumber;
                 $user->student()->create([
                     'branch' => $validatedData['branch'],
                     'phone' => $validatedData['phone'],
@@ -190,6 +192,7 @@ class StudentController extends Controller
                     'course_id_prof' => $validatedData['course_id_prof'],
                     'currency_prof' => $validatedData['currency_prof'],
                     'fees_prof' => $validatedData['fees_prof'],
+                    'balance' => $validatedData['fees_prof'],
                     'duration_prof' => $validatedData['duration_prof'],
                     'Scholarship' => $validatedData['scholarship'],
                     'Scholarship_amount' => $validatedData['scholarship_amount']
@@ -202,6 +205,11 @@ class StudentController extends Controller
                 $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
                 $studentIndexNumber = $query['course_code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
                 // return $studentIndexNumber;
+
+                if (Student::where('index_number', $studentIndexNumber)->exists()) {
+                    return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
+                }
+                
                 $user->student()->create([
                     'branch' => $validatedData['branch'],
                     'phone' => $validatedData['phone'],
@@ -216,6 +224,7 @@ class StudentController extends Controller
                     'course_id' => $validatedData['course_id'],
                     'currency' => $validatedData['currency'],
                     'fees' => $validatedData['fees'],
+                    'balance' => $validatedData['fees'],
                     'level' => $validatedData['level'],
                     'session' => $validatedData['session'],
                     'academicyear' => $validatedData['academicyear'],
@@ -593,20 +602,7 @@ class StudentController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Invalid student category');
             }
-
-            // if ($student->student_category === 'Academic') {
-            //     $studentFields['fees'] = $validatedData['fees'];
-            //     $studentFields['course_id'] = $validatedData['course_id'];
-            //     $studentFields['level'] = $validatedData['level'];
-            //     $studentFields['session'] = $validatedData['session'];
-            // } elseif ($student->student_category === 'Professional') {
-            //     $studentFields['fees_prof'] = $validatedData['fees'];
-            //     $studentFields['course_id_prof'] = $validatedData['course_id'];
-            // }
-
-            // $student->update($studentFields);
-
-            // return redirect()->back()->with('success', 'Student updated successfully');        
+      
         } catch (Exception $e) {
             Log::error(message: "Error occured updating student" .$e);
 

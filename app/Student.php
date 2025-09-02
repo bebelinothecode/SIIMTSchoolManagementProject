@@ -35,13 +35,11 @@ class Student extends Model
         'academicyear',
         'Scholarship',
         'Scholarship_amount',
-        // 'permanent_address',
         'index_number',
         'balance',
         'last_level',
         'last_session',
         'branch'
-        // 'student_type',
     ];
 
     public function user() 

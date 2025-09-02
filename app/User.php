@@ -62,4 +62,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
+
+// Mutator for forcing uppercase storage
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtoupper($value);
+    }
 }
