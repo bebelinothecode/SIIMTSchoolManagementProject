@@ -57,6 +57,7 @@
                             <option value="Cash" {{ old('method_of_payment', $transaction->method_of_payment ?? '') === 'Cash' ? 'selected' : '' }}>Cash</option>
                             <option value="Cheque" {{ old('method_of_payment', $transaction->method_of_payment ?? '') === 'Cheque' ? 'selected' : '' }}>Cheque</option>
                             <option value="Momo" {{ old('method_of_payment', $transaction->method_of_payment ?? '') === 'Momo' ? 'selected' : '' }}>Momo</option>
+                            <option value="Bank Transfer" {{ old('method_of_payment', $transaction->method_of_payment ?? '') === 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -88,7 +89,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="balance" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('balance', $transaction->balance)}}" readonly>
+                        <input name="balance" id="balance" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('balance', $transaction->balance)}}">
                         @error('balance')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror

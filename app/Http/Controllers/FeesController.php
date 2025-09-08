@@ -105,6 +105,8 @@ class  FeesController extends Controller
             
 
 
+            // return $student;
+
             if (!$student) {
                 return back()->withErrors(['error' => 'Student not found.']);
             }
@@ -551,7 +553,16 @@ class  FeesController extends Controller
             //code...
             $transaction = FeesPaid::findOrFail($id);
 
-            return view('backend.fees.transactionreceipt', compact('transaction'));
+            $student = Student::where('index_number',$transaction->student_index_number)->first();
+
+            $courseAcademic = $student->course()->first();
+            $courseProfessional = $student->diploma()->first();
+
+            // return $student->diploma()->first();
+
+            // return $transaction;
+
+            return view('backend.fees.transactionreceipt', compact('transaction','student','courseAcademic','courseProfessional'));
         } catch (\Throwable $th) {
             //throw $th;
             return redirect()->back()->with('error','Error generating receipt');

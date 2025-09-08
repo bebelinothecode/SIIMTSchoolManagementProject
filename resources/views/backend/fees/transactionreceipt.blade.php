@@ -125,6 +125,7 @@
             <h3>Student Details</h3>
             <p><strong>Index Number:</strong> {{ $transaction->student_index_number }}</p>
             <p><strong>Name:</strong> {{ $transaction->student_name }}</p>
+            <p><strong>Course:</strong> {{ $courseAcademic->course_name ?? $courseProfessional->name }}</p>
 
             <h3>Payment Details</h3>
             <table>
@@ -142,7 +143,12 @@
                     <th>Method of Payment</th>
                     <td>{{ $transaction->method_of_payment }}</td>
                 </tr>
-                
+                @if($transaction->currency === '$')
+                <tr>
+                    <th>Remarks</th>
+                    <td>{{ $transaction->remarks }}</td>
+                </tr>
+                @endif      
             </table>
         </div>
 
