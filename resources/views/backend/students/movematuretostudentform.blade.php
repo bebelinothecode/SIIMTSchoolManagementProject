@@ -15,7 +15,7 @@
     </div>
 
     <div class="table w-full mt-8 bg-white rounded">
-        <form action="{{ route('movemature.tostudent',$matureStudent->id) }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
+        <form action="{{ route('movemature.tostudent') }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
             @csrf
             @if ($errors->any())
                 <div class="alert alert-danger">

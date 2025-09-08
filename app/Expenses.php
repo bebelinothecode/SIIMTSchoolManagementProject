@@ -31,4 +31,9 @@ class Expenses extends Model
     //     return $this->belongsTo(ExpenseCategory::class, 'expense_category'); // or 'category_id' if that's the column name
     // }
 
+    public function setNameAttribute($value)
+    {
+        $this->attributes['category'] = strtoupper($value);
+    }
+
 }

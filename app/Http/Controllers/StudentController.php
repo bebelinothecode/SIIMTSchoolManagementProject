@@ -20,6 +20,7 @@ use App\FeesType;
 use Carbon\Carbon;
 use App\AcademicYear;
 use App\Defer;
+// use Symfony\Component\HttpFoundation\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Imports\StudentsImport;
@@ -349,10 +350,26 @@ class StudentController extends Controller
         return view('backend.students.printletter', compact('student', 'academicyear'));
     }
 
-    public function studentSchoolFees() {
-        $fees = Fees::paginate(10);
+    public function studentSchoolFees(Request $request) {
+        $sort = $request->input('sort');
+        $query = Grade::query();
 
-        return view('backend.students.schoolfees', compact('fees'));
+        $queryDiploma = Diploma::query();
+
+        $acaFees = null;
+        $profFees = null;
+
+        if($sort === 'Academic') {
+           $acaFees = $query->get();
+        } elseif($sort === 'Professional') {
+            $profFees = $queryDiploma->get();
+        }
+
+        // $academicFees = Grade::paginate(10);
+
+        // $professionalFees = Diploma::paginate(10);
+
+        return view('backend.students.schoolfees', compact('sort','acaFees','profFees'));
     }
 
     public function test2() {
@@ -621,9 +638,11 @@ class StudentController extends Controller
         $studentName = $student->user->name;
         $studentIndexNumber = $student->index_number;
         $student_balance = $student->balance;
+        $studentId = $student->id;
         $feesTypes = FeesType::all();
+        // return $student;
         // return [$levelChanged, $semesterChanged];
-        return view('backend.students.payfeesform', compact('student','studentName','studentIndexNumber','student_balance','feesTypes','levelChanged','semesterChanged'));
+        return view('backend.students.payfeesform', compact('studentId','student','studentName','studentIndexNumber','student_balance','feesTypes','levelChanged','semesterChanged'));
     }
 
     public function promoteAll(Request $request) {
@@ -1288,8 +1307,7 @@ class StudentController extends Controller
               });
            }
 
-        $students = $query->orderBy('name', 'asc')
-        ->paginate(10);
+        $students = $query->orderBy('name', 'asc')->paginate(10);
 
         return view('backend.students.maturestudentindex',compact('students'));
     }
@@ -1479,6 +1497,7 @@ class StudentController extends Controller
                     'course_id_prof' => $validatedData['course_id_prof'],
                     'currency_prof' => $validatedData['currency_prof'],
                     'fees_prof' => $validatedData['fees_prof'],
+                    'balance' => $validatedData['fees_prof'],
                     'duration_prof' => $validatedData['duration_prof'],
                     'Scholarship' => $validatedData['scholarship'],
                     'Scholarship_amount' => $validatedData['scholarship_amount']
@@ -1504,6 +1523,7 @@ class StudentController extends Controller
                     'course_id' => $validatedData['course_id'],
                     'currency' => $validatedData['currency'],
                     'fees' => $validatedData['fees'],
+                    'balance' => $validatedData['fees'],
                     'level' => $validatedData['level'],
                     'session' => $validatedData['session'],
                     'academicyear' => $validatedData['academicyear'],

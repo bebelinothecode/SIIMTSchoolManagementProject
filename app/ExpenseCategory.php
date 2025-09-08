@@ -14,4 +14,9 @@ class ExpenseCategory extends Model
     protected $fillable = [
         'expense_category',
     ];
+
+     public function setNameAttribute($value)
+    {
+        $this->attributes['expense_category'] = strtoupper($value);
+    }
 }

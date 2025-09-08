@@ -16,6 +16,7 @@ class FeesPaid extends Model
     protected $fillable = [
         'student_index_number',
         'student_name',
+        'student_id',
         // 'start_academic_year',
         // 'end_academic_year',
         // 'semester',
@@ -32,5 +33,10 @@ class FeesPaid extends Model
         'other_fees',
         'idempotency_key'
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }
 

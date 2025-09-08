@@ -62,6 +62,7 @@ class  FeesController extends Controller
 
         if($student) {
             return response()->json([
+                'id'=> $student->id,
                 'name'=> $student->user->name,
                 'fees' => $student->fees,
                 'student_category' => $student->student_category,
@@ -80,7 +81,7 @@ class  FeesController extends Controller
             // dd($request->all());
             $validatedData = $request->validate([
                 'student_index_number' => 'required|string',
-                'student_name' => 'required | string',
+                'student_name' => 'required|string',
                 'method_of_payment' => 'required',
                 'fees_type' => 'required',
                 'amount' => 'nullable',
@@ -96,7 +97,13 @@ class  FeesController extends Controller
             // dd($validatedData);
             DB::beginTransaction();
 
-            $student = Student::where('index_number',operator: $validatedData['student_index_number'])->first();
+            $student = Student::with(['course', 'diploma'])
+                ->where('index_number', $validatedData['student_index_number'])
+                ->first();
+
+            // return $student;
+            
+
 
             if (!$student) {
                 return back()->withErrors(['error' => 'Student not found.']);
@@ -125,6 +132,7 @@ class  FeesController extends Controller
             $feespaid = FeesPaid::create([
                 'student_index_number' => $validatedData['student_index_number'],
                 'student_name' => $validatedData['student_name'],
+                'student_id' => $student->id,
                 'method_of_payment' => $validatedData['method_of_payment'],
                 'amount' => $validatedData['fees_type'] === 'School Fees' ? $validatedData['amount'] : $validatedData['amount_paid'],
                 'balance' => $validatedData['fees_type'] === 'School Fees' ? $validatedData['balance'] : 0,
@@ -146,7 +154,7 @@ class  FeesController extends Controller
 
             DB::commit();
 
-            return view('backend.fees.receipt', compact('feespaid'))->with('success', 'School Fees has been collected');
+            return view('backend.fees.receipt', compact('feespaid','student'))->with('success', 'School Fees has been collected');
         } catch (Exception $e) {
             //throw $th;
             DB::rollBack();
@@ -249,136 +257,213 @@ class  FeesController extends Controller
         return view('backend.fees.transactions');
     }
 
-    // public function getTransactions(Request $request) {
-    //     try {
-    //         $search = $request->input('search');
-    
-    //         $query = FeesPaid::query();
+//     public function getTransactions(Request $request) {
+//     try {
+//         $search = $request->input('search');
 
-    //         $matureQuery = MatureStudent::query();
+//         $payments = FeesPaid::with(['student.user'])->where('student.user.name', 'like', "%{$search}%")
+//                   ->latest()
+//                   ->paginate(12);
 
-    //         $enquiryQuery = Enquiry::query();     
-    
-    //         if (!empty($search)) {
-    //             $query->where('student_index_number', 'like', "%{$search}%")
-    //                   ->orWhere('student_name', 'like', "%{$search}%");
-    //         }
+//         // $query = FeesPaid::query();
+//         $matureQuery = MatureStudent::query();
+//         $enquiryQuery = Enquiry::query();     
 
-    //         if(!empty($search)) {
-    //             $matureQuery->where('name', 'like', "%{$search}%")
-    //             ->orWhere('mature_index_number','like',"%{$search}%");
-    //         }
-    
-    //         $transactions = $query->latest()->paginate(5);
-    //         $matureTransactions = $matureQuery->latest()->paginate(5);
-    //         $enquiryPayments = $enquiryQuery->where('bought_forms', 'Yes')->paginate(2);
+//           if (!empty($search)) {
+//             // $query->where('student.user.name', 'like', "%{$search}%")
+//             //       ->orWhere('student_name', 'like', "%{$search}%");
 
-    //         // return $matureTransactions;
+//             $matureQuery->where('name', 'like', "%{$search}%")
+//                 ->orWhere('mature_index_number','like',"%{$search}%");
 
-    
-    //         return view('backend.fees.transactions', compact('transactions','matureTransactions','enquiryPayments'));
-    //     } catch (Exception $e) {
-    //         Log::error("Error executing query", ["message" => $e->getMessage()]);
-            
-    //         return redirect()->back()->with('error', 'An error occurred while fetching transactions.');
-    //     }
-    // }
+//             $enquiryQuery->where(function($q) use ($search) {
+//                 $q->where('name', 'like', "%{$search}%")
+//                   ->orWhere('telephone_number', 'like', "%{$search}%");
+//             });
+//         }
 
-    public function getTransactions(Request $request) {
-    try {
-        $search = $request->input('search');
+//         // Get all records without pagination first
+//         // $transactions = $query->latest()->get();
+//         $matureTransactions = $matureQuery->latest()->get();
+//         $enquiryPayments = $enquiryQuery->where('bought_forms', 'Yes')->get();
 
-        $query = FeesPaid::query();
-        $matureQuery = MatureStudent::query();
-        $enquiryQuery = Enquiry::query();     
+//         // Transform each collection to have consistent structure
+//         $normalizedTransactions = $payments->map(function($transaction) {
+//             return [
+//                 'id' => $transaction->id,
+//                 'type' => 'regular',
+//                 'name' => $transaction->student_name,
+//                 'index_number' => $transaction->student_index_number,
+//                 'amount' => $transaction->amount ?? null,
+//                 'balance' => $transaction->balance ?? null,
+//                 'created_at' => $transaction->created_at,
+//                 'original_record' => $transaction
+//             ];
+//         });
 
-          if (!empty($search)) {
-            $query->where('student_index_number', 'like', "%{$search}%")
-                  ->orWhere('student_name', 'like', "%{$search}%");
+//         $normalizedMatureTransactions = $matureTransactions->map(function($transaction) {
+//             return [
+//                 'id' => $transaction->id,
+//                 'type' => 'mature',
+//                 'name' => $transaction->name,
+//                 'index_number' => $transaction->mature_index_number,
+//                 'amount' => $transaction->amount ?? null,
+//                 'created_at' => $transaction->created_at,
+//                 'original_record' => $transaction,
+//                 'balance' => $transaction->balance ?? null,
+//             ];
+//         });
 
-            $matureQuery->where('name', 'like', "%{$search}%")
-                ->orWhere('mature_index_number','like',"%{$search}%");
+//         $normalizedEnquiryPayments = $enquiryPayments->map(function($payment) {
+//             return [
+//                 'id' => $payment->id,
+//                 'type' => 'enquiry',
+//                 'name' => $payment->name ?? $payment->full_name ?? null,
+//                 'index_number' => $payment->reference_number ?? null,
+//                 'amount' => $payment->form_fee ?? $payment->amount ?? null,
+//                 'created_at' => $payment->created_at,
+//                 'telephone_number' => $payment->telephone_number ?? null,
+//                 'original_record' => $payment
+//             ];
+//         });
 
-            $enquiryQuery->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('telephone_number', 'like', "%{$search}%");
-            });
-        }
+//         // Combine all collections and sort by created_at descending
+//         $combinedTransactions = $normalizedTransactions
+//             ->concat($normalizedMatureTransactions)
+//             ->concat($normalizedEnquiryPayments)
+//             ->sortByDesc('created_at')
+//             ->values(); // Reset array keys
 
-        // Get all records without pagination first
-        $transactions = $query->latest()->get();
-        $matureTransactions = $matureQuery->latest()->get();
-        $enquiryPayments = $enquiryQuery->where('bought_forms', 'Yes')->get();
+//         // Manual pagination
+//         $perPage = 12; // Total items per page
+//         $currentPage = request()->get('page', 1);
+//         $offset = ($currentPage - 1) * $perPage;
+//         $paginatedItems = $combinedTransactions->slice($offset, $perPage);
 
-        // Transform each collection to have consistent structure
-        $normalizedTransactions = $transactions->map(function($transaction) {
-            return [
-                'id' => $transaction->id,
-                'type' => 'regular',
-                'name' => $transaction->student_name,
-                'index_number' => $transaction->student_index_number,
-                'amount' => $transaction->amount ?? null,
-                'balance' => $transaction->balance ?? null,
-                'created_at' => $transaction->created_at,
-                'original_record' => $transaction
-            ];
-        });
+//         // Create paginator
+//         $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+//             $paginatedItems,
+//             $combinedTransactions->count(),
+//             $perPage,
+//             $currentPage,
+//             ['path' => request()->url(), 'query' => request()->query()]
+//         );
 
-        $normalizedMatureTransactions = $matureTransactions->map(function($transaction) {
-            return [
-                'id' => $transaction->id,
-                'type' => 'mature',
-                'name' => $transaction->name,
-                'index_number' => $transaction->mature_index_number,
-                'amount' => $transaction->amount ?? null,
-                'created_at' => $transaction->created_at,
-                'original_record' => $transaction,
-                'balance' => $transaction->balance ?? null,
-            ];
-        });
-
-        $normalizedEnquiryPayments = $enquiryPayments->map(function($payment) {
-            return [
-                'id' => $payment->id,
-                'type' => 'enquiry',
-                'name' => $payment->name ?? $payment->full_name ?? null,
-                'index_number' => $payment->reference_number ?? null,
-                'amount' => $payment->form_fee ?? $payment->amount ?? null,
-                'created_at' => $payment->created_at,
-                'telephone_number' => $payment->telephone_number ?? null,
-                'original_record' => $payment
-            ];
-        });
-
-        // Combine all collections and sort by created_at descending
-        $combinedTransactions = $normalizedTransactions
-            ->concat($normalizedMatureTransactions)
-            ->concat($normalizedEnquiryPayments)
-            ->sortByDesc('created_at')
-            ->values(); // Reset array keys
-
-        // Manual pagination
-        $perPage = 12; // Total items per page
-        $currentPage = request()->get('page', 1);
-        $offset = ($currentPage - 1) * $perPage;
-        $paginatedItems = $combinedTransactions->slice($offset, $perPage);
-
-        // Create paginator
-        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $paginatedItems,
-            $combinedTransactions->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-        return view('backend.fees.transactions', compact('paginator'));
-    } catch (Exception $e) {
-        Log::error("Error executing query", ["message" => $e->getMessage()]);
+//         return view('backend.fees.transactions', compact('paginator'));
+//     } catch (Exception $e) {
+//         Log::error("Error executing query", ["message" => $e->getMessage()]);
         
-        return redirect()->back()->with('error', 'An error occurred while fetching transactions.');
+//         return redirect()->back()->with('error', 'An error occurred while fetching transactions.');
+//     }
+// }
+
+    public function getTransactions(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+
+            // Regular student payments
+            $paymentsQuery = FeesPaid::with(['student.user']);
+
+            if (!empty($search)) {
+                $paymentsQuery->where(function ($query) use ($search) {
+                    $query->whereHas('student.user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('student_name', 'like', "%{$search}%");
+                });
+            }
+
+            $payments = $paymentsQuery->latest()->get();
+
+            // Mature students
+            $matureQuery = MatureStudent::query();
+            if (!empty($search)) {
+                $matureQuery->where('name', 'like', "%{$search}%")
+                    ->orWhere('mature_index_number', 'like', "%{$search}%");
+            }
+            $matureTransactions = $matureQuery->latest()->get();
+
+            // Enquiries
+            $enquiryQuery = Enquiry::query();
+            if (!empty($search)) {
+                $enquiryQuery->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('telephone_number', 'like', "%{$search}%");
+                });
+            }
+            $enquiryPayments = $enquiryQuery->where('bought_forms', 'Yes')->get();
+
+            // Normalize regular payments
+            $normalizedTransactions = $payments->map(function ($transaction) {
+                return [
+                    'id' => $transaction->id,
+                    'type' => 'regular',
+                    'name' => $transaction->student->user->name ?? $transaction->student_name,
+                    'index_number' => $transaction->student_index_number,
+                    'amount' => $transaction->amount ?? null,
+                    'balance' => $transaction->balance ?? null,
+                    'created_at' => $transaction->created_at,
+                    'original_record' => $transaction
+                ];
+            });
+
+            // Normalize mature student payments
+            $normalizedMatureTransactions = $matureTransactions->map(function ($transaction) {
+                return [
+                    'id' => $transaction->id,
+                    'type' => 'mature',
+                    'name' => $transaction->name,
+                    'index_number' => $transaction->mature_index_number,
+                    'amount' => $transaction->amount ?? null,
+                    'balance' => $transaction->balance ?? null,
+                    'created_at' => $transaction->created_at,
+                    'original_record' => $transaction
+                ];
+            });
+
+            // Normalize enquiry payments
+            $normalizedEnquiryPayments = $enquiryPayments->map(function ($payment) {
+                return [
+                    'id' => $payment->id,
+                    'type' => 'enquiry',
+                    'name' => $payment->name ?? $payment->full_name ?? null,
+                    'index_number' => $payment->reference_number ?? null,
+                    'amount' => $payment->form_fee ?? $payment->amount ?? null,
+                    'created_at' => $payment->created_at,
+                    'telephone_number' => $payment->telephone_number ?? null,
+                    'original_record' => $payment
+                ];
+            });
+
+            // Combine and sort all transactions
+            $combinedTransactions = $normalizedTransactions
+                ->concat($normalizedMatureTransactions)
+                ->concat($normalizedEnquiryPayments)
+                ->sortByDesc('created_at')
+                ->values(); // reset array keys
+
+            // Manual pagination
+            $perPage = 12;
+            $currentPage = request()->get('page', 1);
+            $offset = ($currentPage - 1) * $perPage;
+            $paginatedItems = $combinedTransactions->slice($offset, $perPage);
+
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+                $paginatedItems,
+                $combinedTransactions->count(),
+                $perPage,
+                $currentPage,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+
+            return view('backend.fees.transactions', compact('paginator'));
+        } catch (Exception $e) {
+            Log::error("Error executing query", ["message" => $e->getMessage()]);
+            return redirect()->back()->with('error', 'An error occurred while fetching transactions.');
+        }
     }
-}
+
     
 
     public function editTransactionForm($id) {
@@ -439,6 +524,16 @@ class  FeesController extends Controller
             //code...
             $transaction = FeesPaid::findOrFail($id);
 
+            // return $transaction;
+            if($transaction->student_index_number) {
+                $student = Student::where('index_number',$transaction->student_index_number)->first();
+
+                if($student) {
+                    $student->balance += $transaction->amount;
+                    $student->save();
+                }
+            }
+            
             $transaction->delete();
 
             return redirect()->back()->with('success','Transaction deleted successfully');

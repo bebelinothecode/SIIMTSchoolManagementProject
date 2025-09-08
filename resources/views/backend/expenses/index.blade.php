@@ -40,7 +40,7 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
-                    <th class="py-3 px-6 text-left">Source of Expense</th>
+                    {{-- <th class="py-3 px-6 text-left">Source of Expense</th> --}}
                     <th class="py-3 px-6 text-left">Description</th>
                     <th class="py-3 px-6 text-left">Category</th>
                     <th class="py-3 px-6 text-left">Currency</th>
@@ -58,7 +58,7 @@
             <tbody class="text-gray-600 text-sm font-light">
                 @forelse ($expenses as $expense)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->source_of_expense }}</td>
+                    {{-- <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->source_of_expense }}</td> --}}
                     <td class="py-3 px-6 text-left">{{ $expense->description_of_expense }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->category }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->currency }}</td>

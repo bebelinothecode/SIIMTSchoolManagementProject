@@ -235,6 +235,7 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::get('/show/registered/courses',[StudentController::class, 'showRegisteredCourses'])->name('show.registeredcourses');
     Route::get('/evalaute/lecturers/form',[StudentController::class, 'lecturerEvaluationForm'])->name('evaluate.lecturersform');
     Route::post('/submit/evaluation',[StudentController::class, 'evaluateLecturer'])->name('submit.evaluation');
+    // Route::get('/school/fees',[FeesController::class, 'schoolFees'])->name('schoolfees.index');                 
 });
 
 // Route::group(['middleware' => ['auth','role:frontdesk']], function () {

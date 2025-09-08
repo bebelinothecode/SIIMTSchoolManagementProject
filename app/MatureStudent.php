@@ -26,4 +26,9 @@ class MatureStudent extends Model
     {
         return $this->belongsTo(Grade::class, 'course_id');
     }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtoupper($value);
+    }
 }
