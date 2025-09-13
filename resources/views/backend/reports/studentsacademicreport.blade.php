@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students Report(Academic)</title>
+    <title>Students Report</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -84,9 +84,15 @@
                 <img src="{{asset('logo\SIIMT-logo.png')}}" alt="Institution Logo" class="logo">
             </div>
             <h2 class="report-title">SIIMT UNIVERSITY COLLEGE</h2>
-            <h5 class="report-title">STUDENTS REPORT (ACADEMIC)</h5>
+            <h5 class="report-title">STUDENTS REPORT</h5>
             <div class="report-date">
                 <i class="far fa-calendar-alt"></i> Generated on: {{ \Carbon\Carbon::now()->format('F j, Y h:i A') }}
+            </div>
+            <!-- Download Button -->
+            <div class="text-right mt-2">
+                <a href="{{ route('students.report.download', request()->all()) }}" class="btn btn-success">
+                    <i class="fas fa-download"></i> Download Report
+                </a>
             </div>
         </div>
 
@@ -106,10 +112,10 @@
                         <span class="badge badge-primary">{{ $semester }}</span>
                     </div>
                 @endif
-                @if ($courseAcademic)
+                @if ($acaProf)
                     <div class="col-md-3">
-                        <strong>Course:</strong><br>
-                        <span class="badge badge-primary">{{ $courseAcademic }}</span>
+                        <strong>Course/Diploma:</strong><br>
+                        <span class="badge badge-primary">{{ $acaProf }}</span>
                     </div>
                 @endif
                 @if ($branch)
@@ -118,11 +124,17 @@
                         <span class="badge badge-primary">{{ $branch }}</span>
                     </div>
                 @endif
+                  @if ($nationality)
+                    <div class="col-md-3">
+                        <strong>Nationality:</strong><br>
+                        <span class="badge badge-primary">{{ $nationality }}</span>
+                    </div>
+                @endif
                 
-                @if ($totalCount)
+                @if ($totalStudents)
                     <div class="col-md-3">
                         <strong>Total Student Count:</strong><br>
-                        <span class="badge badge-primary">{{ $totalCount }}</span>
+                        <span class="badge badge-primary">{{ $totalStudents }}</span>
                     </div>
                 @endif
             </div>
@@ -136,8 +148,7 @@
                             <tr>
                                 <th>Index No.</th>
                                 <th>Student Name</th>
-                                <th>Level</th>
-                                <th>Semester</th>
+                                <th>Fees</th>
                                 <th>Balance</th>
                             </tr>
                         </thead>
@@ -145,9 +156,8 @@
                             @foreach ($students as $student)
                                 <tr>
                                     <td>{{ $student->index_number }}</td>
-                                    <td>{{ $student->user_name ?? "N/A" }}</td>
-                                    <td>{{ $student->level ?? "N/A" }}</td>
-                                    <td>{{ $student->session ?? "N/A" }}</td>
+                                    <td>{{ $student->user->name ?? "N/A" }}</td>
+                                    <td>{{ $student->course->fees ?? $student->diploma->fees ?? "N/A" }}</td>
                                     <td>{{ number_format($student->balance,2) }}</td>
                                 </tr>
                             @endforeach

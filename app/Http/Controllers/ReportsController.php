@@ -23,11 +23,11 @@ use Illuminate\Support\Facades\Validator;
 
 class ReportsController extends Controller
 {
-    public function getReportsForm(Request $request) {
-        $diplomas = Diploma::all();
+    // public function getReportsForm(Request $request) {
+    //     $diplomas = Diploma::all();
 
-        return view('backend.reports.students', compact('diplomas'));
-    }
+    //     return view('backend.reports.students', compact('diplomas'));
+    // }
 
     public function example() {
         $admins = User::role('Admin')->get();
@@ -1904,6 +1904,13 @@ DECIMAL(10,2))')) ?? 0;
         'Professional']);
         }
         return $query->sum(DB::raw('CAST(amount AS DECIMAL(10,2))')) ?? 0;
+    }
+
+    public function enquiryReportsForm() {
+        $courses = Grade::all();
+        $diplomas = Diploma::all();
+
+        return view('backend.reports.enquiryreportsform', compact('courses', 'diplomas'));
     }
 
 }

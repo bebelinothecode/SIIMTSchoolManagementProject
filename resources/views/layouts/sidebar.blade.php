@@ -361,18 +361,18 @@
                 </svg>
             </a>
             <div id="librarySubmenu4" class="hidden pl-6 mt-2" aria-hidden="true">
-                <a href="{{ route('reports.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                <a href="{{ route('students.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                     <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                         <path fill="currentColor" d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/>
                     </svg>
-                    <span class="ml-2 text-sm font-semibold">Student Reports (Professional)</span>
+                    <span class="ml-2 text-sm font-semibold">Student Reports</span>
                 </a>
-                <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                {{-- <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                     <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                         <path fill="currentColor" d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/>
                     </svg>
                     <span class="ml-2 text-sm font-semibold">Student Reports (Academic)</span>
-                </a>
+                </a> --}}
                 <a href="{{ route('get.deferlistform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                     <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         <path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/>
@@ -402,6 +402,12 @@
                         <path fill="currentColor" d="M0 96C0 60.7 28.7 32 64 32H512c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zm64 64V416H512V160H64zm96 64c0-17.7 14.3-32 32-32H384c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H192c-17.7 0-32-14.3-32-32V224zm32-16c-8.8 0-16 7.2-16 16v64c0 8.8 7.2 16 16 16H384c8.8 0 16-7.2 16-16V224c0-8.8-7.2-16-16-16H192zM144 352a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
                     </svg>
                     <span class="ml-2 text-sm font-semibold">Balance Reports</span>
+                </a>
+                <a href="{{ route('enquiryreport.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                    <path fill="currentColor" d="M512 80c8.8 0 16 7.2 16 16v32H48V96c0-8.8 7.2-16 16-16H512zm16 144V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V224H528zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm56 304c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H248z"/>
+                </svg>
+                <span class="ml-2 text-sm font-semibold">Enquiry Reports</span>
                 </a>
                 
             </div>
@@ -787,12 +793,12 @@
                     </svg>
                 </a>
                 <div id="librarySubmenu4" class="hidden pl-6 mt-2" aria-hidden="true">
-                    <a href="{{ route('reports.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                        <span class="ml-2 text-sm font-semibold">Student Reports(Professional)</span>
+                    <a href="{{ route('students.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                        <span class="ml-2 text-sm font-semibold">Student Reports</span>
                     </a>
-                    <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    {{-- <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <span class="ml-2 text-sm font-semibold">Student Reports(Academic)</span>
-                    </a>
+                    </a> --}}
                     {{-- <a href="{{ route('teacherreport.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                         <span class="ml-2 text-sm font-semibold">Teacher Reports</span>
                     </a> --}}

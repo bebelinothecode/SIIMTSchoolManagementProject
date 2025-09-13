@@ -39,7 +39,9 @@ class Student extends Model
         'balance',
         'last_level',
         'last_session',
-        'branch'
+        'branch',
+        'student_type',
+        'admission_cycle'
     ];
 
     public function user() 

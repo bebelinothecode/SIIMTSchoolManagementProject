@@ -125,6 +125,8 @@ class StudentController extends Controller
                 'parent_phonenumber' => 'required|string|max:15',
                 'student_category' => 'required|in:Professional,Academic',
                 'scholarship' => 'required|in:Yes,No',
+                'student_type' => 'required|in:Local,Foreign',
+                'admission_cycle' => 'required|in:February,August',
                 'scholarship_amount' => 'nullable|numeric|required_if:scholarship,Yes'
             ];
 
@@ -200,6 +202,8 @@ class StudentController extends Controller
                     'balance' => $validatedData['fees_prof'],
                     'duration_prof' => $validatedData['duration_prof'],
                     'Scholarship' => $validatedData['scholarship'],
+                    'student_type' => $validatedData['student_type'],
+                    'admission_cycle' => $validatedData['admission_cycle'],
                     'Scholarship_amount' => $validatedData['scholarship_amount']
                 ]);
             }  elseif ($request->student_category === 'Academic') {
@@ -232,6 +236,8 @@ class StudentController extends Controller
                     'balance' => $validatedData['fees'],
                     'level' => $validatedData['level'],
                     'session' => $validatedData['session'],
+                    'student_type' => $validatedData['student_type'],
+                    'admission_cycle' => $validatedData['admission_cycle'],
                     'academicyear' => $validatedData['academicyear'],
                     'Scholarship' => $validatedData['scholarship'],
                     'Scholarship_amount' => $validatedData['scholarship_amount']
@@ -496,9 +502,9 @@ class StudentController extends Controller
 
     public function storeEnquiry(Request $request) {
         try {
-
-        $receiptNumber = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8)); 
-       
+        // dd($request->all);
+        
+        
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -509,8 +515,10 @@ class StudentController extends Controller
             'currency' => 'nullable|string',
             'amount_paid' => 'nullable|numeric',
             'User' => 'nullable|string',
-            'receipt_number'=> $receiptNumber
+            'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
         ]);
+
+        $receiptNumber = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8));
 
         $existingEnquiry = Enquiry::where('receipt_number', $receiptNumber)->first();
 
@@ -527,6 +535,8 @@ class StudentController extends Controller
             'bought_forms' => $validatedData['bought_forms'],
             'currency' => $validatedData['currency'],
             'amount' => $validatedData['amount_paid'],
+            'branch' => $validatedData['branch'],
+            'receipt_number' => $receiptNumber,
             'User' => Auth::user()->name
         ]);
 
@@ -1727,5 +1737,70 @@ class StudentController extends Controller
 
             return redirect()->back()->with('error', 'Something went wrong: '.$th->getMessage());
         }
+    }
+
+    public function studentsReportsForm() {
+        $grades = Grade::all();
+        $diplomas = Diploma::all();
+
+        return view('backend.reports.students',compact('grades','diplomas'));
+    }
+
+    public function generateStudentsReport(Request $request) {
+        // dd($request->all());
+        $validatedData = $request->validate([
+            'acaProf' => 'required|in:Academic,Professional,Total',
+            'diploma_id' => 'nullable|exists:diploma,id',
+            'course_id' => 'nullable|exists:grades,id',
+            'level' => 'nullable|in:100,200,300,400',
+            'semester' => 'nullable|in:1,2',
+            'nationality' => 'nullable|in:Local,Foreign,Total',
+            'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
+        ]);
+
+        $acaProf = $validatedData['acaProf'];
+        $diploma_id = $validatedData['diploma_id']; 
+        $course_id = $validatedData['course_id'];
+        $level = $validatedData['level'];
+        $semester = $validatedData['semester'];
+        $nationality = $validatedData['nationality'];
+        $branch = $validatedData['branch'];
+
+        $query = Student::with(['user','course','diploma']);
+
+        if($acaProf !== 'Total') {
+            $query->where('student_category', $acaProf);
+        } else {
+            $query->whereIn('student_category', ['Academic', 'Professional']);
+        }
+        if (!empty($diploma_id)) {
+            $query->where('course_id_prof', $diploma_id);
+        }
+        if (!empty($course_id)) {
+            $query->where('course_id', $course_id);
+        }
+        if (!empty($level)) {
+            $query->where('level', $level);
+        }
+        if (!empty($semester)) {
+            $query->where('session', $semester);
+        }
+
+       if (!empty($nationality)) {
+        if ($nationality !== 'Total') {
+            $query->where('student_type', $nationality);
+        } else {
+            $query->whereIn('student_type', ['Local', 'Foreign']);
+         }
+        }
+        if (!empty($branch)) {
+            $query->where('branch', $branch);
+        }
+
+        $students = $query->get();
+
+        $totalStudents = $students->count();
+
+        return view('backend.reports.studentsacademicreport',compact('students','acaProf','diploma_id','course_id','level','semester','nationality','branch','totalStudents'));
     }
 }

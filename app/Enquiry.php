@@ -18,10 +18,16 @@ class Enquiry extends Model
         'bought_forms',
         'currency',
         'amount',
+        'branch',
         'User',
         'receipt_number'
     ];
 
     use HasFactory;
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtoupper($value);
+    }
 }
 

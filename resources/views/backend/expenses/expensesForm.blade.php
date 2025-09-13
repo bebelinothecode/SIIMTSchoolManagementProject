@@ -27,10 +27,26 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <select name="source_of_expense" id="source_of_expense" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight m-3 focus:outline-none focus:bg-white focus:border-gray-500" required>
+                    <select name="source_of_expense" id="source_of_expense" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight m-3 focus:outline-none focus:bg-white focus:border-gray-500">
                         <option value="">--Select one--</option>
                         <option value="Academic">Academic</option>
                         <option value="Professional">Professional</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="md:flex md:items-center mb-6">
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="branch">
+                        Branch
+                    </label>
+                </div>
+                <div class="md:w-2/3">
+                    <select name="branch" id="branch" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight m-3 focus:outline-none focus:bg-white focus:border-gray-500" required>
+                        <option value="">--Select branch--</option>
+                        <option value="Kanda">Kanda</option>
+                        <option value="Spintex">Spintex</option>
+                        <option value="Kasoa">Kasoa</option>
                     </select>
                 </div>
             </div>
@@ -52,10 +68,10 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <select name="expense_category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expense_category">
+                    <select name="expense_category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expense_category" required>
                         <option value="">--Select Category--</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->expense_category }}">{{ $category->expense_category }}</option>
+                            <option value="{{ $category->id }}">{{ $category->expense_category }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -83,7 +99,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <input type="number" name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" placeholder="Enter cash amount" step="0.01" min="0">
+                    <input type="number" name="amount" id="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" placeholder="Enter cash amount" step="0.01" min="0" required>
                 </div>
             </div>
 
@@ -216,9 +232,7 @@
                 conditionalFieldsMobileMoney.classList.remove('hidden');
             } else if (selectedMode === 'Bank Transfer') {
                 conditionalFieldsBankDetails.classList.remove('hidden');
-            } else if(selectedMode === 'Cash') {
-                conditionalFieldsCash.classList.remove('hidden');
-            }
+            } 
         });
     });
 </script>

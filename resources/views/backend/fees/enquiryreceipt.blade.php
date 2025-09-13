@@ -131,6 +131,10 @@
                     <th>Amount Paid</th>
                     <td> {{ number_format( $enquiry->amount, 2) }}</td>
                 </tr>
+                <tr>
+                    <th>Receipt Number</th>
+                    <td> {{ number_format( $enquiry->receipt_number, 2) }}</td>
+                </tr>
             </table>
         </div>
 
@@ -139,7 +143,8 @@
 
         <div class="footer">
             <p>Thank you for your payment!</p>
-            <p>For any inquiries, please contact us at <strong>(+233) 057 080 1631</strong></p>        
+            <p>For any inquiries, please contact us at <strong>(+233) 057 080 1631</strong></p> 
+            <p>This is a system generated receipt, no need for a signature</p>         
             <p>&copy; {{ now()->format('Y') }} SIIMT University College. All rights reserved.</p>
         </div>
     </div>
