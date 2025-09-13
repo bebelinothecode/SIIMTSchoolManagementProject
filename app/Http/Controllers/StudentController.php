@@ -1281,20 +1281,25 @@ class StudentController extends Controller
 
     public function restoreDeletedStudent($id)
     {
-        $student = Student::withTrashed()->with('user')->findOrFail($id);
+        try {
+            //code...
+            $student = Student::withTrashed()->with('user')->findOrFail($id);
 
-        // return $student;
-        $student->restore();
-        // $student->assignRole('Student');
+            // return $student;
+            $student->restore();
+            // $student->assignRole('Student');
 
-        if ($student->user && $student->user->trashed()) {
-            $student->user->restore();
+            if ($student->user && $student->user->trashed()) {
+                $student->user->restore();
+            }
+
+            return redirect()->back()->with('success', 'Student restored successfully.');
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
         }
-
-        return response()->json([
-            'message' => 'Student and related user restored successfully.',
-            'student' => $student
-        ]);
     }
 
     public function matureStudentsIndex(Request $request) {
