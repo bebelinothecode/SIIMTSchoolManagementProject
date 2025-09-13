@@ -175,6 +175,11 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('expense/category/update/{id}',[ExpensesController::class, 'updateExpenseCategory'])->name('update.expensecategory');
     Route::get('expense/category/create/form',[ExpensesController::class, 'createExpenseCategoryForm'])->name('create.expensecategoryform');
     Route::post('expense/category/create',[ExpensesController::class, 'createExpenseCategory'])->name('create.expensecategory');
+    Route::get('students/reports/form',[StudentController::class, 'studentsReportsForm'])->name('students.reportsform');
+    Route::post('/generate/students/reports',[StudentController::class, 'generateStudentsReport'])->name('students.report');
+    Route::get('/students/report/download', [StudentController::class, 'downloadStudentsReport'])->name('students.report.download');
+    Route::get('enquiry/reports/form',[ReportsController::class, 'enquiryReportsForm'])->name('enquiryreport.form');
+    // Route::get('/reports/download/{type}', [ReportController::class, 'downloadReport'])->name('reports.download');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

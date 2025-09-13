@@ -22,7 +22,7 @@ class ExpensesController extends Controller
         try {
             // dd($request->all());
             $validatedData = $request->validate([
-                "source_of_expense" => 'required|string',
+                "source_of_expense" => 'nullable|string',
                 "description" => 'required|string|max:300',
                 'expense_category' => 'required|string',
                 "currency" => "required|string|in:Ghana Cedi,Dollar",
@@ -35,7 +35,7 @@ class ExpensesController extends Controller
             ]);
 
             Expenses::create([
-                'source_of_expense'=> $validatedData['source_of_expense'],
+                'source_of_expense'=> $validatedData['source_of_expense'] ?? null,
                 'description_of_expense' => $validatedData['description'],
                 'category' => $validatedData['expense_category'],
                 'currency' => $validatedData['currency'],
@@ -61,22 +61,46 @@ class ExpensesController extends Controller
         return view('backend.reports.expensesreportform', compact('categorys'));
     }
     
+    // public function indexTable(Request $request) 
+    //     {
+    //         $search = $request->input('search');
+    //         $query = Expenses::with('expenseCategory');
+           
+
+    //         if($request->has('search') && $request->search != '') {
+    //             $search = $request->search;
+    //             $query->where(function($q) use ($search) {
+    //                 $q->where('amount', 'like', '%' . $search . '%')
+    //                     ->orWhere('category', 'like', '%' . $search . '%')
+    //                 ->orWhere('mode_of_payment', 'like', '%' . $search . '%');
+    //             });
+    //         }
+
+    //         $expenses = $query->latest()->paginate(10);
+
+    //         return view('backend.expenses.index', compact('expenses'));
+    // }
+
     public function indexTable(Request $request) 
-        {
-            $query = Expenses::query();
+    {
+        $search = $request->input('search');
+        $query = Expenses::with('expenseCategory');
 
-            if($request->has('search') && $request->search != '') {
-                $search = $request->search;
-                $query->where(function($q) use ($search) {
-                    $q->where('amount', 'like', '%' . $search . '%')
-                    ->orWhere('category', 'like', '%' . $search . '%')
-                    ->orWhere('mode_of_payment', 'like', '%' . $search . '%');
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('amount', 'like', '%' . $search . '%')
+                ->orWhere('category', 'like', '%' . $search . '%')
+                ->orWhere('mode_of_payment', 'like', '%' . $search . '%')
+                // Search by related expense category name
+                ->orWhereHas('expenseCategory', function($catQuery) use ($search) {
+                    $catQuery->where('expense_category', 'like', '%' . $search . '%');
                 });
-            }
+            });
+        }
 
-            $expenses = $query->latest()->paginate(10);
+        $expenses = $query->latest()->paginate(10);
 
-            return view('backend.expenses.index', compact('expenses'));
+        return view('backend.expenses.index', compact('expenses'));
     }
 
     public function generateExpensesReport(Request $request)

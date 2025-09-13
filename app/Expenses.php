@@ -23,7 +23,8 @@ class Expenses extends Model
         'bank_details',
         'cash_details',
         'BackDate',
-        'branch'
+        'branch',
+        'expensecategory_id'
     ];
 
     // public function category()
@@ -34,6 +35,11 @@ class Expenses extends Model
     public function setNameAttribute($value)
     {
         $this->attributes['category'] = strtoupper($value);
+    }
+
+    public function expenseCategory()
+    {
+        return $this->belongsTo(ExpenseCategory::class, 'expensecategory_id');
     }
 
 }

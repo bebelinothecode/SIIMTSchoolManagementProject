@@ -19,4 +19,9 @@ class ExpenseCategory extends Model
     {
         $this->attributes['expense_category'] = strtoupper($value);
     }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expenses::class, 'expensecategory_id');
+    }
 }

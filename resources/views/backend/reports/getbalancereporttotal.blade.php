@@ -237,90 +237,88 @@
             }
         }
 
-        /* Print Styles */
+        /* Print Styles - Minimal Ink */
         @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-
             body {
                 background: white !important;
+                color: black !important;
                 padding: 0;
-                font-size: 14px;
+                font-size: 13px;
                 line-height: 1.3;
             }
 
             .container {
-                box-shadow: none;
-                border-radius: 0;
-                max-width: none;
-                margin: 0;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                border: 1px solid #ccc !important;
             }
 
             .header {
-                background: #4c51bf !important;
-                color: white !important;
-                padding: 20px;
-                -webkit-print-color-adjust: exact;
+                background: white !important;
+                color: black !important;
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
             }
 
-            .content {
-                padding: 15px;
+            th {
+                background: #f0f0f0 !important;
+                color: black !important;
+                font-weight: bold;
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            td {
+                border: 1px solid #ddd !important;
+                color: black !important;
+                padding: 6px;
+            }
+
+            tr:nth-child(even),
+            tr:hover {
+                background: white !important;
+            }
+
+            tfoot td {
+                background: #f0f0f0 !important;
+                color: black !important;
+                font-weight: bold;
+                border-top: 2px solid #000 !important;
+            }
+
+            .summary-card {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                color: black !important;
+                page-break-inside: avoid;
+            }
+
+            .summary-card::before,
+            .table-icon {
+                display: none !important;
+            }
+
+            .amount,
+            .status-positive,
+            .status-negative {
+                color: black !important;
+                font-weight: bold;
+            }
+
+            .total-amount {
+                background: #f0f0f0 !important;
+                color: black !important;
+                font-weight: bold;
+                border: 1px solid #000 !important;
+                padding: 4px;
             }
 
             .table-section {
                 page-break-inside: avoid;
-                margin-bottom: 30px;
             }
 
-            .table-header {
-                page-break-after: avoid;
-            }
-
-            table {
-                page-break-inside: auto;
-                font-size: 13px;
-                margin-bottom: 15px;
-            }
-
-            th {
-                background: #4c51bf !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-                padding: 10px 8px;
-            }
-
-            td {
-                padding: 8px;
-            }
-
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
-
-            tfoot td {
-                background: #2d3748 !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-            }
-
-            .summary-card {
-                background: #f8f9ff !important;
-                border: 2px solid #e3e8ff !important;
-                -webkit-print-color-adjust: exact;
-                page-break-inside: avoid;
-            }
-
-            /* Ensure page breaks */
             .page-break {
                 page-break-before: always;
-            }
-
-            /* Hide hover effects in print */
-            tr:hover {
-                background-color: inherit !important;
             }
         }
     </style>
