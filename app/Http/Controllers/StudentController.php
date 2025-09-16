@@ -502,9 +502,6 @@ class StudentController extends Controller
 
     public function storeEnquiry(Request $request) {
         try {
-        // dd($request->all);
-        
-        
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -542,11 +539,6 @@ class StudentController extends Controller
 
         if($validatedData['bought_forms'] === 'Yes') {
             return view('backend.fees.enquiryreceipt',compact('enquiry','receiptNumber'));
-            // return response()->json([
-            //     'status' => 'success',
-            //     'redirect_url' => route('enquiry.receipt', ['id' => $enquiry->id]),
-            //     'message' => 'Enquiry saved and receipt generated.'
-            // ]);
         }
 
         return redirect()->back()->with('success', 'Enquiry created successfully');
@@ -1085,6 +1077,67 @@ class StudentController extends Controller
         return view('backend.students.changestatus',compact('id','student'));
     }
 
+//     public function changeStudentsStatus(Request $request, $id)
+// {
+//     $validatedData = $request->validate([
+//         'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
+//     ]);
+
+//     try {
+//         $student = Student::findOrFail($id);
+
+//         switch ($validatedData['student_defer']) {
+//             case 'defer':
+//                 DB::transaction(function () use ($student) {
+//                     // Insert only the fields you need
+//                     Defer::create([
+//                         'student_id' => $student->id,
+//                         'name' => $student->name,
+//                         'course' => $student->course,
+//                         'expected_start_date' => $student->expected_start_date,
+//                         // add more fields as required
+//                     ]);
+
+//                     // soft delete (if using SoftDeletes) or hard delete
+//                     $student->delete();
+//                 });
+
+//                 return redirect()->back()->with('success', 'Student moved to defer list successfully');
+
+//             case 'Completed':
+//                 if ($student->student_category === 'Professional') {
+//                     if ((int) $student->balance === 0) {
+//                         $student->status = 'Completed';
+//                         $student->save();
+//                         return redirect()->back()->with('success', 'Student status updated to Completed successfully');
+//                     } else {
+//                         return redirect()->back()->with('error', 'This professional student has an outstanding balance. Please clear the balance before marking as Completed.');
+//                     }
+//                 }
+//                 break;
+
+//             case 'withdrawn':
+//                 $student->status = 'Withdrawn';
+//                 $student->save();
+//                 return redirect()->back()->with('success', 'Student marked as Withdrawn successfully');
+
+//             case 'expelled':
+//                 $student->status = 'Expelled';
+//                 $student->save();
+//                 return redirect()->back()->with('success', 'Student marked as Expelled successfully');
+//         }
+
+//         return redirect()->back()->with('error', 'Invalid status update request.');
+
+//     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+//         return redirect()->back()->with('error', 'Student not found.');
+//     } catch (Exception $e) {
+//         Log::error('Error changing student status: ' . $e->getMessage());
+//         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+//     }
+// }
+
+
     public function changeStudentsStatus(Request $request, $id)
     {
         // dd($request->all());
@@ -1097,14 +1150,13 @@ class StudentController extends Controller
             $student = Student::findOrFail($id);
 
             if ($validatedData['student_defer'] === 'defer') {
-                DB::transaction(function () use ($id) {
-                    $student = Student::findOrFail($id);
+                $student = Student::findOrFail($id);
 
-                    // Defer::create($student->toArray());
-                   Defer::create($student->toArray());
-                    
-                   $student->delete();
-                });
+                $user = User::findOrFail($student->user_id);
+
+                Defer::create($student->toArray());
+
+                $user->student()->delete();
 
                 return redirect()->back()->with('success', 'Student moved to defer list successfully');
             } elseif (($validatedData['student_defer'] === 'Completed') && ((int)$student->balance === 0) && ($student->student_category === 'Professional')) {
