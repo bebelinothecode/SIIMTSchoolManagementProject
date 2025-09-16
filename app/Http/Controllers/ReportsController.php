@@ -1907,10 +1907,50 @@ DECIMAL(10,2))')) ?? 0;
     }
 
     public function enquiryReportsForm() {
-        $courses = Grade::all();
+        $grades = Grade::all();
         $diplomas = Diploma::all();
 
-        return view('backend.reports.enquiryreportsform', compact('courses', 'diplomas'));
+        return view('backend.reports.enquiryreportsform', compact('grades', 'diplomas'));
+    }
+
+    public function generateEnquiryReport(Request $request) {
+        dd($request->all());
+        $validatedData = $request->validate([
+            'acaProf' => 'required|in:Academic,Professional',
+            'diploma_id' => 'nullable|exists:diploma,id',
+            'course_id' => 'nullable|exists:grades,id',
+            'current_date' => 'nullable|date',
+            'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
+        ]);
+
+        $enquires = StudentEnquire::query();
+
+        if ($request->filled('acaProf')) {
+            $enquires->where('type_of_course', $request->acaProf);
+        }
+
+        if ($request->filled('diploma_id')) {
+            $enquires->where('diploma_id', $request->diploma_id);
+        }
+
+        if ($request->filled('course_id')) {
+            $enquires->where('course_id', $request->course_id);
+        }
+
+        if ($request->filled('current_date')) {
+            $enquires->whereDate('created_at', $request->current_date);
+        }
+
+        if ($request->filled('branch')) {
+            $enquires->where('branch', $request->branch);
+        }
+
+        $enquires = $enquires->get();
+
+    }
+
+    public function canteenReportForm() {
+        // return view('backend.reports.canteenreportform');   
     }
 
 }

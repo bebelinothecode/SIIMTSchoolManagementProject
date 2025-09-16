@@ -178,7 +178,9 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('students/reports/form',[StudentController::class, 'studentsReportsForm'])->name('students.reportsform');
     Route::post('/generate/students/reports',[StudentController::class, 'generateStudentsReport'])->name('students.report');
     Route::get('/students/report/download', [StudentController::class, 'downloadStudentsReport'])->name('students.report.download');
-    Route::get('enquiry/reports/form',[ReportsController::class, 'enquiryReportsForm'])->name('enquiryreport.form');
+    Route::post('enquiry/reports/form',[ReportsController::class, 'enquiryReportsForm'])->name('enquiryreport.form');
+    Route::post('/generate/enquiry/reports',[ReportsController::class, 'generateEnquiryReport'])->name('enquiry.report');
+    Route::get('/canteen/index',[ExpensesController::class, 'canteenIndex'])->name('canteen.index');
     // Route::get('/reports/download/{type}', [ReportController::class, 'downloadReport'])->name('reports.download');
     
     Route::resource('assignrole', 'RoleAssign');
