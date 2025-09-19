@@ -419,7 +419,7 @@
                 </div>
                 <div class="md:w-2/3 block text-gray-600 font-bold">
                     <div class="relative">
-                        <select name="admission_cycle" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
+                        <select name="admission_cycle" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                             <option value="">--Select Cycle--</option>
                             <option value="February">February</option>
                             <option value="August">August</option>                                

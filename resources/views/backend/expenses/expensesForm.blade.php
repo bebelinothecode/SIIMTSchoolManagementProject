@@ -68,7 +68,7 @@
                     </label>
                 </div>
                 <div class="md:w-2/3">
-                    <select name="expense_category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expense_category" required>
+                    <select name="expensecategory_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expensecategory_id" required>
                         <option value="">--Select Category--</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->expense_category }}</option>

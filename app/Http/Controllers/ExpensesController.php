@@ -25,7 +25,7 @@ class ExpensesController extends Controller
             $validatedData = $request->validate([
                 "source_of_expense" => 'nullable|string',
                 "description" => 'required|string|max:300',
-                'expense_category' => 'required|string',
+                'expensecategory_id' => 'required|integer|exists:expense_category,id',
                 "currency" => "required|string|in:Ghana Cedi,Dollar",
                 "mode_of_payment" => 'required|string',
                 'cheque_number' => 'nullable|string',
@@ -38,7 +38,7 @@ class ExpensesController extends Controller
             Expenses::create([
                 'source_of_expense'=> $validatedData['source_of_expense'] ?? null,
                 'description_of_expense' => $validatedData['description'],
-                'category' => $validatedData['expense_category'],
+                'expensecategory_id' => $validatedData['expensecategory_id'],
                 'currency' => $validatedData['currency'],
                 'amount' => $validatedData['amount'],
                 'mode_of_payment' => $validatedData['mode_of_payment'],
@@ -100,6 +100,9 @@ class ExpensesController extends Controller
         }
 
         $expenses = $query->latest()->paginate(10);
+        // $expenses = $query->get();
+
+        // return $expenses;
 
         return view('backend.expenses.index', compact('expenses'));
     }
