@@ -383,64 +383,141 @@ class StudentController extends Controller
         return $students;
     }
 
-    // public function studentEnquiry(Request $request)
-    // {
-    //     // Get the sorting parameter from the request
-    //     $sort = $request->query('sort');
-
-    //     // Query the enquiries
-    //     $enquiries = Enquiry::when($sort, function ($query, $sort) {
-    //         // Filter by type_of_course if a sort value is provided
-    //         return $query->where('type_of_course', $sort);
-    //     })
-    //     ->latest() // Sort by the latest entries
-    //     ->paginate(5); // Paginate the results
-
-    //     $searchTerm = $request->input('search');
-
-    //     $results = Enquiry::where(function ($query) use ($searchTerm) {
-    //         $query->where('name', 'LIKE', "%{$searchTerm}%")
-    //             ->orWhere('telephone_number', 'LIKE', "%{$searchTerm}%")
-    //             ->orWhere('interested_course', 'LIKE', "%{$searchTerm}%")
-    //             ->orWhere('bought_forms', 'LIKE', "%{$searchTerm}%")
-    //             ->orWhere('amount', 'LIKE', "%{$searchTerm}%");
-    //     })->get();
-
-    //     // Return the view with the enquiries data
-    //     return view('backend.students.enquiry', compact('enquiries'));
-    // }
-
     public function studentEnquiry(Request $request)
     {
-        try {
-            //code...
-            $query = Enquiry::query();
+        // Get the sorting parameter from the request
+        $sort = $request->query('sort');
 
-            if($request->has('search') && !empty($request->search)) {
-                $searchTerm = $request->search;
-                
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('name', 'like', "%{$searchTerm}%")
-                      ->orWhere('telephone_number', 'like', "%{$searchTerm}%")
-                      ->orWhere('interested_course', 'like', "%{$searchTerm}%")
-                      ->orWhere('type_of_course', 'like', "%{$searchTerm}%");
-                });
-            }
+        // Query the enquiries
+        $enquiries = Enquiry::with(['diploma','course'])->when($sort, function ($query, $sort) {
+            // Filter by type_of_course if a sort value is provided
+            return $query->where('type_of_course', $sort);
+        })
+        ->latest() // Sort by the latest entries
+        ->paginate(5); // Paginate the results
 
-            // Apply sorting filter if sort parameter is present
-            if ($request->has('sort') && !empty($request->sort)) {
-                $query->where('type_of_course', $request->sort);
-            }
+        // return $enquiries;
 
-            // Order by latest first and paginate
-            $enquiries = $query->latest()->paginate(10);
+        $searchTerm = $request->input('search');
 
-            return view('backend.students.enquiry', compact('enquiries'));
-        } catch (Exception $e) {
-            //throw $th;
-            Log::error('Error searching enquiry:' . $e);
-        }
+        $results = Enquiry::where(function ($query) use ($searchTerm) {
+            $query->where('name', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('telephone_number', 'LIKE', "%{$searchTerm}%")
+                // ->orWhere('interested_course', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('bought_forms', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('amount', 'LIKE', "%{$searchTerm}%");
+        })->get();
+
+        // Return the view with the enquiries data
+        return view('backend.students.enquiry', compact('enquiries'));
     }
+
+    // public function studentEnquiry(Request $request)
+    // {
+    //     try {
+    //         //code...
+
+    //     $query = DB::table('student_enquires')
+    //         ->select(
+    //             '*',
+    //             DB::raw("CASE 
+    //                         WHEN student_enquires.type_of_course = 'Academic' THEN grade.course_name 
+    //                         WHEN student_enquires.type_of_course = 'Professional' THEN diploma.name 
+    //                     END as course_name")
+    //         )
+    //         ->leftJoin('grades', function ($join) {
+    //             $join->on('student_enquires.interested_course', '=', 'grades.id')
+    //                 ->where('student_enquires.type_of_course', 'Academic');
+    //         })
+    //         ->leftJoin('diploma', function ($join) {
+    //             $join->on('student_enquires.interested_course', '=', 'diploma.id')
+    //                 ->where('student_enquires.type_of_course', 'Professional');
+    //         });
+
+    //       return $query->get();
+
+
+    
+
+
+    //         if($request->has('search') && !empty($request->search)) {
+    //             $searchTerm = $request->search;
+                
+    //             $query->where(function($q) use ($searchTerm) {
+    //                 $q->where('name', 'like', "%{$searchTerm}%")
+    //                   ->orWhere('telephone_number', 'like', "%{$searchTerm}%")
+    //                   ->orWhere('interested_course', 'like', "%{$searchTerm}%")
+    //                   ->orWhere('type_of_course', 'like', "%{$searchTerm}%");
+    //             });
+    //         }
+
+    //         // Apply sorting filter if sort parameter is present
+    //         if ($request->has('sort') && !empty($request->sort)) {
+    //             $query->where('type_of_course', $request->sort);
+    //         }
+
+    //         // Order by latest first and paginate
+    //         $enquiries = $query->get();
+
+    //         return $enquiries;
+
+    //         return view('backend.students.enquiry', compact('enquiries'));
+    //     } catch (Exception $e) {
+    //         //throw $th;
+    //         Log::error('Error searching enquiry:' . $e);
+    //     }
+    // }
+
+//     public function studentEnquiry(Request $request)
+// {
+//     try {
+//         $query = DB::table('student_enquires')
+//             ->select(
+//                 'student_enquires.*',
+//                 DB::raw("CASE 
+//                             WHEN student_enquires.type_of_course = 'Academic' THEN grades.course_name 
+//                             WHEN student_enquires.type_of_course = 'Professional' THEN diploma.name 
+//                         END as course_name")
+//             )
+//             ->leftJoin('grades', function ($join) {
+//                 $join->on('student_enquires.interested_course', '=', 'grades.id')
+//                     ->where('student_enquires.type_of_course', '=', 'Academic'); // 👈 quotes
+//             })
+//             ->leftJoin('diploma', function ($join) {
+//                 $join->on('student_enquires.interested_course', '=', 'diploma.id')
+//                     ->where('student_enquires.type_of_course', '=', 'Professional'); // 👈 quotes
+//             });
+//             // ->get();
+
+//         // 🔎 Search filter
+//         if ($request->filled('search')) {
+//             $searchTerm = $request->search;
+//             $query->where(function($q) use ($searchTerm) {
+//                 $q->where('student_enquires.name', 'like', "%{$searchTerm}%")
+//                   ->orWhere('student_enquires.telephone_number', 'like', "%{$searchTerm}%")
+//                   ->orWhere('student_enquires.interested_course', 'like', "%{$searchTerm}%")
+//                   ->orWhere('student_enquires.type_of_course', 'like', "%{$searchTerm}%");
+//             });
+//         }
+
+//         // 🔽 Sorting filter (you probably want orderBy, not where)
+//         if ($request->filled('sort')) {
+//             $query->orderBy('student_enquires.type_of_course', $request->sort === 'desc' ? 'desc' : 'asc');
+//         }
+
+//         // ⏰ Order latest first and paginate
+//         $enquiries = $query->orderBy('student_enquires.created_at', 'desc')->paginate(15);
+
+//         return $enquiries;
+
+//         return view('backend.students.enquiry', compact('enquiries'));
+
+//     } catch (\Exception $e) {
+//         Log::error('Error searching enquiry: ' . $e->getMessage());
+//         return back()->with('error', 'Something went wrong while fetching enquiries.');
+//     }
+// }
+
 
    
 
@@ -491,27 +568,29 @@ class StudentController extends Controller
 
         $diplomas = Diploma::all();
 
-        $dropdownItems = $courses->map(function ($course) {
-            return ['id' => $course->id, 'name' => $course->course_name];
-        })->merge($diplomas->map(function ($diploma) {
-            return ['id' => $diploma->id, 'name' => $diploma->name];
-        }));
+        // $dropdownItems = $courses->map(function ($course) {
+        //     return ['id' => $course->id, 'name' => $course->course_name];
+        // })->merge($diplomas->map(function ($diploma) {
+        //     return ['id' => $diploma->id, 'name' => $diploma->name];
+        // }));
 
-        return view('backend.students.enquiryform', compact('dropdownItems'));
+        return view('backend.students.enquiryform', compact('courses','diplomas'));
     }
 
     public function storeEnquiry(Request $request) {
         try {
+            // dd($request->all());
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
-            'course' => 'required|string',
+            'diploma_id' => 'nullable|integer',
             'expected_start_date' => 'required',
             'type_of_course' => 'required',
             'bought_forms' => 'nullable|in:Yes,No',
             'currency' => 'nullable|string',
             'amount_paid' => 'nullable|numeric',
             'User' => 'nullable|string',
+            'course_id' => 'nullable|integer',
             'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
         ]);
 
@@ -526,7 +605,8 @@ class StudentController extends Controller
         $enquiry = Enquiry::create([
             'name' => $validatedData['name'],
             'telephone_number' => $validatedData['telephone_number'],
-            'interested_course' => $validatedData['course'],
+            'course_id' => $validatedData['course_id'],
+            'diploma_id' => $validatedData['diploma_id'],
             'expected_start_date' => $validatedData['expected_start_date'],
             'type_of_course' => $validatedData['type_of_course'],
             'bought_forms' => $validatedData['bought_forms'],

@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('canteen.store') }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
+            <form action="{{ route('update.canteenitem',$canteenItem->id) }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -24,7 +24,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('phone') }}">
+                        <input name="name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{$canteenItem->name ?? old('name') }}">
                         @error('name')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -37,7 +37,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <textarea name="description" id="description" placeholder="Enter here..." class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"></textarea>
+                        <textarea name="description" id="description" placeholder="Enter here..." class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">{{$canteenItem->description}}</textarea>
                         @error('description')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -50,7 +50,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{ old('amount') }}">
+                        <input name="amount" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="number" value="{{$canteenItem->amount ?? old('amount') }}">
                         @error('amount')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -143,7 +143,7 @@
                     <div class="md:w-1/3"></div>
                     <div class="md:w-2/3">
                         <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-                            Save Enquiry
+                            Edit Canteen Item
                         </button>
                     </div>
                </div>

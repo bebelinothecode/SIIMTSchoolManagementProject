@@ -348,4 +348,99 @@ class ExpensesController extends Controller
     public function createCanteenItemForm() {
         return view('backend.canteen.create');
     }
+
+    public function storeCanteenItem(Request $request) {
+        try {
+            //code...
+             $validatedData = $request->validate([
+            'name' => 'required|string|max:30',
+            'description' => 'nullable|string|max:300',
+            'amount' => 'required|string',
+            'category' => 'required|string|in:Income,Expense',
+            'mode_of_transaction' => 'required|string|in:Cash,Mobile Money,Bank Transfer,Cheque',
+            'branch' => 'required|string|in:Kasoa,Kanda,Spintex',
+            'currency' => 'required|string|in:Ghana Cedi,Dollar',
+        ]);
+
+        Canteen::create([
+            'item_name' => $validatedData['name'],
+            'description' => $validatedData['description'] ?? null,
+            'amount' => $validatedData['amount'],
+            'category' => $validatedData['category'],
+            'mode_of_transaction' => $validatedData['mode_of_transaction'],
+            'branch' => $validatedData['branch'],
+            'currency' => $validatedData['currency'],
+        ]);
+
+        return redirect()->back()->with('success', 'Canteen transaction recorded successfully.');
+
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error recording canteen transaction: ' . $e->getMessage());
+
+            return redirect()->back()->with('success', 'Canteen transaction recorded successfully.');
+        }
+    }
+
+    public function deleteCanteenItem(Request $request, $id) {
+        $canteenItem = Canteen::findOrFail($id);
+
+        if (!$canteenItem) {
+            return redirect()->back()->with('error', 'Canteen item not found.');
+        }
+
+        $canteenItem->delete();
+
+        return redirect()->back()->with('success', 'Canteen item deleted successfully.');
+    }
+
+    public function editCanteenItemForm($id) {
+        $canteenItem = Canteen::findOrFail($id);
+
+        return view('backend.canteen.edit', compact('canteenItem'));
+    }
+
+    public function updateCanteenItem(Request $request, $id) {
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:30',
+                'description' => 'nullable|string|max:300',
+                'amount' => 'required|string',
+                'category' => 'required|string|in:Income,Expense',
+                'mode_of_transaction' => 'required|string|in:Cash,Mobile Money,Bank Transfer,Cheque',
+                'branch' => 'required|string|in:Kasoa,Kanda,Spintex',
+                'currency' => 'required|string|in:Ghana Cedi,Dollar',
+            ]);
+
+            $name = $validatedData['name'];
+            $description = $validatedData['description'] ?? null;
+            $amount = $validatedData['amount'];
+            $category = $validatedData['category'];
+            $modeOfTransaction = $validatedData['mode_of_transaction'];
+            $branch = $validatedData['branch'];
+            $currency = $validatedData['currency'];
+    
+            $canteenItem = Canteen::findOrFail($id);
+    
+            $updated = $canteenItem->update([
+                'item_name' => $name,
+                'description' => $description,
+                'amount' => $amount,
+                'category' => $category,
+                'mode_of_transaction' => $modeOfTransaction,
+                'branch' => $branch,
+                'currency' => $currency,
+            ]); 
+
+            if($updated === true) {
+                return redirect()->back()->with('success', 'Updated successfully');
+            }
+        } catch (Exception $e) {
+            //throw $th;
+            Log::error('Error updating canteen item: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Error updating canteen item');
+        }
+    }
 }

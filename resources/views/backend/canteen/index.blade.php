@@ -5,7 +5,7 @@
     <h1 class="text-2xl font-bold text-gray-700">Canteen</h1>
 
     <div class="flex justify-between items-center mt-6">
-        <a href="{{ route('enquiry.form') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
+        <a href="{{ route('canteen.createform') }}" class="bg-gray-200 text-gray-700 text-sm uppercase py-2 px-4 flex items-center rounded">
             <svg class="w-3 h-3 fill-current" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
             <span class="ml-2 text-xs font-semibold">Add Canteen Transaction</span>
         </a>
@@ -56,38 +56,33 @@
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
-                {{-- @foreach ($enquiries as $enquiry) --}}
-                {{-- <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->name }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->telephone_number }}</td>
-                    <td class="border border-gray-200 px-2 py-2">{{ $enquiry->type_of_course ?? "N/A" }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->interested_course }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->expected_start_date)->format('M d, Y') }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->bought_forms }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->currency }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->created_at)->format('M d, Y H:i A') }}</td>
+                @foreach ($canteenItems as $canteenItem)
+                 <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->item_name }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->description }}</td>
+                    <td class="border border-gray-200 px-2 py-2">{{ $canteenItem->amount }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->category }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->mode_of_transaction }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->branch }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->currency }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->amount }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($canteenItem->created_at)->format('M d, Y H:i A') }}</td>
                     <td class="py-3 px-6 text-center">
-                        @if ($enquiry->bought_forms === 'Yes')
-                            <a href="{{ route('print.enquiryreceipt',$enquiry->id) }}" class="ml-4 text-green-600 hover:underline" target="_blank">Print</a>
-                        @endif
-                        @if ($enquiry->bought_forms === 'No')
-                             <a href="{{ route('buy.forms',$enquiry->id) }} " class="ml-4 text-blue-600 hover:underline">Buy Forms</a>
-                        @endif
-                        <form action="{{ route('delete.enquiry',$enquiry->id) }} " method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');" class="inline">
+                        <a href="{{ route('edit.canteenItemForm',$canteenItem->id) }}" class="ml-2 text-blue-600 hover:underline">Edit</a>
+                        <form action="{{ route('delete.canteenitem',$canteenItem->id) }} " method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
                         </form>
                     </td>
-                </tr> --}}
-                {{-- @endforeach --}}
-
-                {{-- @if ($enquiries->isEmpty())
-                <tr>
-                    <td colspan="6" class="text-center py-4 text-gray-500">No enquiries found.</td>
                 </tr>
-                @endif --}}
+                @endforeach
+
+                @if ($canteenItems->isEmpty())
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500">No canteen records found.</td>
+                </tr>
+                @endif
             </tbody>
         </table>
     </div>
@@ -116,7 +111,7 @@
 
     <!-- Pagination -->
     <div class="mt-4">
-        {{-- {{ $enquiries->appends(request()->query())->links() }} --}}
+        {{ $canteenItems->appends(request()->query())->links() }}
     </div> 
 </div>
 @endsection

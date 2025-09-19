@@ -10,4 +10,14 @@ class Canteen extends Model
     use HasFactory;
 
     protected $table = 'canteen';
+
+    protected $fillable = [
+        'item_name',
+        'description',
+        'amount',
+        'category',
+        'mode_of_transaction',
+        'branch',
+        'currency',
+    ];
 }

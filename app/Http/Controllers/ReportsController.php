@@ -1914,43 +1914,129 @@ DECIMAL(10,2))')) ?? 0;
     }
 
     public function generateEnquiryReport(Request $request) {
-        dd($request->all());
+        // dd($request->all());
         $validatedData = $request->validate([
             'acaProf' => 'required|in:Academic,Professional',
             'diploma_id' => 'nullable|exists:diploma,id',
             'course_id' => 'nullable|exists:grades,id',
             'current_date' => 'nullable|date',
+            'start_date' => 'nullable|date',
+            'bought_forms' => 'nullable|in:Yes,No',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
         ]);
 
-        $enquires = StudentEnquire::query();
+        $enquires = Enquiry::query();
 
-        if ($request->filled('acaProf')) {
-            $enquires->where('type_of_course', $request->acaProf);
+        if($validatedData['start_date'] && $validatedData['end_date']) {
+            $enquires->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
+        } elseif ($validatedData['start_date']) {
+            $enquires->where('created_at', '>=', $validatedData['start_date']);
+        } elseif ($validatedData['end_date']) {
+            $enquires->where('created_at', '<=', $validatedData['end_date']);
+        } elseif ($validatedData['current_date']) {
+            $enquires->whereDate('created_at', $validatedData['current_date']);
         }
 
-        if ($request->filled('diploma_id')) {
-            $enquires->where('diploma_id', $request->diploma_id);
+        if ($validatedData['bought_forms']) {
+            $enquires->where('bought_forms', $validatedData['bought_forms']);
         }
 
-        if ($request->filled('course_id')) {
-            $enquires->where('course_id', $request->course_id);
+        if ($validatedData['acaProf']) {
+            $enquires->where('type_of_course', $validatedData['acaProf']);
         }
 
-        if ($request->filled('current_date')) {
-            $enquires->whereDate('created_at', $request->current_date);
+        if ($validatedData['diploma_id']) {
+            $enquires->where('diploma_id', $validatedData['diploma_id']);
         }
 
-        if ($request->filled('branch')) {
-            $enquires->where('branch', $request->branch);
+        if ($validatedData['course_id']) {
+            $enquires->where('course_id', $validatedData['course_id']);
         }
+
+        if ($validatedData['branch']) {
+            $enquires->where('branch', $validatedData['branch']);
+        }
+
+
+
+        // if ($request->filled('acaProf')) {
+        //     $enquires->where('type_of_course', $request->acaProf);
+        // }
+
+        // if ($request->filled('diploma_id')) {
+        //     $enquires->where('diploma_id', $request->diploma_id);
+        // }
+
+        // if ($request->filled('course_id')) {
+        //     $enquires->where('course_id', $request->course_id);
+        // }
+
+        // if ($request->filled('current_date')) {
+        //     $enquires->whereDate('created_at', $request->current_date);
+        // }
+
+        // if ($request->filled('branch')) {
+        //     $enquires->where('branch', $request->branch);
+        // }
+
+        // if ($request->filled('branch')) {
+        //     $enquires->where('branch', $request->branch);
+        // }
 
         $enquires = $enquires->get();
+
+        return $enquires;
 
     }
 
     public function canteenReportForm() {
-        // return view('backend.reports.canteenreportform');   
+        return view('backend.reports.canteenreportform');   
+    }
+
+    public function generateCanteenReport(Request $request) {
+        // dd($request->all());
+        $validatedData = $request->validate([
+            'current_date' => 'nullable|date',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'branch' => 'nullable|in:Kasoa,Spintex,Kanda',
+            'category' => 'required|in:Income,Expense,Total',
+            'currency' => 'nullable|string',
+            'mode_of_transaction' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
+        ]);
+
+        $canteenQuery = DB::table('canteen');
+
+        if($validatedData['start_date'] && $validatedData['end_date']) {
+            $canteenQuery->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
+        } elseif ($validatedData['start_date']) {
+            $canteenQuery->where('created_at', '>=', $validatedData['start_date']);
+        } elseif ($validatedData['end_date']) {
+            $canteenQuery->where('created_at', '<=', $validatedData['end_date']);
+        } elseif ($validatedData['current_date']) {
+            $canteenQuery->whereDate('created_at', $validatedData['current_date']);
+        }
+
+        if ($validatedData['branch']) {
+            $canteenQuery->where('branch', $validatedData['branch']);
+        }
+
+        if ($validatedData['category'] !== 'Total') {
+            $canteenQuery->where('category', $validatedData['category']);
+        }
+
+        if ($validatedData['currency']) {
+            $canteenQuery->where('currency', $validatedData['currency']);
+        }
+
+        if ($validatedData['mode_of_transaction']) {
+            $canteenQuery->where('mode_of_transaction', $validatedData['mode_of_transaction']);
+        }
+
+        $sales = $canteenQuery->get();
+
+        return view('backend.reports.canteenreport', compact('sales','validatedData')); 
     }
 
 }

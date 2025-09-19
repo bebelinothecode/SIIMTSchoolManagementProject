@@ -61,7 +61,7 @@
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->name }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->telephone_number }}</td>
                     <td class="border border-gray-200 px-2 py-2">{{ $enquiry->type_of_course ?? "N/A" }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->interested_course }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->course->course_name ?? $enquiry->diploma->name ?? $enquiry->interested_course ?? "N/A" }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->expected_start_date)->format('M d, Y') }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->bought_forms }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->currency }}</td>

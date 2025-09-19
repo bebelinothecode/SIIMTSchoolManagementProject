@@ -20,7 +20,9 @@ class Enquiry extends Model
         'amount',
         'branch',
         'User',
-        'receipt_number'
+        'receipt_number',
+        'course_id',
+        'diploma_id',
     ];
 
     use HasFactory;
@@ -28,6 +30,16 @@ class Enquiry extends Model
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = strtoupper($value);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Grade::class, 'course_id');
+    }
+
+    public function diploma()
+    {
+        return $this->belongsTo(Diploma::class, 'diploma_id');
     }
 }
 
