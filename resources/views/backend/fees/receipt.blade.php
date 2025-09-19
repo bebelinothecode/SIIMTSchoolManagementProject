@@ -167,6 +167,13 @@
                     <td>{{ $feespaid->Momo_number }}</td>
                 </tr>
                 @endif
+
+                @if ($student->late_fees_charges !== '0')
+                <tr>
+                    <th>Late Fees Charges</th>
+                    <td>{{ $student->late_fees_charges }}</td>
+                </tr>
+                @endif
             </table>
         </div>
 

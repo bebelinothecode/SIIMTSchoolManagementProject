@@ -51,6 +51,7 @@
                     <th class="py-3 px-6 text-left">Bought Forms</th>
                     <th class="py-3 px-6 text-left">Currency</th>
                     <th class="py-3 px-6 text-left">Amount</th>
+                    <th class="py-3 px-6 text-left">Branch</th>
                     <th class="py-3 px-6 text-left">Created On</th>
                     <th class="py-3 px-6 text-left">Actions</th>
                 </tr>
@@ -66,6 +67,7 @@
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->bought_forms }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->currency }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->branch ?? "N/A" }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->created_at)->format('M d, Y H:i A') }}</td>
                     <td class="py-3 px-6 text-center">
                         @if ($enquiry->bought_forms === 'Yes')

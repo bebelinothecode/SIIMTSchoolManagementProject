@@ -60,7 +60,7 @@
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
                     {{-- <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->source_of_expense }}</td> --}}
                     <td class="py-3 px-6 text-left">{{ $expense->description_of_expense }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->expenseCategory->expense_category ?? $expense->category ?? 'N/A' }}</td>
+                    <td class="py-3 px-6 text-left">{{ $expense->expenseCategory->expense_category  ?? $expense->category ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->currency }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->amount }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
