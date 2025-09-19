@@ -133,7 +133,7 @@
                 </tr>
                 <tr>
                     <th>Receipt Number</th>
-                    <td> {{ number_format( $enquiry->receipt_number, 2) }}</td>
+                    <td> {{  $enquiry->receipt_number }}</td>
                 </tr>
             </table>
         </div>

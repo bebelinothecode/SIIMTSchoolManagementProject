@@ -15,7 +15,7 @@
         </div>
         
         <div class="table w-full mt-8 bg-white rounded">
-            <form action=" " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
+            <form action="{{ route('students.report') }} " method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -65,7 +65,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <select id="choices-select" name="courseID">
+                        <select id="choices-select" name="diploma_id">
                             <option value="">--Select Diploma--</option>
                                 @foreach ($diplomas as $diploma)
                                     <option value="{{ $diploma->id }}">{{ $diploma->code }} - {{ $diploma->name }}</option>
@@ -86,7 +86,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <select id="choices-select-1" name="courseID-1">
+                        <select id="choices-select-1" name="course_id">
                             <option value="">--Select Course--</option>
                                 @foreach ($grades as $course)
                                     <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
@@ -125,7 +125,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <select name="level" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="level" >
+                        <select name="semester" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="level" >
                             <option value="">--Select Semester--</option>
                             <option value="1">1</option>
                             <option value="2">2</option>

@@ -14,7 +14,7 @@
         </div> -->
 
         <!-- Search Form -->
-        <form action="{{ route('classes.index')}}" method="GET" class="flex items-center mt-4 space-x-4">
+        <!-- <form action="{{ route('classes.index')}}" method="GET" class="flex items-center mt-4 space-x-4">
             <input 
                 type="text" 
                 name="search" 
@@ -28,7 +28,7 @@
             >
                 Search
             </button>
-        </form>
+        </form> -->
         
         <!-- Students Table -->
         <div class="mt-6 bg-white rounded-lg shadow">
@@ -88,6 +88,25 @@
                 </tbody>
             </table>
         </div>
+        @if(session('error'))
+            <script>
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: '{{ session('error') }}',
+                });
+            </script>
+        @endif
+
+        @if(session('success'))
+            <script>
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: '{{ session('success') }}',
+                });
+            </script>
+        @endif
 
         <!-- Pagination -->
         <div class="mt-8">

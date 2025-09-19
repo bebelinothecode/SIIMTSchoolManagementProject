@@ -74,11 +74,13 @@
                         @if ($enquiry->bought_forms === 'No')
                              <a href="{{ route('buy.forms',$enquiry->id) }} " class="ml-4 text-blue-600 hover:underline">Buy Forms</a>
                         @endif
+                        @role('Admin|rector')
                         <form action="{{ route('delete.enquiry',$enquiry->id) }} " method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
                         </form>
+                        @endhasrole
                     </td>
                 </tr>
                 @endforeach
