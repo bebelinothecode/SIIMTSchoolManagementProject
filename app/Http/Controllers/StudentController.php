@@ -342,11 +342,18 @@ class StudentController extends Controller
             if ($request->student_category === 'Professional') {
                 $courseID = $validatedData['course_id_prof'];
                 $query = Diploma::findOrFail($courseID);
+
+                $maxRunning = Student::where('course_id_prof', $courseID)
+                ->whereNotNull('running_number')
+                ->max('running_number');
+
+                // return $maxRunning;
     
-                // ✅ Get max running_number for this course
-                $maxRunning = Student::where('course_id_prof', $courseID)->max('running_number');
+                // $maxRunning = Student::where('course_id_prof', $courseID)->max('running_number');
                 $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
                 $formattedCount = sprintf('%03d', $nextRunning);
+
+                // return $formattedCount;
     
                 $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
                 $branchPrefixes = [
@@ -355,10 +362,14 @@ class StudentController extends Controller
                     'Spintex' => 'SP',
                 ];
                 $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
+
+                $uniqueNumber = mt_rand(100, 999999);
     
                 $studentIndexNumber = $branchCode . "/" . $query['code'] . "/" .
                                       Carbon::now()->year . "/" . Carbon::now()->month . "/" .
-                                      $attend . "/" . $formattedCount;
+                                      $attend . "/" . $formattedCount . "/" . $uniqueNumber;
+
+                // return $studentIndexNumber;
     
                 if (Student::where('index_number', $studentIndexNumber)->exists()) {
                     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
@@ -392,16 +403,25 @@ class StudentController extends Controller
             elseif ($request->student_category === 'Academic') {
                 $courseID = $validatedData['course_id'];
                 $query = Grade::findOrFail($courseID);
+
+                $maxRunning = Student::where('course_id', $courseID)
+                ->whereNotNull('running_number')
+                ->max('running_number');
+
+                // return $maxRunning;
     
                 // ✅ Get max running_number for this course
-                $maxRunning = Student::where('course_id', $courseID)->max('running_number');
+                // $maxRunning = Student::where('course_id', $courseID)->max('running_number');
                 $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
                 $formattedCount = sprintf('%03d', $nextRunning);
     
                 $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
+
+                $uniqueNumber = mt_rand(100, 999999);
+
                 $studentIndexNumber = $query['course_code'] . "/" .
                                       Carbon::now()->year . "/" . Carbon::now()->month . "/" .
-                                      $attend . "/" . $formattedCount;
+                                      $attend . "/" . $formattedCount . "/" . $uniqueNumber;
     
                 if (Student::where('index_number', $studentIndexNumber)->exists()) {
                     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');

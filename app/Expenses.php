@@ -27,15 +27,10 @@ class Expenses extends Model
         'expensecategory_id'
     ];
 
-    // public function category()
+    // public function setNameAttribute($value)
     // {
-    //     return $this->belongsTo(ExpenseCategory::class, 'expense_category'); // or 'category_id' if that's the column name
+    //     $this->attributes['category'] = strtoupper($value);
     // }
-
-    public function setNameAttribute($value)
-    {
-        $this->attributes['category'] = strtoupper($value);
-    }
 
     public function expenseCategory()
     {

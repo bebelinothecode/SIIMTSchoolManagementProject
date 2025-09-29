@@ -125,7 +125,7 @@
             <h3>Student Details</h3>
             <p><strong>Index Number:</strong> {{ $feespaid->student_index_number }}</p>
             <p><strong>Name:</strong> {{ $feespaid->student_name }}</p>
-            <p><strong>Course/Diploma:</strong> {{ $student->course->course_name ?? $student->diploma->name }}</p>
+            <p><strong>Programme:</strong> {{ $student->course->course_name ?? $student->diploma->name }}</p>
 
             <h3>Payment Details</h3>
             <table>

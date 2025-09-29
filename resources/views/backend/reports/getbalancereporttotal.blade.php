@@ -511,7 +511,7 @@
                         <tr>
                             <td>{{ $e->source_of_expense ?? "N/A" }}</td>
                             <td>{{ $e->description_of_expense ?? "N/A" }}</td>
-                            <td>{{ $e->category ?? "N/A" }}</td>
+                            <td>{{  $e->expenseCategory->expense_category ?? $e->category ?? "N/A"}}</td>
                             <td class="amount status-negative">{{ $e->amount ?? "N/A" }}</td>
                             <td>{{ $e->mode_of_payment ?? "N/A" }}</td>
                             <td>{{ $e->created_at }}</td>
