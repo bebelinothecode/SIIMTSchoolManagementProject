@@ -91,7 +91,8 @@ class  FeesController extends Controller
                 'Momo_number' => 'nullable',
                 'cheque_number' => 'nullable',
                 'remarks'  => 'nullable|string',
-                'other_fees' => 'nullable'
+                'other_fees' => 'nullable',
+                'late_fees_charges' => 'nullable',
             ]);
 
             // dd($validatedData);
@@ -145,6 +146,7 @@ class  FeesController extends Controller
                 'receipt_number' => $receipt_number,
                 'fees_type' => $validatedData['fees_type'],
                 'other_fees' => $validatedData['other_fees'],
+                'late_fees_charges' => $validatedData['late_fees_charges'],
                 'idempotency_key' => $idempotencyKey
             ]);
 
@@ -378,6 +380,8 @@ class  FeesController extends Controller
 
             $payments = $paymentsQuery->latest()->get();
 
+            // return $payments;
+
             // Mature students
             $matureQuery = MatureStudent::query();
             if (!empty($search)) {
@@ -550,21 +554,15 @@ class  FeesController extends Controller
 
     public function printReceiptFromTransaction($id) {
         try {
-            //code...
-            $transaction = FeesPaid::findOrFail($id);
+            $transaction = FeesPaid::with('student.user')->findOrFail($id);
 
             $student = Student::where('index_number',$transaction->student_index_number)->first();
 
             $courseAcademic = $student->course()->first();
             $courseProfessional = $student->diploma()->first();
 
-            // return $student->diploma()->first();
-
-            // return $transaction;
-
             return view('backend.fees.transactionreceipt', compact('transaction','student','courseAcademic','courseProfessional'));
         } catch (\Throwable $th) {
-            //throw $th;
             return redirect()->back()->with('error','Error generating receipt');
         }
     }

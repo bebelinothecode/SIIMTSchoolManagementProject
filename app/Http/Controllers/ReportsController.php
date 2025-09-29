@@ -520,14 +520,15 @@ class ReportsController extends Controller
     public function generatePaymentReport(Request $request)
 {
     try {
-        // ✅ Validate request inputs
+        // dd($request->all());
         $validatedData = $request->validate([
             'current_date'       => 'nullable|date',
             'start_date'         => 'nullable|date',
             'end_date'           => 'nullable|date',
             'aca_prof'           => 'nullable|in:Academic,Professional,All',
             'branch'             => 'nullable|in:Kasoa,Kanda,Spintex',
-            'method_of_payment'  => 'nullable|in:Cash,Momo,Cheque'
+            'method_of_payment'  => 'nullable|in:Cash,Momo,Cheque',
+            'fees_type'          => 'nullable|string|in:School Fees,Mature Exams,Resit,Graduation Fees,Other'
         ]);
 
         $currentDate      = $validatedData['current_date'] ?? null;
@@ -536,6 +537,7 @@ class ReportsController extends Controller
         $aca_prof         = strtolower($validatedData['aca_prof'] ?? 'All');
         $branch           = $validatedData['branch'] ?? null;
         $methodOfPayment  = $validatedData['method_of_payment'] ?? null;
+        $feesType         = $validatedData['fees_type'] ?? null;
 
         // ✅ Step 1: Get unique student index numbers
         $uniqueIndexNumbers = FeesPaid::distinct()->pluck('student_index_number');
@@ -564,8 +566,6 @@ class ReportsController extends Controller
         // ✅ Step 4: Fetch transactions
         $feeTransactionsQuery = FeesPaid::whereIn('student_index_number', $filteredIndexNumbers);
 
-        // return $feeTransactionsQuery->get();
-
         // Date filters
         if ($startDate && $endDate) {
             $feeTransactionsQuery->whereBetween('created_at', [$startDate, $endDate]);
@@ -580,6 +580,10 @@ class ReportsController extends Controller
         // Payment method filter
         if ($methodOfPayment) {
             $feeTransactionsQuery->where('method_of_payment', $methodOfPayment);
+        }
+
+        if($feesType) {
+            $feeTransactionsQuery->where('fees_type', $feesType);
         }
 
         $feeTransactions = $feeTransactionsQuery->get();
@@ -640,7 +644,8 @@ class ReportsController extends Controller
             'methodOfPayment'                   => $methodOfPayment,
             'cashTotal'                         => $cashTotal,
             'momoTotal'                         => $momoTotal,
-            'chequeTotal'                       => $chequeTotal
+            'chequeTotal'                       => $chequeTotal,
+            'feesType'                         => $feesType,        
         ]);
 
     } catch (\Exception $e) {
@@ -861,7 +866,7 @@ class ReportsController extends Controller
     
     //         // Apply date filters for expenses
     //         if ($currentDate) {
-    //             $formFeesQuery->whereDate('created_at',$currentDate);
+    //             $expensesQuery->whereDate('created_at', $currentDate);
     //         } elseif ($startDate && $endDate) {
     //             $expensesQuery->whereBetween('created_at', [$startDate, $endDate]);
     //         } elseif ($startDate) {
@@ -869,7 +874,7 @@ class ReportsController extends Controller
     //         } elseif ($endDate) {
     //             $expensesQuery->where('created_at', '<=', $endDate);
     //         }
-    
+
     //         // Get expenses transactions
     //         $expensesTransactions = $expensesQuery->get();
 
@@ -934,45 +939,28 @@ class ReportsController extends Controller
     //         // Compute balances
     //         $totalAcademicBalance = $totalCollectionsAcademic - $expensesAcademicTotal;
     //         $totalProfessionalBalance = $totalCollectionsProfessional - $expensesProfessionalTotal;
-    //         $totalCombinedBalance = $totalAcademicBalance + $totalProfessionalBalance;
-    //         $totalCombinedCollections = $totalCollectionsAcademic + $totalCollectionsProfessional;
-    //         $totalCombinedExpenses = $expensesAcademicTotal + $expensesProfessionalTotal;
     
-    //         // Prepare data for view
-    //         $data = [
-    //             'selectedCategory' => $selectedCategory,
-    //             'currentDate' => $currentDate,
-    //             'startDate' => $startDate,
-    //             'endDate' => $endDate,
-                
-    //             // Transactions
-    //             'expensesTransactions' => $expensesTransactions,
-    //             'feeCollectionTransactions' => $feeCollectionTransactions,
-                
-    //             // Academic totals
-    //             'expensesAcademicTotal' => $expensesAcademicTotal,
-    //             'totalCollectionsAcademic' => $totalCollectionsAcademic,
-    //             'totalAcademicBalance' => $totalAcademicBalance,
-                
-    //             // Professional totals
-    //             'expensesProfessionalTotal' => $expensesProfessionalTotal,
-    //             'totalCollectionsProfessional' => $totalCollectionsProfessional,
-    //             'totalProfessionalBalance' => $totalProfessionalBalance,
-                
-    //             // Combined totals
-    //             'totalCombinedExpenses' => $totalCombinedExpenses,
-    //             'totalCombinedCollections' => $totalCombinedCollections,
-    //             'totalCombinedBalance' => $totalCombinedBalance,
-    //         ];
-    
-    //         // Return view based on category
+    //         // Determine which view to return
     //         if ($selectedCategory === 'Academic') {
-    //             return view('backend.reports.getbalancereportacademic', compact('totalSchoolFeesByCheque','totalSchoolFeesByMomo','totalSchoolFeesByCash','selectedCategory','currentDate','startDate','endDate','expensesTransactions','feeCollectionTransactions','expensesAcademicTotal','totalCollectionsAcademic','totalAcademicBalance','totalCombinedExpenses','totalCombinedCollections','totalCombinedBalance','formFeesTransactions','formFeesTotals','feesTransactions'));
+    //             return view('backend.reports.getbalancereportacademic', compact(
+    //                 'totalAcademicBalance', 'totalCollectionsAcademic', 'expensesAcademicTotal', 'selectedCategory','currentMonth','startDate','endDate'
+    //             ));
     //         } elseif ($selectedCategory === 'Professional') {
-    //             return view('backend.reports.getbalancereportprofessional',compact('selectedCategory','currentDate','startDate','endDate','expensesProfessionalTotal','totalCollectionsProfessional','totalProfessionalBalance','expensesTransactions','feeCollectionTransactions','formFeesTransactions','formFeesTotals','feesTransactions'));
+    //             return view('backend.reports.getbalancereportprofessional', compact(
+    //                 'totalProfessionalBalance', 'totalCollectionsProfessional', 'expensesProfessionalTotal', 'selectedCategory','currentMonth','startDate','endDate'
+    //             ));
     //         } elseif ($selectedCategory === 'Total') {
-    //             return view('backend.reports.getbalancereporttotal', compact('formFeesBebelinos','formFeesAllAmount','feeCollectionTransactions','expensesTransactions','expensesTotalAmount','feesPaymentsTotal'));
+    //             $totalCombinedBalance = $totalAcademicBalance + $totalProfessionalBalance;
+    //             $totalCombinedCollections = $totalCollectionsAcademic + $totalCollectionsProfessional;
+    //             $totalCombinedExpenses = $expensesAcademicTotal + $expensesProfessionalTotal;
+    
+    //             return view('backend.reports.getbalancereporttotal', compact(
+    //                 'totalCombinedBalance', 'totalCombinedCollections', 'totalCombinedExpenses', 'selectedCategory','currentMonth','startDate','endDate'
+    //             ));
     //         }
+    
+    //         return redirect()->back()->with('error', 'Invalid category selection.');
+    
     //     } catch (Exception $e) {
     //         Log::error('Error occurred while generating the balance report', [
     //             'message' => $e->getMessage(),
@@ -1041,8 +1029,8 @@ class ReportsController extends Controller
 //             'category' => 'nullable|string|in:Academic,Professional,Total',
 //             'current_date' => 'nullable|date',
 //             'start_date' => 'nullable|date',
+//             'end_date' => 'nullable|date|after_or_equal:start_date',
 //             'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
-//             'end_date' => 'nullable|date|after_or_equal:start_date'
 //         ]);
 
 //         $selectedCategory = $validatedData['category'] ?? null;
@@ -1053,14 +1041,16 @@ class ReportsController extends Controller
 //         $yesterday = Carbon::parse($currentDate ?? $startDate)->subDay()->toDateString();
         
 //         // ========== FORM FEES ==========
-//         $formFeesQuery = DB::table('student_enquires');
+//         $formFeesQuery = DB::table('student_enquires')
+//             ->where('bought_forms', 'Yes');
+
 //         if ($currentDate) {
 //             $formFeesQuery->whereDate('created_at', $currentDate);
 //         } elseif ($startDate && $endDate) {
 //             $formFeesQuery->whereBetween('created_at', [$startDate, $endDate]);
 //         }
 
-//         $formFeesBebelinos = $formFeesQuery->where('bought_forms', 'Yes')->get();
+//         $formFeesBebelinos = $formFeesQuery->get();
 //         $formFeesAllAmount = $formFeesBebelinos->sum(function ($item) {
 //             return (float) $item->amount;
 //         });
@@ -1074,27 +1064,14 @@ class ReportsController extends Controller
 //         $formFeesTotals = $formFeesTransactions->sum('amount');
 
 //         // ========== EXPENSES ==========
-//         $expensesQuery = DB::table('expenses');
-//         if (in_array($selectedCategory, ['Academic', 'Professional'])) {
-//             $expensesQuery->where('source_of_expense', $selectedCategory);
-//         } else {
-//             $expensesQuery->whereIn('source_of_expense', ['Academic', 'Professional']);
-//         }
-
-//         if ($modeOfPayment) {
-//             $expensesQuery->whereIn('mode_of_payment', ['Cash', 'Mobile Money', 'Bank Transfer']);
-//             $expensesQuery->where('mode_of_payment', $modeOfPayment);
-//         }
-
-//         if ($currentDate) {
-//             $expensesQuery->whereDate('created_at', $currentDate);
-//         } elseif ($startDate && $endDate) {
-//             $expensesQuery->whereBetween('created_at', [$startDate, $endDate]);
-//         } elseif ($startDate) {
-//             $expensesQuery->where('created_at', '>=', $startDate);
-//         } elseif ($endDate) {
-//             $expensesQuery->where('created_at', '<=', $endDate);
-//         }
+//         $expensesQuery = DB::table('expenses')
+//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
+//                 fn($q) => $q->where('source_of_expense', $selectedCategory),
+//                 fn($q) => $q->whereIn('source_of_expense', ['Academic', 'Professional'])
+//             )
+//             ->when($modeOfPayment, fn($q) => $q->where('mode_of_payment', $modeOfPayment))
+//             ->when($currentDate, fn($q) => $q->whereDate('created_at', $currentDate))
+//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
 
 //         $expensesTransactions = $expensesQuery->get();
 //         $expensesTotalAmount = $expensesTransactions->sum(fn($item) => (float) $item->amount);
@@ -1105,7 +1082,7 @@ class ReportsController extends Controller
 //         $expensesAcademicTotal = $expensesTotals['Academic'] ?? 0;
 //         $expensesProfessionalTotal = $expensesTotals['Professional'] ?? 0;
 
-//         // ========== SCHOOL FEES ==========
+//         // ========== SCHOOL FEES COLLECTIONS ==========
 //         $feeCollectionsQuery = DB::table('collect_fees')
 //             ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
 //             ->whereIn('students.student_category', ['Academic', 'Professional']);
@@ -1133,16 +1110,170 @@ class ReportsController extends Controller
 //             ->select('collect_fees.*', 'students.student_category')
 //             ->get();
 
+//         $totalSchoolFeesByCash = $feeCollectionTransactions->where('method_of_payment','Cash')->sum('amount');
+//         $totalSchoolFeesByMomo = $feeCollectionTransactions->where('method_of_payment','Momo')->sum('amount');
+//         $totalSchoolFeesByCheque = $feeCollectionTransactions->where('method_of_payment','Cheque')->sum('amount');
+            
+//         $feesPaymentsTotal = $feeCollectionTransactions->sum('amount');
+            
+//         $feesTransactions = $feeCollectionTransactions->where('student_category',$selectedCategory)->all();
+    
+//         // Calculate fee collection totals
+//         $feeCollectionsTotals = $feeCollectionTransactions->groupBy('student_category')
+//             ->map(function ($items) {
+//                 return $items->sum('amount');
+//             });
+
+//         $totalCollectionsAcademic = $feeCollectionsTotals['Academic'] ?? 0;
+//         $totalCollectionsProfessional = $feeCollectionsTotals['Professional'] ?? 0;
+    
+//         // Compute balances
+//         $totalAcademicBalance = $totalCollectionsAcademic - $expensesAcademicTotal;
+//         $totalProfessionalBalance = $totalCollectionsProfessional - $expensesProfessionalTotal;
+//         $totalCombinedBalance = $totalAcademicBalance + $totalProfessionalBalance;
+//         $totalCombinedCollections = $totalCollectionsAcademic + $totalCollectionsProfessional;
+//         $totalCombinedExpenses = $expensesAcademicTotal + $expensesProfessionalTotal;
+
+//         // Prepare data for view
+//         $data = [
+//             'selectedCategory' => $selectedCategory,
+//             'currentDate' => $currentDate,
+//             'startDate' => $startDate,
+//             'endDate' => $endDate,
+                
+//             // Transactions
+//             'expensesTransactions' => $expensesTransactions,
+//             'feeCollectionTransactions' => $feeCollectionTransactions,
+                
+//             // Academic totals
+//             'expensesAcademicTotal' => $expensesAcademicTotal,
+//             'totalCollectionsAcademic' => $totalCollectionsAcademic,
+//             'totalAcademicBalance' => $totalAcademicBalance,
+                
+//             // Professional totals
+//             'expensesProfessionalTotal' => $expensesProfessionalTotal,
+//             'totalCollectionsProfessional' => $totalCollectionsProfessional,
+//             'totalProfessionalBalance' => $totalProfessionalBalance,
+                
+//             // Combined totals
+//             'totalCombinedExpenses' => $totalCombinedExpenses,
+//             'totalCombinedCollections' => $totalCombinedCollections,
+//             'totalCombinedBalance' => $totalCombinedBalance,
+//         ];
+    
+//         // Return view based on category
+//         if ($selectedCategory === 'Academic') {
+//             return view('backend.reports.getbalancereportacademic', $data);
+//         } elseif ($selectedCategory === 'Professional') {
+//             return view('backend.reports.getbalancereportprofessional', $data);
+//         } elseif ($selectedCategory === 'Total') {
+//             return view('backend.reports.getbalancereporttotal', $data);
+//         }
+//     } catch (Exception $e) {
+//         Log::error('Error occurred while generating the balance report', [
+//             'message' => $e->getMessage(),
+//             'trace' => $e->getTraceAsString()
+//         ]);
+    
+//         return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
+//     }
+// }
+
+// public function calculateBalanceTotal(Request $request)
+// {
+//     try {
+//         $validatedData = $request->validate([
+//             'category' => 'nullable|string|in:Academic,Professional,Total',
+//             'current_date' => 'nullable|date',
+//             'start_date' => 'nullable|date',
+//             'end_date' => 'nullable|date|after_or_equal:start_date',
+//             'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
+//         ]);
+
+//         $selectedCategory = $validatedData['category'] ?? null;
+//         $currentDate = Carbon::parse($validatedData['current_date'] ?? Carbon::today())->toDateString();
+//         $startDate = $validatedData['start_date'] ?? null;
+//         $endDate = $validatedData['end_date'] ?? null;
+//         $modeOfPayment = $validatedData['mode_of_payment'] ?? null;
+//         $yesterday = Carbon::parse($currentDate)->subDay()->toDateString();
+
+//         $paymentMethodMap = [
+//             'Cash' => 'Cash',
+//             'Mobile Money' => 'Momo',
+//             'Bank Transfer' => 'Cheque'
+//         ];
+
+//         // ====== Opening Balance (from yesterday) ======
+//         $formFeesYesterday = DB::table('student_enquires')
+//             ->whereDate('created_at', $yesterday)
+//             ->where('bought_forms', 'Yes')
+//             ->when($selectedCategory, fn($q) => $q->where('type_of_course', $selectedCategory), fn($q) => $q->whereIn('type_of_course', ['Academic', 'Professional']))
+//             ->sum(DB::raw('COALESCE(amount::numeric, 0)'));
+
+//         $expensesYesterday = DB::table('expenses')
+//             ->whereDate('created_at', $yesterday)
+//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
+//                 fn($q) => $q->where('source_of_expense', $selectedCategory),
+//                 fn($q) => $q->whereIn('source_of_expense', ['Academic', 'Professional']))
+//             ->when($modeOfPayment, fn($q) => $q->where('mode_of_payment', $modeOfPayment))
+//             ->sum(DB::raw('COALESCE(amount::numeric, 0)'));
+
+//         $feeCollectionsYesterday = DB::table('collect_fees')
+//             ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
+//             ->whereDate('collect_fees.created_at', $yesterday)
+//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
+//                 fn($q) => $q->where('students.student_category', $selectedCategory),
+//                 fn($q) => $q->whereIn('students.student_category', ['Academic', 'Professional']))
+//             ->when(isset($paymentMethodMap[$modeOfPayment]), fn($q) => $q->where('collect_fees.method_of_payment', $paymentMethodMap[$modeOfPayment]))
+//             ->sum(DB::raw('COALESCE(collect_fees.amount::numeric, 0)'));
+
+//         $openingBalance = ($formFeesYesterday + $feeCollectionsYesterday) - $expensesYesterday;
+
+//         // ====== Form Fees for current range ======
+//         $formFeesQuery = DB::table('student_enquires')
+//             ->where('bought_forms', 'Yes')
+//             ->when($currentDate, fn($q) => $q->whereDate('created_at', $currentDate))
+//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+//             ->when($selectedCategory, fn($q) => $q->where('type_of_course', $selectedCategory), fn($q) => $q->whereIn('type_of_course', ['Academic', 'Professional']));
+
+//         $formFeesTransactions = $formFeesQuery->get();
+//         $formFeesTotals = $formFeesTransactions->sum(fn($item) => (float) $item->amount);
+
+//         // ====== Expenses ======
+//         $expensesQuery = DB::table('expenses')
+//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
+//                 fn($q) => $q->where('source_of_expense', $selectedCategory),
+//                 fn($q) => $q->whereIn('source_of_expense', ['Academic', 'Professional']))
+//             ->when($modeOfPayment, fn($q) => $q->where('mode_of_payment', $modeOfPayment))
+//             ->when($currentDate, fn($q) => $q->whereDate('created_at', $currentDate))
+//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
+
+//         $expensesTransactions = $expensesQuery->get();
+//         $expensesTotalAmount = $expensesTransactions->sum(fn($item) => (float) $item->amount);
+
+//         $expensesTotals = $expensesTransactions->groupBy('source_of_expense')
+//             ->map(fn($items) => $items->sum(fn($item) => (float) $item->amount));
+
+//         $expensesAcademicTotal = $expensesTotals['Academic'] ?? 0;
+//         $expensesProfessionalTotal = $expensesTotals['Professional'] ?? 0;
+
+//         // ====== Fee Collections ======
+//         $feeCollectionsQuery = DB::table('collect_fees')
+//             ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
+//             ->whereIn('students.student_category', ['Academic', 'Professional'])
+//             ->when($currentDate, fn($q) => $q->whereDate('collect_fees.created_at', $currentDate))
+//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('collect_fees.created_at', [$startDate, $endDate]))
+//             ->when(isset($paymentMethodMap[$modeOfPayment]), fn($q) => $q->where('collect_fees.method_of_payment', $paymentMethodMap[$modeOfPayment]));
+
+//         $feeCollectionTransactions = $feeCollectionsQuery->select('collect_fees.*', 'students.student_category')->get();
 //         $feesPaymentsTotal = $feeCollectionTransactions->sum(fn($item) => (float) $item->amount);
 
-
-//         $feesTransactions = in_array($selectedCategory, ['Academic', 'Professional'])
+//         $feesTransactions = in_array($selectedCategory, ['Academic', 'Professional']) 
 //             ? $feeCollectionTransactions->where('student_category', $selectedCategory)->all()
-//             : $feeCollectionTransactions->whereIn('student_category', ['Academic', 'Professional'])->all();
+//             : $feeCollectionTransactions;
 
 //         $feeCollectionsTotals = $feeCollectionTransactions->groupBy('student_category')
-//         ->map(fn($items) => $items->sum(fn($item) => (float) $item->amount));
-        
+//             ->map(fn($items) => $items->sum(fn($item) => (float) $item->amount));
 
 //         $totalCollectionsAcademics = $feeCollectionsTotals['Academic'] ?? 0;
 //         $totalCollectionsProfessional = $feeCollectionsTotals['Professional'] ?? 0;
@@ -1153,6 +1284,10 @@ class ReportsController extends Controller
 //         $totalCombinedCollections = $totalCollectionsAcademics + $totalCollectionsProfessional;
 //         $totalCombinedExpenses = $expensesAcademicTotal + $expensesProfessionalTotal;
 
+//         // ====== Closing Balance ======
+//         $closingBalance = $openingBalance + $formFeesTotals + $feesPaymentsTotal - $expensesTotalAmount;
+
+//         // ====== Mode breakdowns ======
 //         $collectionsByCategoryAndMode = $feeCollectionTransactions->groupBy(['student_category', 'method_of_payment'])
 //               ->map(fn($group) => $group->map(fn($items) => $items->sum(fn($item) => (float) $item->amount)));
 
@@ -1270,179 +1405,6 @@ class ReportsController extends Controller
 //     }
 // }
 
-// public function calculateBalanceTotal(Request $request)
-// {
-//     try {
-//         $validatedData = $request->validate([
-//             'category' => 'nullable|string|in:Academic,Professional,Total',
-//             'current_date' => 'nullable|date',
-//             'start_date' => 'nullable|date',
-//             'end_date' => 'nullable|date|after_or_equal:start_date',
-//             'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
-//         ]);
-
-//         $selectedCategory = $validatedData['category'] ?? null;
-//         $currentDate = Carbon::parse($validatedData['current_date'] ?? Carbon::today())->toDateString();
-//         $startDate = $validatedData['start_date'] ?? null;
-//         $endDate = $validatedData['end_date'] ?? null;
-//         $modeOfPayment = $validatedData['mode_of_payment'] ?? null;
-//         $yesterday = Carbon::parse($currentDate)->subDay()->toDateString();
-
-//         $paymentMethodMap = [
-//             'Cash' => 'Cash',
-//             'Mobile Money' => 'Momo',
-//             'Bank Transfer' => 'Cheque'
-//         ];
-
-//         // ====== Opening Balance (from yesterday) ======
-//         $formFeesYesterday = DB::table('student_enquires')
-//             ->whereDate('created_at', $yesterday)
-//             ->where('bought_forms', 'Yes')
-//             ->when($selectedCategory, fn($q) => $q->where('type_of_course', $selectedCategory), fn($q) => $q->whereIn('type_of_course', ['Academic', 'Professional']))
-//             ->sum(DB::raw('COALESCE(amount::numeric, 0)'));
-
-//         $expensesYesterday = DB::table('expenses')
-//             ->whereDate('created_at', $yesterday)
-//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
-//                 fn($q) => $q->where('source_of_expense', $selectedCategory),
-//                 fn($q) => $q->whereIn('source_of_expense', ['Academic', 'Professional']))
-//             ->when($modeOfPayment, fn($q) => $q->where('mode_of_payment', $modeOfPayment))
-//             ->sum(DB::raw('COALESCE(amount::numeric, 0)'));
-
-//         $feeCollectionsYesterday = DB::table('collect_fees')
-//             ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
-//             ->whereDate('collect_fees.created_at', $yesterday)
-//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
-//                 fn($q) => $q->where('students.student_category', $selectedCategory),
-//                 fn($q) => $q->whereIn('students.student_category', ['Academic', 'Professional']))
-//             ->when(isset($paymentMethodMap[$modeOfPayment]), fn($q) => $q->where('collect_fees.method_of_payment', $paymentMethodMap[$modeOfPayment]))
-//             ->sum(DB::raw('COALESCE(collect_fees.amount::numeric, 0)'));
-
-//         $openingBalance = ($formFeesYesterday + $feeCollectionsYesterday) - $expensesYesterday;
-
-//         // ====== Form Fees for current range ======
-//         $formFeesQuery = DB::table('student_enquires')
-//             ->where('bought_forms', 'Yes')
-//             ->when($currentDate, fn($q) => $q->whereDate('created_at', $currentDate))
-//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
-//             ->when($selectedCategory, fn($q) => $q->where('type_of_course', $selectedCategory), fn($q) => $q->whereIn('type_of_course', ['Academic', 'Professional']));
-
-//         $formFeesTransactions = $formFeesQuery->get();
-//         $formFeesTotals = $formFeesTransactions->sum(fn($item) => (float) $item->amount);
-
-//         // ====== Expenses ======
-//         $expensesQuery = DB::table('expenses')
-//             ->when(in_array($selectedCategory, ['Academic', 'Professional']),
-//                 fn($q) => $q->where('source_of_expense', $selectedCategory),
-//                 fn($q) => $q->whereIn('source_of_expense', ['Academic', 'Professional']))
-//             ->when($modeOfPayment, fn($q) => $q->where('mode_of_payment', $modeOfPayment))
-//             ->when($currentDate, fn($q) => $q->whereDate('created_at', $currentDate))
-//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
-
-//         $expensesTransactions = $expensesQuery->get();
-//         $expensesTotalAmount = $expensesTransactions->sum(fn($item) => (float) $item->amount);
-
-//         $expensesTotals = $expensesTransactions->groupBy('source_of_expense')
-//             ->map(fn($items) => $items->sum(fn($item) => (float) $item->amount));
-
-//         $expensesAcademicTotal = $expensesTotals['Academic'] ?? 0;
-//         $expensesProfessionalTotal = $expensesTotals['Professional'] ?? 0;
-
-//         // ====== Fee Collections ======
-//         $feeCollectionsQuery = DB::table('collect_fees')
-//             ->join('students', 'collect_fees.student_index_number', '=', 'students.index_number')
-//             ->whereIn('students.student_category', ['Academic', 'Professional'])
-//             ->when($currentDate, fn($q) => $q->whereDate('collect_fees.created_at', $currentDate))
-//             ->when($startDate && $endDate, fn($q) => $q->whereBetween('collect_fees.created_at', [$startDate, $endDate]))
-//             ->when(isset($paymentMethodMap[$modeOfPayment]), fn($q) => $q->where('collect_fees.method_of_payment', $paymentMethodMap[$modeOfPayment]));
-
-//         $feeCollectionTransactions = $feeCollectionsQuery->select('collect_fees.*', 'students.student_category')->get();
-//         $feesPaymentsTotal = $feeCollectionTransactions->sum(fn($item) => (float) $item->amount);
-
-//         $feesTransactions = in_array($selectedCategory, ['Academic', 'Professional']) 
-//             ? $feeCollectionTransactions->where('student_category', $selectedCategory)->all()
-//             : $feeCollectionTransactions;
-
-//         $feeCollectionsTotals = $feeCollectionTransactions->groupBy('student_category')
-//             ->map(fn($items) => $items->sum(fn($item) => (float) $item->amount));
-
-//         $totalCollectionsAcademics = $feeCollectionsTotals['Academic'] ?? 0;
-//         $totalCollectionsProfessional = $feeCollectionsTotals['Professional'] ?? 0;
-
-//         $totalAcademicBalance = $totalCollectionsAcademics - $expensesAcademicTotal;
-//         $totalProfessionalBalance = $totalCollectionsProfessional - $expensesProfessionalTotal;
-//         $totalCombinedBalance = $totalAcademicBalance + $totalProfessionalBalance;
-//         $totalCombinedCollections = $totalCollectionsAcademics + $totalCollectionsProfessional;
-//         $totalCombinedExpenses = $expensesAcademicTotal + $expensesProfessionalTotal;
-
-//         // ====== Closing Balance ======
-//         $closingBalance = $openingBalance + $formFeesTotals + $feesPaymentsTotal - $expensesTotalAmount;
-
-//         // ====== Mode breakdowns ======
-//         $collectionsByCategoryAndMode = $feeCollectionTransactions->groupBy(['student_category', 'method_of_payment'])
-//             ->map(fn($group) => $group->map(fn($items) => $items->sum(fn($item) => (float) $item->amount)));
-
-//         $expensesByCategoryAndMode = $expensesTransactions->groupBy(['source_of_expense', 'mode_of_payment'])
-//             ->map(fn($group) => $group->map(fn($items) => $items->sum(fn($item) => (float) $item->amount)));
-
-//         $balanceByCategoryAndMode = [];
-//         foreach (['Academic', 'Professional'] as $category) {
-//             foreach (['Cash', 'Mobile Money', 'Bank Transfer'] as $mode) {
-//                 $collections = $collectionsByCategoryAndMode[$category][$mode] ?? 0;
-//                 $expenses = $expensesByCategoryAndMode[$category][$mode] ?? 0;
-//                 $balanceByCategoryAndMode[$category][$mode] = $collections - $expenses;
-//             }
-//         }
-
-//         $data = [
-//             'selectedCategory' => $selectedCategory,
-//             'currentDate' => $currentDate,
-//             'startDate' => $startDate,
-//             'endDate' => $endDate,
-//             'expensesTransactions' => $expensesTransactions,
-//             'feeCollectionTransactions' => $feeCollectionTransactions,
-//             'feesTransactions' => $feesTransactions,
-//             'expensesAcademicTotal' => $expensesAcademicTotal,
-//             'totalCollectionsAcademics' => $totalCollectionsAcademics,
-//             'totalAcademicBalance' => $totalAcademicBalance,
-//             'expensesProfessionalTotal' => $expensesProfessionalTotal,
-//             'totalCollectionsProfessional' => $totalCollectionsProfessional,
-//             'totalProfessionalBalance' => $totalProfessionalBalance,
-//             'totalCombinedExpenses' => $totalCombinedExpenses,
-//             'totalCombinedCollections' => $totalCombinedCollections,
-//             'totalCombinedBalance' => $totalCombinedBalance,
-//             'formFeesTransactions' => $formFeesTransactions,
-//             'formFeesTotals' => $formFeesTotals,
-//             'feesPaymentsTotal' => $feesPaymentsTotal,
-//             'expensesTotalAmount' => $expensesTotalAmount,
-//             'collectionsByCategoryAndMode' => $collectionsByCategoryAndMode,
-//             'expensesByCategoryAndMode' => $expensesByCategoryAndMode,
-//             'balanceByCategoryAndMode' => $balanceByCategoryAndMode,
-//             'openingBalance' => $openingBalance,
-//             'closingBalance' => $closingBalance,
-//         ];
-
-//         if ($selectedCategory === 'Academic') {
-//             return view('backend.reports.getbalancereportacademic', $data);
-//         } elseif ($selectedCategory === 'Professional') {
-//             return view('backend.reports.getbalancereportprofessional', $data);
-//         } else {
-//             return view('backend.reports.getbalancereporttotal', $data);
-//         }
-
-//     } catch (Exception $e) {
-//         Log::error('Error occurred while generating the balance report', [
-//             'message' => $e->getMessage(),
-//             'trace' => $e->getTraceAsString()
-//         ]);
-//         return redirect()->back()->with('error', 'An error occurred while generating the report. Please try again.');
-//     }
-// }
-
-
-
-
-
 public function calculateBalanceTotal(Request $request)
     {
         try {
@@ -1545,10 +1507,39 @@ public function calculateBalanceTotal(Request $request)
         $expensesTotalAmount = $expensesTransactions->sum('amount');
 
         $expensesTotals = $expensesTransactions->groupBy('source_of_expense')->map(fn($items) => $items->sum('amount'));
-       
+    
         $expensesAcademicTotal = $expensesTotals['Academic'] ?? 0;
-        
         $expensesProfessionalTotal = $expensesTotals['Professional'] ?? 0;
+    
+        // ================CANTEEN INCOME & EXPENSES===========
+        $canteenQuery = DB::table('canteen');
+
+         if ($currentDate) {
+            $canteenQuery->whereDate('created_at', $currentDate);
+        } elseif ($startDate && $endDate) {
+            $canteenQuery->whereBetween('created_at', [$startDate,$endDate]);
+        } elseif ($startDate) {
+            $canteenQuery->where('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $canteenQuery->where('created_at', '<=', $endDate);
+        }
+
+        $canteenMomoTransactions = $canteenQuery->where('mode_of_transaction', 'Mobile Money')->get();
+        $canteenMomoTotal = $canteenMomoTransactions->sum('amount');
+
+        $canteenCashTransactions = $canteenQuery->where('mode_of_transaction', 'Cash')->get();
+        $canteenCashTotal = $canteenCashTransactions->sum('amount');    
+        $canteenBankTransactions = $canteenQuery->where('mode_of_transaction', 'Bank Transfer')->get();
+        $canteenBankTotal = $canteenBankTransactions->sum('amount');
+
+        $canteenIncomeTransactions = $canteenQuery->where('category', 'Income')->get();
+        $canteenIncomeTotal = $canteenIncomeTransactions->sum('amount');
+
+        $canteenExpenseTransactions = $canteenQuery->where('category', 'Expense')->get();
+        $canteenExpenseTotal = $canteenExpenseTransactions->sum('amount');
+
+
+        $canteenIncomeTotal = $canteenIncomeTransactions->sum('amount');
 
         // ===============MATURE STUDENTS===========
         $matureStudentsQuery = DB::table('mature_students');
@@ -1622,35 +1613,35 @@ public function calculateBalanceTotal(Request $request)
         $totalCombinedBalance = $totalAcademicBalance +
         $totalProfessionalBalance;
         $totalCombinedCollections = $totalCollectionsAcademics +
-        $totalCollectionsProfessional;
+        $totalCollectionsProfessional + $canteenIncomeTotal;
         $totalCombinedExpenses = $expensesAcademicTotal +
-        $expensesProfessionalTotal;
+        $expensesProfessionalTotal+$canteenExpenseTotal;
         // ========== GROUPED BY CATEGORY + PAYMENT MODE ==========
-        $collectionsByCategoryAndMode =
-        $feeCollectionTransactions->groupBy(['student_category',
+        $collectionsByMode =
+        $feeCollectionTransactions->groupBy([
         'method_of_payment'])
-        ->map(fn($categoryGroup) =>
-        $categoryGroup->map(fn($items) =>
-        $items->sum('amount'))
-        );
-        $expensesByCategoryAndMode =
-        $expensesTransactions->groupBy(['source_of_expense',
+        ->map(fn($items) =>
+       collect($items)->sum('amount'));
+
+        $expensesByMode =
+        $expensesTransactions->groupBy([
         'mode_of_payment'])
-        ->map(fn($categoryGroup) =>
-        $categoryGroup->map(fn($items) =>
-        $items->sum('amount'))
-        );
-        $balanceByCategoryAndMode = [];
-        foreach (['Academic', 'Professional'] as $category) {
+        ->map(fn($items) =>
+       collect($items)->sum('amount'));
+
+        $balanceByMode = [];
+        
         foreach (['Cash', 'Momo', 'Cheque'] as $mode) {
-        $collections =
-        $collectionsByCategoryAndMode[$category][$mode] ?? 0;
-        $expenses =
-        $expensesByCategoryAndMode[$category][$mode] ?? 0;
-        $balanceByCategoryAndMode[$category][$mode] =
-        $collections - $expenses;
+            $collections = $collectionsByMode[$mode] ?? 0;
+            $expenses = $expensesByMode[$mode] ?? 0;
+            $balanceByMode[$mode] = $collections - $expenses;
         }
-        }
+
+        // Pass these to your view
+        $data['collectionsByMode'] = $collectionsByMode;
+        $data['expensesByMode'] = $expensesByMode;
+        $data['balanceByMode'] = $balanceByMode;
+
         // View Data
         $data = [
         'selectedCategory' => $selectedCategory,
@@ -1658,6 +1649,13 @@ public function calculateBalanceTotal(Request $request)
         'startDate' => $startDate,
         'endDate' => $endDate,
         // NEW: Daily balances data
+        'canteenIncomeTransactions' => $canteenIncomeTransactions,
+        'canteenMomoTotal' => $canteenMomoTotal,
+        'canteenCashTotal' => $canteenCashTotal,
+        'canteenBankTotal' => $canteenBankTotal,
+        'canteenExpenseTransactions' => $canteenExpenseTransactions,
+        'canteenIncomeTotal' => $canteenIncomeTotal,
+        'canteenExpenseTotal' => $canteenExpenseTotal,
         'dailyBalances' => $dailyBalances,
         'dateRange' => $dateRange,
         'expensesTransactions' => $expensesTransactions,
@@ -1678,23 +1676,23 @@ public function calculateBalanceTotal(Request $request)
         'formFeesAllAmount' => $formFeesAllAmount,
         'feesPaymentsTotal' => $feesPaymentsTotal,
         'expensesTotalAmount' => $expensesTotalAmount,
-        'collectionsByCategoryAndMode' => $collectionsByCategoryAndMode,
-        'expensesByCategoryAndMode' => $expensesByCategoryAndMode,
-        'balanceByCategoryAndMode' => $balanceByCategoryAndMode,
+        'collectionsByMode' => $collectionsByMode,
+        'expensesByMode' => $expensesByMode,
+        'balanceByMode' => $balanceByMode,
         'matureTransactions' => $matureTransactions,
         'matureTransactionsTotal' => $matureTransactionsTotal,
         ];
-        // return $data;
+
         // View response
         if ($selectedCategory === 'Academic') {
-        return view('backend.reports.getbalancereportacademic',
-        $data);
+            return view('backend.reports.getbalancereportacademic',
+            $data);
         } elseif ($selectedCategory === 'Professional') {
-        return
-        view('backend.reports.getbalancereportprofessional', $data);
+            return
+            view('backend.reports.getbalancereportprofessional', $data);
         } elseif ($selectedCategory === 'Total') {
-        return view('backend.reports.getbalancereporttotal',
-        $data);
+            return view('backend.reports.getbalancereporttotal',
+            $data);
         }
         } catch (Exception $e) {
         Log::error('Error occurred while generating the balance
@@ -1877,8 +1875,7 @@ DECIMAL(10,2))')) ?? 0;
     {
     $query->where('source_of_expense', $selectedCategory);
     } else {
-    $query->whereIn('source_of_expense', ['Academic',
-    'Professional']);
+    $query->whereIn('source_of_expense', ['Academic', 'Professional']);
     }
     // Apply payment method filter
     if (in_array($modeOfPayment, ['Cash', 'Mobile Money', 'Bank
@@ -1913,82 +1910,133 @@ DECIMAL(10,2))')) ?? 0;
         return view('backend.reports.enquiryreportsform', compact('grades', 'diplomas'));
     }
 
-    public function generateEnquiryReport(Request $request) {
-        // dd($request->all());
-        $validatedData = $request->validate([
-            'acaProf' => 'required|in:Academic,Professional',
-            'diploma_id' => 'nullable|exists:diploma,id',
-            'course_id' => 'nullable|exists:grades,id',
-            'current_date' => 'nullable|date',
-            'start_date' => 'nullable|date',
-            'bought_forms' => 'nullable|in:Yes,No',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
-        ]);
+    // public function generateEnquiryReport(Request $request) {
+    //     // dd($request->all());
+    //     $validatedData = $request->validate([
+    //         'acaProf' => 'required|in:Academic,Professional,Total',
+    //         'diploma_id' => 'nullable|exists:diploma,id',
+    //         'course_id' => 'nullable|exists:grades,id',
+    //         'current_date' => 'nullable|date',
+    //         'start_date' => 'nullable|date',
+    //         'bought_forms' => 'nullable|in:Yes,No',
+    //         'end_date' => 'nullable|date|after_or_equal:start_date',
+    //         'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
+    //     ]);
 
-        $enquires = Enquiry::query();
+    //     $enquires = Enquiry::with(['course','diploma']);
 
-        if($validatedData['start_date'] && $validatedData['end_date']) {
-            $enquires->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
-        } elseif ($validatedData['start_date']) {
-            $enquires->where('created_at', '>=', $validatedData['start_date']);
-        } elseif ($validatedData['end_date']) {
-            $enquires->where('created_at', '<=', $validatedData['end_date']);
-        } elseif ($validatedData['current_date']) {
-            $enquires->whereDate('created_at', $validatedData['current_date']);
-        }
+    //     if($validatedData['start_date'] && $validatedData['end_date']) {
+    //         $enquires->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
+    //     } elseif ($validatedData['start_date']) {
+    //         $enquires->where('created_at', '>=', $validatedData['start_date']);
+    //     } elseif ($validatedData['end_date']) {
+    //         $enquires->where('created_at', '<=', $validatedData['end_date']);
+    //     } elseif ($validatedData['current_date']) {
+    //         $enquires->whereDate('created_at', $validatedData['current_date']);
+    //     }
 
-        if ($validatedData['bought_forms']) {
-            $enquires->where('bought_forms', $validatedData['bought_forms']);
-        }
+    //     if ($validatedData['bought_forms']) {
+    //         $enquires->where('bought_forms', $validatedData['bought_forms']);
+    //     }
 
-        if ($validatedData['acaProf']) {
-            $enquires->where('type_of_course', $validatedData['acaProf']);
-        }
+    //     if ($validatedData['acaProf'] !== 'Total') {
+    //         $enquires->where('type_of_course', $validatedData['acaProf']);
+    //     }
 
-        if ($validatedData['diploma_id']) {
-            $enquires->where('diploma_id', $validatedData['diploma_id']);
-        }
+    //     if ($validatedData['diploma_id']) {
+    //         $enquires->where('diploma_id', $validatedData['diploma_id']);
+    //     }
 
-        if ($validatedData['course_id']) {
-            $enquires->where('course_id', $validatedData['course_id']);
-        }
+    //     if ($validatedData['course_id']) {
+    //         $enquires->where('course_id', $validatedData['course_id']);
+    //     }
 
-        if ($validatedData['branch']) {
-            $enquires->where('branch', $validatedData['branch']);
-        }
+    //     if ($validatedData['branch']) {
+    //         $enquires->where('branch', $validatedData['branch']);
+    //     }
 
+    //     $enquires = $enquires->get();
 
+    //     // return $enquires;
 
-        // if ($request->filled('acaProf')) {
-        //     $enquires->where('type_of_course', $request->acaProf);
-        // }
+    //     return view('backend.reports.enquiryreports', compact('enquires','validatedData'));
 
-        // if ($request->filled('diploma_id')) {
-        //     $enquires->where('diploma_id', $request->diploma_id);
-        // }
+    // }
 
-        // if ($request->filled('course_id')) {
-        //     $enquires->where('course_id', $request->course_id);
-        // }
+    public function generateEnquiryReport(Request $request)
+{  
+    //  dd($request->all());
+    $validatedData = $request->validate([
+        'acaProf'      => 'required|in:Academic,Professional,Total',
+        'diploma_id'   => 'nullable|exists:diploma,id',
+        'course_id'    => 'nullable|exists:grades,id',
+        'current_date' => 'nullable|date',
+        'start_date'   => 'nullable|date',
+        'bought_forms' => 'nullable|in:Yes,No',
+        'end_date'     => 'nullable|date|after_or_equal:start_date',
+        'branch'       => 'nullable|in:Kasoa,Spintex,Kanda',
+        'source_of_enquiry' => 'nullable|string|max:255',
+        'preferred_time' => 'nullable|string|max:255',
+        'method_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer'
+    ]);
 
-        // if ($request->filled('current_date')) {
-        //     $enquires->whereDate('created_at', $request->current_date);
-        // }
+    $course = Grade::find($validatedData['course_id']) ?? null;
+    $diploma = Diploma::find($validatedData['diploma_id']) ?? null;
 
-        // if ($request->filled('branch')) {
-        //     $enquires->where('branch', $request->branch);
-        // }
+    $enquires = Enquiry::with(['course', 'diploma']);
 
-        // if ($request->filled('branch')) {
-        //     $enquires->where('branch', $request->branch);
-        // }
+    // Date filters
+    $enquires->when($validatedData['start_date'] && $validatedData['end_date'], function ($query) use ($validatedData) {
+        $query->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
+    })->when($validatedData['start_date'] && !$validatedData['end_date'], function ($query) use ($validatedData) {
+        $query->where('created_at', '>=', $validatedData['start_date']);
+    })->when($validatedData['end_date'] && !$validatedData['start_date'], function ($query) use ($validatedData) {
+        $query->where('created_at', '<=', $validatedData['end_date']);
+    })->when($validatedData['current_date'], function ($query) use ($validatedData) {
+        $query->whereDate('created_at', $validatedData['current_date']);
+    });
 
-        $enquires = $enquires->get();
+    // Other filters
+    $enquires->when($validatedData['bought_forms'], function ($query) use ($validatedData) {
+        $query->where('bought_forms', $validatedData['bought_forms']);
+    });
 
-        return $enquires;
-
+    // Only filter acaProf if not "Total"
+    if ($validatedData['acaProf'] !== 'Total') {
+        $enquires->where('type_of_course', $validatedData['acaProf']);
     }
+
+    $enquires->when($validatedData['diploma_id'], function ($query) use ($validatedData) {
+        $query->where('diploma_id', $validatedData['diploma_id']);
+    });
+
+    $enquires->when($validatedData['course_id'], function ($query) use ($validatedData) {
+        $query->where('course_id', $validatedData['course_id']);
+    });
+
+    $enquires->when($validatedData['branch'], function ($query) use ($validatedData) {
+        $query->where('branch', $validatedData['branch']);
+    });
+
+    $enquires->when($validatedData['source_of_enquiry'], function ($query) use ($validatedData) {
+        $query->where('source_of_enquiry', 'like', '%' . $validatedData['source_of_enquiry'] . '%');
+    });
+
+    $enquires->when($validatedData['preferred_time'], function ($query) use ($validatedData) {
+        $query->where('preferred_time', 'like', '%' . $validatedData['preferred_time'] . '%');
+    });
+
+    $enquires->when($validatedData['method_of_payment'], function($query) use($validatedData) {
+        $query->where('method_of_payment',$validatedData['method_of_payment']);
+    });
+
+    $datas = $enquires->get();
+
+    // return $datas;
+
+    return view('backend.reports.enquiryreports', compact('datas','validatedData','course','diploma'));
+}
+
 
     public function canteenReportForm() {
         return view('backend.reports.canteenreportform');   

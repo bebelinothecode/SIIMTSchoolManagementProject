@@ -123,9 +123,14 @@
 
         <div class="details">
             <h3>Student Details</h3>
-            <p><strong>Index Number:</strong> {{ $transaction->student_index_number }}</p>
-            <p><strong>Name:</strong> {{ $transaction->student_name }}</p>
-            <p><strong>Course:</strong> {{ $courseAcademic->course_name ?? $courseProfessional->name }}</p>
+            <p><strong>Index Number:</strong> {{ $transaction->student->index_number }}</p>
+            <p><strong>Name:</strong> {{ $transaction->student->user->name }}</p>
+            <p><strong>Programme:</strong> {{ $courseAcademic->course_name ?? $courseProfessional->name }}</p>
+             @if($student->student_category === 'Academic')
+               <p><strong>Level:</strong> {{ $transaction->student->level }}</p>
+               <p><strong>Semester:</strong> {{ $transaction->student->session }}</p>
+            @endif
+
 
             <h3>Payment Details</h3>
             <table>
@@ -143,12 +148,16 @@
                     <th>Method of Payment</th>
                     <td>{{ $transaction->method_of_payment }}</td>
                 </tr>
-                @if($transaction->currency === '$')
+                {{-- @if($student->student_category === 'Academic')
                 <tr>
-                    <th>Remarks</th>
-                    <td>{{ $transaction->remarks }}</td>
+                    <th>Level</th>
+                    <td>{{ $student->level }}</td>
                 </tr>
-                @endif      
+                <tr>
+                    <th>Semester</th>
+                    <td>{{ $student->session }}</td>
+                </tr>
+                @endif       --}}
             </table>
         </div>
 
@@ -158,7 +167,8 @@
 
         <div class="footer">
             <p>Thank you for your payment!</p>
-            <p>For any inquiries, please contact us at <strong>(+233) 057 080 1631</strong></p>        
+            <p>For any inquiries, please contact us at <strong>(+233) 057 080 1631</strong></p>
+            <p>This is a system generated receipt.No need for signature</p>          
             <p>&copy; {{ now()->format('Y') }} SIIMT University College. All rights reserved.</p>
         </div>
     </div>

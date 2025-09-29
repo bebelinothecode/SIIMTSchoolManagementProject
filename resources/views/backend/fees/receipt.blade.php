@@ -126,6 +126,10 @@
             <p><strong>Index Number:</strong> {{ $feespaid->student_index_number }}</p>
             <p><strong>Name:</strong> {{ $feespaid->student_name }}</p>
             <p><strong>Course/Diploma:</strong> {{ $student->course->course_name ?? $student->diploma->name }}</p>
+            @if ($student->student_category === 'Academic')
+                <p><strong>Level:</strong> {{ $student->level }}</p>
+                <p><strong>Semester:</strong> {{ $student->session }}</p>
+            @endif
 
             <h3>Payment Details</h3>
             <table>
@@ -168,10 +172,10 @@
                 </tr>
                 @endif
 
-                @if ($student->late_fees_charges !== '0')
+                @if ($feespaid->late_fees_charges !== '0')
                 <tr>
                     <th>Late Fees Charges</th>
-                    <td>{{ $student->late_fees_charges }}</td>
+                    <td>{{ $feespaid->late_fees_charges }}</td>
                 </tr>
                 @endif
             </table>

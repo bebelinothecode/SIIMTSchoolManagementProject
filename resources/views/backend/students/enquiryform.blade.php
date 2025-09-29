@@ -130,7 +130,7 @@
                             <select name="diploma_id" id="professional-select" class="form-select">
                                 <option value="">-- Select Course --</option>
                                 @foreach($diplomas as $diploma)
-                                    <option value="{{ $diploma->id }}">{{ $diploma->name }}</option>
+                                    <option value="{{ $diploma->id }}">{{$diploma->code  }}-{{ $diploma->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -153,6 +153,26 @@
                                 <option value="Ghana Cedi">Ghana Cedi</option>
                             </select>
                             @error('currency')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                     <div class="md:flex md:items-center mb-6">
+                        <div class="md:w-1/3">
+                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                                Method of Payment
+                            </label>
+                        </div>
+                        <div class="md:w-2/3">
+                            <select name="method_of_payment" id="currency"
+                                    class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="">-- Select method --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Mobile Money">Mobile Money</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                            @error('method_of_payment')
                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>
                             @enderror
                         </div>
@@ -207,6 +227,46 @@
                             <option value="Spintex">Spintex</option>
                         </select>
                         @error('branch')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Source of enquiry
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <select name="source_of_enquiry" id="source_of_enquiry"
+                            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
+                            <option value="">-- Select source --</option>
+                            <option value="Whatsapp">Whatsapp</option>
+                            <option value="Walk-in">Walk-in</option>
+                            <option value="TextMessage">Text-Message</option>
+                            <option value="Website">Website</option>
+                        </select>
+                        @error('source_of_enquiry')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="md:flex md:items-center mb-6">
+                    <div class="md:w-1/3">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Preferred Time
+                        </label>
+                    </div>
+                    <div class="md:w-2/3">
+                        <select name="preferred_time" id="preferred_time"
+                            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" required>
+                            <option value="">-- Select --</option>
+                            <option value="Weekday">Weekday</option>
+                            <option value="Weekend">Weekend</option>
+                        </select>
+                        @error('preferred_time')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>

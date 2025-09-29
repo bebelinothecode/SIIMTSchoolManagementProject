@@ -763,7 +763,7 @@ class StudentController extends Controller
 
     public function storeEnquiry(Request $request) {
         try {
-            // dd($request->all());
+        // dd($request->all());
         $validatedData = $request->validate([
             'name' => 'required|string',
             'telephone_number' => 'required|string',
@@ -775,7 +775,10 @@ class StudentController extends Controller
             'amount_paid' => 'nullable|numeric',
             'User' => 'nullable|string',
             'course_id' => 'nullable|integer',
-            'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
+            'branch' => 'nullable|in:Kasoa,Spintex,Kanda',
+            'source_of_enquiry' => 'nullable|string|max:255',
+            'preferred_time' => 'nullable|string|in:Weekday,Weekend',
+            'method_of_payment' => 'nullable|string|max:255',
         ]);
 
         $receiptNumber = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8));
@@ -798,7 +801,10 @@ class StudentController extends Controller
             'amount' => $validatedData['amount_paid'],
             'branch' => $validatedData['branch'],
             'receipt_number' => $receiptNumber,
-            'User' => Auth::user()->name
+            'User' => Auth::user()->name,
+            'source_of_enquiry' => $validatedData['source_of_enquiry'] ?? 'Not Specified',
+            'preferred_time' => $validatedData['preferred_time'] ?? 'Not Specified',
+            'method_of_payment' => $validatedData['method_of_payment'] ?? 'Not Specified',
         ]);
 
         if($validatedData['bought_forms'] === 'Yes') {

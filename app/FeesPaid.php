@@ -21,6 +21,7 @@ class FeesPaid extends Model
         // 'end_academic_year',
         // 'semester',
         'method_of_payment',
+        'late_fees_charges',
         'amount',
         'balance',
         'currency',

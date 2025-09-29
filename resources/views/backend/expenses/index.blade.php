@@ -62,7 +62,7 @@
                     <td class="py-3 px-6 text-left">{{ $expense->description_of_expense }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->expenseCategory->expense_category  ?? $expense->category ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->currency }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->amount }}</td>
+                    <td class="py-3 px-6 text-left">{{ number_format($expense->amount,2) }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->cash_details ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->bank_details ?? 'N/A' }}</td>

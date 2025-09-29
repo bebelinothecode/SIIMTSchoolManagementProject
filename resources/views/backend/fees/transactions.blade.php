@@ -78,18 +78,26 @@
                     </td>
                     <td class="py-3 px-6 text-left">
                         @if($transaction['type'] == 'regular')
-                            {{ number_format($transaction['original_record']->amount, 2) }}
+                            <span class="text-green-600 font-semibold">
+                                {{ number_format($transaction['original_record']->amount, 2) }}
+                            </span>
                         @elseif($transaction['type'] == 'mature')
-                            {{ number_format($transaction['original_record']->amount_paid, 2) }}
+                            <span class="text-green-600 font-semibold">
+                                {{ number_format($transaction['original_record']->amount_paid, 2) }}
+                            </span>
                         @else
-                            {{ number_format($transaction['original_record']->amount, 2) }}
+                            <span class="text-green-600 font-semibold">
+                                {{ number_format($transaction['original_record']->amount, 2) }}
+                            </span>
                         @endif
                     </td>
                     <td class="py-3 px-6 text-left">
                         @if($transaction['type'] == 'regular')
-                            {{ $transaction['original_record']->balance }}
+                            <span class="text-red-600 font-semibold">
+                                {{ number_format($transaction['original_record']->balance, 2) }}
+                            </span>
                         @else
-                            N/A
+                            <span class="text-gray-400">N/A</span>
                         @endif
                     </td>
                     <td class="py-3 px-6 text-left">

@@ -98,7 +98,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">{{ $student->mature_index_number }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $student->amount_paid ?? 'N/A' }}
+                            {{ number_format($student->amount_paid,2) ?? 'N/A' }}
                         </td>
                         @hasrole('Admin|rector')
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

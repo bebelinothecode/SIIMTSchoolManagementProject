@@ -125,6 +125,12 @@
                         <span class="badge badge-success">{{ ucfirst($methodOfPayment) }}</span>
                     </div>
                 @endif
+                @if ($feesType)
+                    <div class="col-md-3">
+                        <strong>Fees Type:</strong><br>
+                        <span class="badge badge-success">{{ ucfirst($feesType) }}</span>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -148,6 +154,7 @@
                                 <th>Method</th>
                                 <th>Amount</th>
                                 <th>Balance</th>
+                                <th>Fees Type</th>
                                 <th>Date/Time</th>
                                 <th>Receipt No.</th>
                                 <th>Remarks</th>
@@ -169,6 +176,7 @@
                                     </td>
                                     <td>{{ number_format($transaction->amount, 2) }}</td>
                                     <td>{{ number_format($transaction->balance, 2) }}</td>
+                                    <td>{{ $transaction->fees_type }}</td>
                                     <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('M j, Y h:i A') }}</td>
                                     <td>{{ $transaction->receipt_number ?? 'N/A' }}</td>
                                     <td><small>{{ $transaction->remarks ?? '-' }}</small></td>

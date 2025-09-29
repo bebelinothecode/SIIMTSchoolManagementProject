@@ -23,6 +23,9 @@ class Enquiry extends Model
         'receipt_number',
         'course_id',
         'diploma_id',
+        'source_of_enquiry',
+        'preferred_time',
+        'method_of_payment'
     ];
 
     use HasFactory;

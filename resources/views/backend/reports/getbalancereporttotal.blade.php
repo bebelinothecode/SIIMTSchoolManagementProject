@@ -386,8 +386,8 @@
                         <tr>
                             <td><strong>{{ $t->student_index_number ?? "N/A" }}</strong></td>
                             <td>{{ $t->student_name ?? "N/A" }}</td>
-                            <td class="amount">{{ $t->amount ?? "N/A" }}</td>
-                            <td class="amount">{{ $t->balance ?? "N/A" }}</td>
+                            <td class="amount">{{ number_format($t->amount,2) ?? "N/A" }}</td>
+                            <td class="amount">{{ number_format($t->balance,2) ?? "N/A" }}</td>
                             <td>{{ $t->currency ?? "N/A" }}</td>
                             <td>{{ $t->method_of_payment }}</td>
                             <td>{{ $t->receipt_number ?? "N/A" }}</td>
@@ -431,7 +431,7 @@
                             <td>{{ $f->name ?? "N/A" }}</td>
                             <td>{{ $f->telephone_number ?? "N/A" }}</td>
                             <td>{{ $f->currency ?? "N/A" }}</td>
-                            <td class="amount">{{ $f->amount ?? "N/A" }}</td>
+                            <td class="amount">{{ number_format($f->amount,2) ?? "N/A" }}</td>
                             <td>{{ $f->created_at ?? "N/A" }}</td>
                         </tr>
                         @empty
@@ -470,7 +470,7 @@
                         <tr>
                             <td>{{ $m->name ?? "N/A" }}</td>
                             <td>{{ $m->currency ?? "N/A" }}</td>
-                            <td class="amount">{{ $m->amount_paid ?? "N/A" }}</td>
+                            <td class="amount">{{ number_format($m->amount_paid,2) ?? "N/A" }}</td>
                             <td><strong>{{ $m->mature_index_number ?? "N/A" }}</strong></td>
                             <td>{{ $m->created_at ?? "N/A" }}</td>
                         </tr>
@@ -484,6 +484,49 @@
                         <tr>
                             <td colspan="2"><strong>Total Mature Payments</strong></td>
                             <td colspan="3" class="total-amount">GHS {{ number_format($matureTransactionsTotal, 2) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="table-section page-break">
+                <div class="table-header">
+                    <div class="table-icon">C</div>
+                    <h3>Canteen Income Collections</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Mode of Transaction</th>
+                            <th>Branch</th>
+                            <th>Currency</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($canteenIncomeTransactions as $f)
+                        <tr>
+                            <td>{{ $f->item_name ?? "N/A" }}</td>
+                            <td>{{ $f->description ?? "N/A" }}</td>
+                            <td class="amount">{{ number_format($f->amount,2) ?? "N/A" }}</td>
+                            <td>{{ $f->mode_of_transaction ?? "N/A" }}</td>
+                            <td>{{ $f->branch ?? "N/A" }}</td>
+                            <td>{{ $f->currency ?? "N/A" }}</td>
+                            <td>{{ $f->created_at ?? "N/A" }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="empty-state">No canteen income records found</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5"><strong>Total Canteen Income</strong></td>
+                            <td colspan="2" class="total-amount">GHS {{ number_format($canteenIncomeTotal, 2) }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -512,7 +555,7 @@
                             <td>{{ $e->source_of_expense ?? "N/A" }}</td>
                             <td>{{ $e->description_of_expense ?? "N/A" }}</td>
                             <td>{{ $e->category ?? "N/A" }}</td>
-                            <td class="amount status-negative">{{ $e->amount ?? "N/A" }}</td>
+                            <td class="amount status-negative">{{ number_format($e->amount,2) ?? "N/A" }}</td>
                             <td>{{ $e->mode_of_payment ?? "N/A" }}</td>
                             <td>{{ $e->created_at }}</td>
                         </tr>
@@ -531,33 +574,81 @@
                 </table>
             </div>
 
-            <!-- Collections by Category -->
-            <div class="table-section">
+             <div class="table-section page-break">
                 <div class="table-header">
                     <div class="table-icon">C</div>
-                    <h3>Collections by Category & Payment Method</h3>
+                    <h3>Canteen Expenses</h3>
                 </div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Category</th>
-                            <th>Cash</th>
-                            <th>Mobile Money</th>
-                            <th>Bank Transfer</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Mode of Transaction</th>
+                            <th>Branch</th>
+                            <th>Currency</th>
+                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($balanceByCategoryAndMode as $category => $modes)
-                            <tr>
-                                <td><strong>{{ $category }}</strong></td>
-                                <td class="amount">GHS {{ number_format($modes['Cash'] ?? 0, 2) }}</td>
-                                <td class="amount">GHS {{ number_format($modes['Momo'] ?? 0, 2) }}</td>
-                                <td class="amount">GHS {{ number_format($modes['Cheque'] ?? 0, 2) }}</td>
-                            </tr>
-                        @endforeach
+                        @forelse ($canteenExpenseTransactions as $f)
+                        <tr>
+                            <td>{{ $f->item_name ?? "N/A" }}</td>
+                            <td>{{ $f->description ?? "N/A" }}</td>
+                            <td class="amount">{{ number_format($f->amount,2) ?? "N/A" }}</td>
+                            <td>{{ $f->mode_of_transaction ?? "N/A" }}</td>
+                            <td>{{ $f->branch ?? "N/A" }}</td>
+                            <td>{{ $f->currency ?? "N/A" }}</td>
+                            <td>{{ $f->created_at ?? "N/A" }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="empty-state">No canteen expenses records found</td>
+                        </tr>
+                        @endforelse
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5"><strong>Total Canteen Expenses</strong></td>
+                            <td colspan="2" class="total-amount">GHS {{ number_format($canteenExpenseTotal, 2) }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
+
+          
+
+            <!-- Collections by Category -->
+            <div class="table-section">
+    <div class="table-header">
+        <div class="table-icon">C</div>
+        <h3>Collections by Payment Method</h3>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Payment Method</th>
+                <th>Collections</th>
+                <th>Expenses</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (['Cash', 'Momo', 'Cheque'] as $mode)
+                @php
+                    $displayMode = $mode === 'Momo' ? 'Mobile Money' : $mode;
+                @endphp
+                <tr>
+                    <td><strong>{{ $displayMode }}</strong></td>
+                    <td class="amount">GHS {{ number_format($collectionsByMode[$mode] ?? 0, 2) }}</td>
+                    <td class="amount">GHS {{ number_format($expensesByMode[$mode] ?? 0, 2) }}</td>
+                    <td class="amount">GHS {{ number_format($balanceByMode[$mode] ?? 0, 2) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
         </div>
     </div>
 </body>
