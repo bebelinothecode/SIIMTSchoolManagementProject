@@ -12,6 +12,7 @@ use App\Teacher;
 use App\FeesPaid;
 use App\AcademicYear;
 use App\Enquiry;
+use App\Expenses;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -1477,7 +1478,7 @@ public function calculateBalanceTotal(Request $request)
 
         $formFeesTotals = $formFeesTransactions->sum('amount');
         // ========== EXPENSES ==========
-        $expensesQuery = DB::table('expenses');
+        $expensesQuery = Expenses::with('expenseCategory');
 
         if($selectedCategory === 'Academic' || $selectedCategory === 'Professional') {
            $expensesQuery->where('source_of_expense',$selectedCategory);
@@ -1502,6 +1503,7 @@ public function calculateBalanceTotal(Request $request)
         }
 
         $expensesTransactions = $expensesQuery->get();
+
         // return $expensesTransactions;
 
         $expensesTotalAmount = $expensesTransactions->sum('amount');

@@ -125,11 +125,15 @@
             <h3>Student Details</h3>
             <p><strong>Index Number:</strong> {{ $feespaid->student_index_number }}</p>
             <p><strong>Name:</strong> {{ $feespaid->student_name }}</p>
+<<<<<<< HEAD
             <p><strong>Course/Diploma:</strong> {{ $student->course->course_name ?? $student->diploma->name }}</p>
             @if ($student->student_category === 'Academic')
                 <p><strong>Level:</strong> {{ $student->level }}</p>
                 <p><strong>Semester:</strong> {{ $student->session }}</p>
             @endif
+=======
+            <p><strong>Programme:</strong> {{ $student->course->course_name ?? $student->diploma->name }}</p>
+>>>>>>> 213a26396867f2fdbcbe14d6e0b0a2a3d5f13ca0
 
             <h3>Payment Details</h3>
             <table>

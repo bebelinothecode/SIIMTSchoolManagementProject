@@ -554,8 +554,13 @@
                         <tr>
                             <td>{{ $e->source_of_expense ?? "N/A" }}</td>
                             <td>{{ $e->description_of_expense ?? "N/A" }}</td>
+<<<<<<< HEAD
                             <td>{{ $e->category ?? "N/A" }}</td>
                             <td class="amount status-negative">{{ number_format($e->amount,2) ?? "N/A" }}</td>
+=======
+                            <td>{{  $e->expenseCategory->expense_category ?? $e->category ?? "N/A"}}</td>
+                            <td class="amount status-negative">{{ $e->amount ?? "N/A" }}</td>
+>>>>>>> 213a26396867f2fdbcbe14d6e0b0a2a3d5f13ca0
                             <td>{{ $e->mode_of_payment ?? "N/A" }}</td>
                             <td>{{ $e->created_at }}</td>
                         </tr>
