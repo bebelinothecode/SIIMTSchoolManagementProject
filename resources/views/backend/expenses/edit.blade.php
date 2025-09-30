@@ -54,7 +54,7 @@
                     <select name="category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="expense_category">
                         <option value="">--Select Category--</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->expense_category }}" {{ $expense->category == $category->expense_category ? 'selected' : '' }}>
+                            <option value="{{ $category->id }}" {{ $expense->category == $category->expense_category ? 'selected' : '' }}>
                                 {{ $category->expense_category }}
                             </option>
                         @endforeach

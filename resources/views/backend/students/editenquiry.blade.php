@@ -21,7 +21,7 @@
         </div>
 
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('store.enquiry') }}" method="POST" 
+            <form action="{{ route('update.enquiry',$enquiry->id) }}" method="POST" 
                   class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
 
@@ -33,9 +33,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="name" 
-                               class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" 
-                               type="text" value="{{ old('name') }}">
+                        <input name="name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{$enquiry->name}}">
                         @error('name')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -50,9 +48,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <input name="telephone_number" 
-                               class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" 
-                               type="phone_number" value="{{ old('telephone_number') }}">
+                        <input name="telephone_number" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="phone_number" value="{{ $enquiry->telephone_number }}">
                         @error('phone_number')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
@@ -67,8 +63,7 @@
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <select name="type_of_course" id="type_of_course"
-                                class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                        <select name="type_of_course" id="type_of_course" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                             <option value="">-- Select type of course --</option>
                             <option value="Academic">Academic</option>
                             <option value="Professional">Professional</option>
@@ -129,9 +124,9 @@
                         <div class="md:w-2/3">
                             <select name="diploma_id" id="professional-select" class="form-select">
                                 <option value="">-- Select Course --</option>
-                                @foreach($diplomas as $diploma)
+                                {{-- @foreach($diplomas as $diploma)
                                     <option value="{{ $diploma->id }}">{{$diploma->code  }}-{{ $diploma->name }}</option>
-                                @endforeach
+                                @endforeach --}}
                             </select>
                         </div>
                     </div>
@@ -278,7 +273,7 @@
                     <div class="md:w-2/3">
                         <button type="submit"
                                 class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
-                            Save Enquiry
+                            Update Enquiry
                         </button>
                     </div>
                 </div>

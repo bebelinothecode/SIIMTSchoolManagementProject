@@ -82,6 +82,7 @@
                             @method('DELETE')
                             <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
                         </form>
+                        <a href="{{ route('edit.enquiry', $enquiry->id) }}" class="ml-4 text-blue-600 hover:underline">Edit</a>
                         @endhasrole
                     </td>
                 </tr>

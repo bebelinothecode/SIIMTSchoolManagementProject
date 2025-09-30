@@ -188,6 +188,8 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/canteen/update/{id}',[ExpensesController::class, 'updateCanteenItem'])->name('update.canteenitem');
     Route::get('/canteen/report/form',[ReportsController::class, 'canteenReportForm'])->name('canteen.reportform');
     Route::post('/generate/canteen/report',[ReportsController::class, 'generateCanteenReport'])->name('canteen.report');
+    Route::get('/edit/enquiry/{id}', [DiplomaController::class, 'editEnquiry'])->name('edit.enquiry');
+    Route::post('/update/enquiry/{id}', [DiplomaController::class, 'updateEnquiry'])->name('update.enquiry');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

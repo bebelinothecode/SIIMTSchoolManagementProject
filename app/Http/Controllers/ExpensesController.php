@@ -100,7 +100,6 @@ class ExpensesController extends Controller
         }
 
         $expenses = $query->latest()->paginate(10);
-        // $expenses = $query->get();
 
         // return $expenses;
 
@@ -232,7 +231,8 @@ class ExpensesController extends Controller
                 'cheque_number' => $chequeNumber,
                 'cash_details' => $cashAmountDetails,
                 'mobile_money_details' => $mobileMoneyDetails,
-                'bank_details' => $bankDetails
+                'bank_details' => $bankDetails,
+                'expensecategory_id' => $category,
             ]); 
 
             if($updated === true) {
