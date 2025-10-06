@@ -92,10 +92,10 @@
                         </label>
                     </div>
                     <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <select name="expense_category" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="student_category">
+                        <select name="expensecategory_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="student_category">
                             <option value="">--Select Category--</option>
                             @foreach ($categorys as $category)
-                                <option value="{{ $category->expense_category }}">{{ $category->expense_category }}</option>
+                                <option value="{{ $category->id }}">{{ $category->expense_category }}</option>
                             @endforeach
                             <!-- <option value="Academic">Academic</option>
                             <option value="Professional">Professional</option> -->

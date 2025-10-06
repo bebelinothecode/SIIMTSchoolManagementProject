@@ -118,10 +118,11 @@
                         <span class="badge badge-success">{{ $filters['branch'] }}</span>
                     </div>
                 @endif
-                @if ($filters['category'])
+               
+                @if ($filters['expensecategory_id'])
                     <div class="col-md-3">
                         <strong>Category:</strong><br>
-                        <span class="badge badge-success">{{ $filters['category'] }}</span>
+                        <span class="badge badge-success">{{ $filters['expensecategory_id'] }}</span>
                     </div>
                 @endif
                 @if ($filters['modeOfPayment'])
@@ -156,7 +157,7 @@
                                     <!-- <td>{{ $data->category ?? "N/A" }}</td> -->
                                     <td>{{ $data->description_of_expense ?? "N/A" }}</td>
                                     <td>{{ $data->branch }}</td>
-                                    <td>{{ $data->category }}</td>
+                                    <td>{{ $data->expenseCategory->expense_category ?? $data->category ?? "N/A" }}</td>
                                     <td>{{ number_format($data->amount,2) }}</td>
                                     <td>{{ $data->mode_of_payment }}</td>
                                     <td>{{ $data->created_at }}</td>
@@ -165,7 +166,7 @@
                             <!-- Total Row -->
                             <tr class="total-highlight">
                                 <td colspan="3" class="text-right">Total</td>
-                                <td><strong>GHS{{ number_format($totalAmount, 2) }}</strong></td>
+                                <td><strong>{{ $datas->first()->currency ?? 'GHS' }} {{ number_format($totalAmount, 2) }}</strong></td>
                                 <td colspan="2"></td>
                             </tr>
                         </tbody>

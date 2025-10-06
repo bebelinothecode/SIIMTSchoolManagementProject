@@ -463,6 +463,8 @@ class  FeesController extends Controller
                 ['path' => request()->url(), 'query' => request()->query()]
             );
 
+            // return $paginator;
+
             return view('backend.fees.transactions', compact('paginator'));
         } catch (Exception $e) {
             Log::error("Error executing query", ["message" => $e->getMessage()]);

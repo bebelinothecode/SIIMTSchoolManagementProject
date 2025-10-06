@@ -574,7 +574,7 @@
                 </table>
             </div>
 
-             <div class="table-section page-break">
+            <div class="table-section page-break">
                 <div class="table-header">
                     <div class="table-icon">C</div>
                     <h3>Canteen Expenses</h3>
@@ -586,6 +586,7 @@
                             <th>Description</th>
                             <th>Amount</th>
                             <th>Mode of Transaction</th>
+                            <th>Category</th>
                             <th>Branch</th>
                             <th>Currency</th>
                             <th>Date</th>
@@ -598,6 +599,7 @@
                             <td>{{ $f->description ?? "N/A" }}</td>
                             <td class="amount">{{ number_format($f->amount,2) ?? "N/A" }}</td>
                             <td>{{ $f->mode_of_transaction ?? "N/A" }}</td>
+                            <td>{{ $f->category ?? "N/A" }}</td>
                             <td>{{ $f->branch ?? "N/A" }}</td>
                             <td>{{ $f->currency ?? "N/A" }}</td>
                             <td>{{ $f->created_at ?? "N/A" }}</td>
