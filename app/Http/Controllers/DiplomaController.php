@@ -197,22 +197,22 @@ class DiplomaController extends Controller
 
     public function updateEnquiry($id, Request $request) {
         try {
-            // dd($request->all());
+            dd($request->all());
 
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'telephone_number' => 'nullable|string|max:255',
                 'type_of_course' => 'nullable|string|max:255',
                 'course_id' => 'nullable|integer',
-                'diploma_id' => 'nullable|integer',
+                // 'diploma_id' => 'nullable|integer',
                 'bought_forms' => 'nullable|string|max:255',
                 'currency' => 'nullable|string|max:255',
-                'expected_start_date' => 'nullable|string|max:255',
-                'method_of_payment' => 'nullable|string|max:255',
-                'amount_paid' => 'nullable|numeric',
-                'branch' => 'nullable|string|max:255',
-                'source_of_enquiry' => 'nullable|string|max:255',
-                'preferred_time' => 'nullable|string|max:255',
+                'expected_start_date' => 'nullable|string|max:255'
+                // 'method_of_payment' => 'nullable|string|max:255',
+                // 'amount_paid' => 'nullable|numeric',
+                // 'branch' => 'nullable|string|max:255',
+                // 'source_of_enquiry' => 'nullable|string|max:255',
+                // 'preferred_time' => 'nullable|string|max:255',
             ]);
 
             $enquiry = Enquiry::findOrFail($id);

@@ -45,13 +45,12 @@
                 <tr>
                     <th class="py-3 px-6 text-left">Name</th>
                     <th class="py-3 px-6 text-left">Telephone</th>
-                    <th class="py-2 px-4 text-left">Source of Expense</th>                    
                     <th class="py-3 px-6 text-left">Interested Course</th>
+                    <th class="py-3 px-6 text-left">Branch</th>
                     <th class="py-3 px-6 text-left">Expected Start Date</th>
                     <th class="py-3 px-6 text-left">Bought Forms</th>
-                    <th class="py-3 px-6 text-left">Currency</th>
                     <th class="py-3 px-6 text-left">Amount</th>
-                    <th class="py-3 px-6 text-left">Branch</th>
+                    <th class="py-2 px-4 text-left">Source of Enquiry</th>    
                     <th class="py-3 px-6 text-left">Created On</th>
                     <th class="py-3 px-6 text-left">Actions</th>
                 </tr>
@@ -61,13 +60,13 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->name }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->telephone_number }}</td>
-                    <td class="border border-gray-200 px-2 py-2">{{ $enquiry->source_of_enquiry ?? "N/A" }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->course->course_name ?? $enquiry->diploma->name ?? $enquiry->interested_course ?? "N/A" }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->branch ?? "N/A" }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->expected_start_date)->format('M d, Y') }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $enquiry->bought_forms }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->currency }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->branch ?? "N/A" }}</td>
+                    <td class="border border-gray-200 px-4 py-2">{{ $enquiry->amount ?? "N/A" }}</td>
+                    <td class="border border-gray-200 px-2 py-2">{{ $enquiry->source_of_enquiry ?? "N/A" }}</td>
+                    
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($enquiry->created_at)->format('M d, Y H:i A') }}</td>
                     <td class="py-3 px-6 text-center">
                         @if ($enquiry->bought_forms === 'Yes')

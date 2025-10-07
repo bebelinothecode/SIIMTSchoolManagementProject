@@ -114,8 +114,8 @@ class ExpensesController extends Controller
             'current_date' => 'nullable|date',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer,Cheque',
-            'expense_category' => 'nullable',
+            'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
+            'expensecategory_id' => 'nullable',
             'branch' => 'nullable|in:Kasoa,Kanda,Spintex'
         ]);
 
@@ -124,13 +124,13 @@ class ExpensesController extends Controller
             'startDate' => $validatedData['start_date'] ?? null,
             'endDate' => $validatedData['end_date'] ?? null,
             'branch' => $validatedData['branch'] ?? null,
-            'category' => $validatedData['expense_category'] ?? null,
+            'expensecategory_id' => $validatedData['expensecategory_id'] ?? null,
             'modeOfPayment' => $validatedData['mode_of_payment'] ?? null,
         ];
 
         // Build dynamic query based on filters
         // $buildQuery = function ($categoryId = null) use ($filters) {
-        $query = Expenses::query();
+        $query = Expenses::with('expenseCategory');
 
         if ($filters['startDate'] && $filters['endDate']) {
             $query->whereBetween('created_at', [
@@ -143,8 +143,8 @@ class ExpensesController extends Controller
             $query->whereDate('created_at', Carbon::parse($filters['currentDate']));
         }
 
-        if ($filters['category']) {
-            $query->where('category', $filters['category']);
+        if ($filters['expensecategory_id']) {
+            $query->where('expensecategory_id', $filters['expensecategory_id']);
         }
 
         if ($filters['modeOfPayment']) {

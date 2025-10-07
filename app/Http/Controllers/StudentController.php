@@ -783,6 +783,54 @@ class StudentController extends Controller
         return view('backend.students.enquiryform', compact('courses','diplomas'));
     }
 
+    public function updateEnquiry(Request $request, $id) {
+        try {
+            // dd($request->all());
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'telephone_number' => 'required|string',
+                'diploma_id' => 'nullable|integer',
+                'expected_start_date' => 'required',
+                'type_of_course' => 'required',
+                'bought_forms' => 'nullable|in:Yes,No',
+                'currency' => 'nullable|string',
+                'amount_paid' => 'nullable|numeric',
+                'User' => 'nullable|string',
+                'course_id' => 'nullable|integer',
+                'branch' => 'nullable|in:Kasoa,Spintex,Kanda',
+                'source_of_enquiry' => 'nullable|string|max:255',
+                'preferred_time' => 'nullable|string|in:Weekday,Weekend',
+                'method_of_payment' => 'nullable|string|max:255',
+            ]);
+    
+            $enquiry = Enquiry::findOrFail($id);
+    
+            $enquiry->update([
+                'name' => $validatedData['name'],
+                'telephone_number' => $validatedData['telephone_number'],
+                'course_id' => $validatedData['course_id'],
+                'diploma_id' => $validatedData['diploma_id'],
+                'expected_start_date' => $validatedData['expected_start_date'],
+                'type_of_course' => $validatedData['type_of_course'],
+                'bought_forms' => $validatedData['bought_forms'],
+                'currency' => $validatedData['currency'],
+                'amount' => $validatedData['amount_paid'],
+                'branch' => $validatedData['branch'],
+                // 'receipt_number' => $receiptNumber,
+                // 'User' => Auth::user()->name,
+                'source_of_enquiry' => $validatedData['source_of_enquiry'] ?? $enquiry->source_of_enquiry,
+                'preferred_time' => $validatedData['preferred_time'] ?? $enquiry->preferred_time,
+                'method_of_payment' => $validatedData['method_of_payment'] ?? $enquiry->method_of_payment,
+            ]);
+    
+            return redirect()->back()->with('success', 'Enquiry updated successfully');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            //throw $th;
+            Log::error('Validation errors: ', $e->errors());
+            return redirect()->back()->with('error', 'Error updating Enquiry'); 
+        }
+    }
+
     public function storeEnquiry(Request $request) {
         try {
         // dd($request->all());
@@ -1947,9 +1995,19 @@ class StudentController extends Controller
     }
 
     public function buyFormsLater($id) {
-        $enquiry = Enquiry::findOrFail($id);
+        $enquiry = Enquiry::with(['course','diploma'])->findOrFail($id);
 
-        return view('backend.students.buyforms',compact('enquiry'));   
+        $courses = null;
+
+        if($enquiry->type_of_course === 'Academic') {
+            $courses = Grade::all();
+        } elseif($enquiry->type_of_course === 'Professional') {
+            $courses = Diploma::all();
+        }
+
+        // return $enquiry;
+
+        return view('backend.students.buyforms',compact('enquiry','courses'));   
     }
 
     public function createUsersForm() {

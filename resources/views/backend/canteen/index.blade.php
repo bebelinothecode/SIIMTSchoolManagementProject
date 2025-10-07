@@ -45,11 +45,11 @@
                 <tr>
                     <th class="py-3 px-6 text-left">Item Name</th>
                     <th class="py-3 px-6 text-left">Description</th>
-                    <th class="py-2 px-4 text-left">Amount</th>                    
+                    <!-- <th class="py-2 px-4 text-left">Amount</th>                     -->
                     <th class="py-3 px-6 text-left">Category</th>
                     <th class="py-3 px-6 text-left">Mode of Transaction</th>
                     <th class="py-3 px-6 text-left">Branch</th>
-                    <th class="py-3 px-6 text-left">Currency</th>
+                    <!-- <th class="py-3 px-6 text-left">Currency</th> -->
                     <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Created On</th>
                     <th class="py-3 px-6 text-left">Actions</th>
@@ -60,13 +60,14 @@
                  <tr class="hover:bg-gray-50 transition-colors">
                     <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->item_name }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->description }}</td>
-                    <td class="border border-gray-200 px-2 py-2">{{ $canteenItem->amount }}</td>
+                    <!-- <td class="border border-gray-200 px-2 py-2">{{ $canteenItem->amount }}</td> -->
                     <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->category }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->mode_of_transaction }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->branch }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->currency }}</td>
-                    <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->amount }}</td>
+                    <!-- <td class="border border-gray-200 px-4 py-2">{{ $canteenItem->currency }}</td> -->
+                    <td class="border border-gray-200 px-4 py-2">GHS-{{number_format($canteenItem->amount,2) }}</td>
                     <td class="border border-gray-200 px-4 py-2">{{ \Carbon\Carbon::parse($canteenItem->created_at)->format('M d, Y H:i A') }}</td>
+                    @hasrole('Admin')
                     <td class="py-3 px-6 text-center">
                         <a href="{{ route('edit.canteenItemForm',$canteenItem->id) }}" class="ml-2 text-blue-600 hover:underline">Edit</a>
                         <form action="{{ route('delete.canteenitem',$canteenItem->id) }} " method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');" class="inline">
@@ -75,6 +76,7 @@
                             <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
                         </form>
                     </td>
+                    @endhasrole
                 </tr>
                 @endforeach
 

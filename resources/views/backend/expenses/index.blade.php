@@ -46,10 +46,10 @@
                     <th class="py-3 px-6 text-left">Currency</th>
                     <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Mode of Payment</th>
-                    <th class="py-3 px-6 text-left">Cash Amount Details</th>
+                    <!-- <th class="py-3 px-6 text-left">Cash Amount Details</th>
                     <th class="py-3 px-6 text-left">Bank Details</th>
                     <th class="py-3 px-6 text-left">Cheque Details</th>
-                    <th class="py-3 px-6 text-left">Mobile Money Details</th>  
+                    <th class="py-3 px-6 text-left">Mobile Money Details</th>   -->
                     @hasanyrole('Admin|rector')
                     <th class="py-3 px-6 text-left">Actions</th>
                     @endhasanyrole             
@@ -64,10 +64,10 @@
                     <td class="py-3 px-6 text-left">{{ $expense->currency }}</td>
                     <td class="py-3 px-6 text-left">{{ number_format($expense->amount,2) }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->cash_details ?? 'N/A' }}</td>
+                    <!-- <td class="py-3 px-6 text-left">{{ $expense->cash_details ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->bank_details ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->cheque_details ?? 'N/A' }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->mobile_money_details ?? 'N/A' }}</td>
+                    <td class="py-3 px-6 text-left">{{ $expense->mobile_money_details ?? 'N/A' }}</td> -->
                     <td class="py-3 px-6 text-center">
                             @hasrole('Admin|rector')
                             <a href="{{ route('expense.edit', $expense->id) }}" class="text-blue-600 hover:underline">Edit</a> 

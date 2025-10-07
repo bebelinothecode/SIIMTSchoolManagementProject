@@ -15,6 +15,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\LecturerEvaluationController;
+use App\Student;
 use App\Teacher;
 use FontLib\Table\Type\name;
 use Illuminate\Support\Facades\Auth;
@@ -190,9 +191,13 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/generate/canteen/report',[ReportsController::class, 'generateCanteenReport'])->name('canteen.report');
     Route::get('/edit/enquiry/{id}', [DiplomaController::class, 'editEnquiry'])->name('edit.enquiry');
     Route::post('/update/enquiry/{id}', [DiplomaController::class, 'updateEnquiry'])->name('update.enquiry');
+<<<<<<< HEAD
     Route::get('/get/paymentplan/form/{id}', [StudentController::class, 'getPaymentPlanForm'])->name('get.paymentplanform');
     Route::post('/save/paymentplan/{id}', [StudentController::class, 'savePaymentPlan'])->name('save.paymentplan');
     Route::put('/update/installments/{id}', [StudentController::class, 'updateInstallments'])->name('update.installments');
+=======
+    // Route::post('/update/enquiry/{id}', [StudentController::class, 'updateEnquiry'])->name('update.enquiry');
+>>>>>>> 48c18dfbbe5c69be5c095d45a32f424543772b14
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

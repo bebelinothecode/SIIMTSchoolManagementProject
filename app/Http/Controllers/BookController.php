@@ -96,7 +96,7 @@ class BookController extends Controller
             'author' => 'nullable|string|max:255',
             'isbn_number' => 'nullable|string',
             'publisher' => 'required|string',
-            'book_name' => 'required|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png,csv|max:45000',
+            'book_name' => 'required|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png,csv|max:450000',
         ]);
 
         // return $validatedData;

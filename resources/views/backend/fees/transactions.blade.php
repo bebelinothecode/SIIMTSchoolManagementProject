@@ -48,8 +48,8 @@
                     <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Balance</th>
                     <th class="py-3 px-6 text-left">Currency</th>
-                    <th class="py-3 px-6 text-left">Cheque Number</th>
-                    <th class="py-3 px-6 text-left">Momo Number</th>
+                    <!-- <th class="py-3 px-6 text-left">Cheque Number</th>
+                    <th class="py-3 px-6 text-left">Momo Number</th> -->
                     <th class="py-3 px-6 text-left">Date</th>
                     <th class="py-3 px-6 text-left">Actions</th>
                 </tr>
@@ -101,14 +101,14 @@
                         @endif
                     </td>
                     <td class="py-3 px-6 text-left">
-                        {{ $transaction['original_record']->currency ?? 'GHS' }}
+                        {{ $transaction['original_record']->currency ?? 'Ghana Cedi' }}
                     </td>
-                    <td class="py-3 px-6 text-left">
+                    <!-- <td class="py-3 px-6 text-left">
                         {{ $transaction['original_record']->cheque_number ?? "Not Found" }}
                     </td>
                     <td class="py-3 px-6 text-left">
                         {{ $transaction['original_record']->Momo_number ?? $transaction['original_record']->momo_number ?? "Not Found" }}
-                    </td>
+                    </td> -->
                     <td class="py-3 px-6 text-left">
                         {{ \Carbon\Carbon::parse($transaction['created_at'])->format('Y-m-d') }}
                     </td>

@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="table w-full mt-8 bg-white rounded">
-            <form action="{{ route('store.enquiry') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
+            <form action="{{ route('update.enquiry',$enquiry->id) }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
@@ -127,18 +127,26 @@
                             Interested Course
                         </label>
                     </div>
-                    <div class="md:w-2/3">
+                    
                         <div class="md:w-2/3">
                             <div class="md:w-2/3">
-                                <select name="course" class="form-select select2-dropdown" id="choices-select">
+                                <select name="course_id" class="form-select select2-dropdown" id="choices-select">
                                     <option value="">-- Select Program --</option>
-                                    @foreach($enquiry as $item)
-                                        <option value="{{ $item['name'] }}">{{ $item['name'] }}</option>
-                                    @endforeach
+                                    @if ($enquiry->type_of_course == 'Professional')
+                                        @foreach($courses as $course)
+                                            <option value="{{ $course->id }}">{{$course->code}}-{{ $course->name}}</option>
+                                        @endforeach
+                                    @endif
+
+                                    @if ($enquiry->type_of_course == 'Academic')
+                                        @foreach($courses as $course)
+                                            <option value="{{ $course->id }}">{{$course->course_code}}-{{ $course->course_name}}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
                             const choices = new Choices('#choices-select', {
