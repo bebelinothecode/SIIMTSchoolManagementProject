@@ -15,6 +15,8 @@ use App\LecturerEvaluationDetail;
 use App\Session;
 use App\FeesPaid;
 use App\Student;
+use App\PaymentPlan;
+use App\Installments;
 use App\Subject;
 use App\FeesType;
 use Carbon\Carbon;
@@ -41,7 +43,7 @@ class StudentController extends Controller
     {
         $sort = $request->input('sort');
 
-        $query = Student::with('user', 'course', 'diploma')
+        $query = Student::with('user','paymentPlans.installments', 'course', 'diploma')
             ->join('users', 'students.user_id', '=', 'users.id')
             ->where(function ($q) {
                 $q->whereNotNull('course_id')
@@ -2151,5 +2153,182 @@ class StudentController extends Controller
         $totalStudents = $students->count();
 
         return view('backend.reports.studentsacademicreport',compact('students','acaProf','diploma_id','course_id','level','semester','nationality','branch','totalStudents'));
+    }
+
+    public function getPaymentPlanForm($id) {
+        $student = Student::with(['paymentPlans.installments','user','course','diploma'])->findOrFail($id);
+
+        // return $student;
+        return view('backend.students.paymentplanform',compact('student'));
+    }
+
+    public function savePaymentPlan(Request $request, $id) {
+        try {
+            //code...
+            // dd($request->all());
+            $student = Student::with(['paymentPlans.installments','user','course','diploma'])->findOrFail($id);
+
+            $validatedData = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'total_fees_due' => 'required|numeric|min:0',
+            'amount_already_paid' => 'required|numeric|min:0',
+            'outstanding_balance' => 'required|numeric|min:0',
+            'currency' => 'required|string|in:Ghana Cedi,Dollar',
+            'installments.*.installments_num' => 'nullable|integer',
+            'installments.*.due_date' => 'nullable|date',
+            'installments.*.amount' => 'nullable|numeric|min:0',
+            'installments.*.payment_method' => 'nullable|string|max:50',
+            'installments.*.notes' => 'nullable|string|max:255',
+        ]);
+
+            // $totalInstallmentAmount = array_sum(array_column($validatedData['installments'], 'amount'));
+
+            // if ($totalInstallmentAmount != $validatedData['total_amount']) {
+            //     return redirect()->back()->with('error', 'The sum of installment amounts must equal the total amount.');
+            // }
+
+            DB::beginTransaction();
+
+            $paymentPlan = PaymentPlan::create([
+                'student_id' => $student->id,
+                'total_fees_due' => floatval($validatedData['total_fees_due']),
+                'outstanding_balance' => floatval($validatedData['outstanding_balance']),
+                'amount_already_paid' => floatval($validatedData['amount_already_paid']),
+                'currency' => $validatedData['currency']
+            ]);
+
+            foreach ($validatedData['installments'] as $installmentData) {
+                Installments::create([
+                    'payment_plan_id' => $paymentPlan->id,
+                    'due_date' => $installmentData['due_date'],
+                    'amount' =>floatval($installmentData['amount']),
+                    'currency' => $validatedData['currency'],
+                    'notes' => $installmentData['notes'] ?? null,
+                    'payment_method' => $installmentData['payment_method'] ?? null,
+                    'installments_num' => $installmentData['installments_num'],
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Payment plan created successfully.');
+
+        } catch (Exception $e) {
+            //throw $th;
+            DB::rollBack();
+
+            Log::error('Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    // public function updateInstallments(Request $request, $id) {
+    //     try {
+    //         //code...
+    //         // dd($request->all());
+    //         $plan = PaymentPlan::with('installments')->findOrFail($id);
+
+    //         $validatedData = $request->validate([
+    //             'student_id' => 'required|exists:students,id',
+    //             'total_fees_due' => 'required|numeric|min:0',
+    //             'amount_already_paid' => 'required|numeric|min:0',
+    //             'outstanding_balance' => 'required|numeric|min:0',
+    //             'currency' => 'required|string|in:Ghana Cedi,Dollar',
+    //             'installments.*.id' => 'nullable|exists:installments,id',
+    //             'installments.*.installments_num' => 'nullable|integer',
+    //             'installments.*.due_date' => 'nullable|date',
+    //             'installments.*.amount' => 'nullable|numeric|min:0',
+    //             'installments.*.payment_method' => 'nullable|string|max:50',
+    //             'installments.*.notes' => 'nullable|string|max:255',
+    //         ]);
+
+    //         DB::beginTransaction();
+
+    //         $plan->update([
+    //             'total_fees_due' => floatval($validatedData['total_fees_due']),
+    //             'outstanding_balance' => floatval($validatedData['outstanding_balance']),
+    //             'amount_already_paid' => floatval($validatedData['amount_already_paid']),
+    //             'currency' => $validatedData['currency']
+    //         ]);
+
+    //         foreach ($validatedData['installments'] as $installmentData) {
+    //             if (isset($installmentData['id'])) {
+    //                 $installment = Installments::findOrFail($installmentData['id']);
+    //                 $installment->update([
+    //                     'due_date' => $installmentData['due_date'],
+    //                     'amount' => floatval($installmentData['amount']),
+    //                     'currency' => $validatedData['currency'],
+    //                     'notes' => $installmentData['notes'] ?? null,
+    //                     'payment_method' => $installmentData['payment_method'] ?? null,
+    //                     'installments_num' => $installmentData['installments_num'],
+    //                 ]);
+    //             } else {
+    //                 Installments::create([
+    //                     'payment_plan_id' => $plan->id,
+    //                     'due_date' => $installmentData['due_date'],
+    //                     'amount' => floatval($installmentData['amount']),
+    //                     'currency' => $validatedData['currency'],
+    //                     'notes' => $installmentData['notes'] ?? null,
+    //                     'payment_method' => $installmentData['payment_method'] ?? null,
+    //                     'installments_num' => $installmentData['installments_num'],
+    //                 ]); 
+                        
+    //             }
+    //         }
+    //         DB::commit();   
+    //         return redirect()->back()->with('success', 'Installments updated successfully.');
+    //     } catch (Exception $e) {
+    //         //throw $th;    
+    //         DB::rollBack();
+    //         Log::error('Error: ' . $e->getMessage());
+    //         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+    //     }
+    // }
+
+    public function updateInstallments(Request $request, $planId)
+    {
+        // dd($request->all());
+        try {
+            $plan = PaymentPlan::findOrFail($planId);
+
+            // return $plan;
+            
+            if ($request->has('installments')) {
+                foreach ($request->installments as $installmentData) {
+                    $installment = Installments::find($installmentData['id']);
+
+                    // return $installment;
+                    
+                    if ($installment && $installment->payment_plan_id == $plan->id) {
+                        // Update paid status and date
+                        if (isset($installmentData['is_paid']) && $installmentData['is_paid']) {
+                            $installment->paid_on = $installmentData['paid_on'] ?? now();
+                            $installment->is_paid = "Yes";
+                        } else {
+                            $installment->paid_on = null;
+                        }
+                        
+                        // Update notes if provided
+                        if (isset($installmentData['notes'])) {
+                            $installment->notes = $installmentData['notes'];
+                        }
+                        
+                        $installment->save();
+                    }
+                }
+                
+                // Recalculate total paid amount
+                $totalPaid = $plan->installments->whereNotNull('paid_on')->sum('amount');
+                $plan->amount_already_paid = $totalPaid;
+                $plan->outstanding_balance = $plan->total_fees_due - $totalPaid;
+                $plan->save();
+            }
+            
+            return redirect()->back()->with('success', 'Payment status updated successfully!');
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error updating payments: ' . $e->getMessage());
+        }
     }
 }

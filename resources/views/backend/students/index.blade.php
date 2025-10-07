@@ -34,6 +34,60 @@
         </div>
     </div>
 
+    <!-- Payment Alerts Summary -->
+    @php
+        $totalDue = 0;
+        $totalOverdue = 0;
+        
+        foreach($students as $student) {
+            $totalDue += count($student->getDueInstallments());
+            $totalOverdue += count($student->getOverdueInstallments());
+        }
+    @endphp
+
+    {{-- {{ $totalDue }}
+    {{ $totalOverdue }} --}}
+
+    @if($totalOverdue > 0)
+    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                    Payment Alert: {{ $totalOverdue }} overdue installment(s)
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                    <p>Some students have overdue payments that require immediate attention.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($totalDue > 0 && $totalOverdue == 0)
+    <div class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-yellow-800">
+                    Payment Notice: {{ $totalDue }} installment(s) due
+                </h3>
+                <div class="mt-2 text-sm text-yellow-700">
+                    <p>Some students have payments due today or in the near future.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Search & Filters -->
     <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
         <form action="{{ route('student.index') }}" method="GET">
@@ -75,13 +129,14 @@
         })
     </script>
 
-    <div class="bg-white shadow-sm rounded-lg min-h-[600px]"> <!-- Added min-h-[600px] -->
+    <div class="bg-white shadow-sm rounded-lg min-h-[600px]">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Index Number</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
@@ -90,14 +145,49 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse ($students as $student)
-                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                    @php
+                        $dueInstallments = $student->getDueInstallments();
+                        $overdueInstallments = $student->getOverdueInstallments();
+                        $hasOverdue = count($overdueInstallments) > 0;
+                        $hasDue = count($dueInstallments) > 0 && !$hasOverdue;
+                    @endphp
+                    <tr class="hover:bg-gray-50 transition-colors duration-150 
+                        {{ $hasOverdue ? 'bg-red-50 border-l-4 border-l-red-500' : '' }}
+                        {{ $hasDue ? 'bg-yellow-50 border-l-4 border-l-yellow-500' : '' }}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
-                                    {{ substr($student->user->name ?? "N/A", 0, 1)  }}
+                                <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 relative">
+                                    {{ substr($student->user->name ?? "N/A", 0, 1) }}
+                                    @if($hasOverdue)
+                                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                    </span>
+                                    @elseif($hasDue)
+                                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                                    </span>
+                                    @endif
                                 </div>
                                 <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $student->user->name ?? "N/A" }}</div>
+                                    <div class="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                        {{ $student->user->name ?? "N/A" }}
+                                        @if($hasOverdue)
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                                </svg>
+                                                Overdue
+                                            </span>
+                                        @elseif($hasDue)
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                                </svg>
+                                                Due
+                                            </span>
+                                        @endif
+                                    </div>
                                     <div class="text-sm text-gray-500">{{ $student->user->email ?? "N/A" }}</div>
                                 </div>
                             </div>
@@ -107,15 +197,43 @@
                                 {{ number_format((int)$student->balance, 2) }}
                             </span>
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @if($hasOverdue)
+                                <div class="flex flex-col">
+                                    <span class="text-red-600 font-medium">
+                                        {{ count($overdueInstallments) }} overdue
+                                    </span>
+                                    <span class="text-xs text-red-500">
+                                        @foreach($overdueInstallments as $installment)
+                                            {{ number_format($installment->amount, 2) }} ({{ \Carbon\Carbon::parse($installment->due_date)->format('M d') }})@if(!$loop->last), @endif
+                                        @endforeach
+                                    </span>
+                                </div>
+                            @elseif($hasDue)
+                                <div class="flex flex-col">
+                                    <span class="text-yellow-600 font-medium">
+                                        {{ count($dueInstallments) }} due
+                                    </span>
+                                    <span class="text-xs text-yellow-500">
+                                        @foreach($dueInstallments as $installment)
+                                            {{ number_format($installment->amount, 2) }} ({{ \Carbon\Carbon::parse($installment->due_date)->format('M d') }})@if(!$loop->last), @endif
+                                        @endforeach
+                                    </span>
+                                </div>
+                            @else
+                                <span class="text-green-600 font-medium flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Up to date
+                                </span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $student->course->course_name ?? $student->diploma->name ?? 'N/A' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">{{ $student->index_number }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <!-- <span class="inline-block w-3 h-3 rounded-full animate-pulse 
-                                {{ $student->status === 'active' ? 'bg-green-500' : 'bg-red-500' }}" 
-                                title="{{ ucfirst($student->status ?? 'Unknown') }}">
-                            </span> -->
                             {{ $student->branch }}
                         </td>
 
@@ -142,6 +260,22 @@
                                             </svg>
                                             View Details
                                         </a>
+                                        <a href="{{ route('get.paymentplanform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                                            <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                            Payment Plan
+                                        </a>
+                                        
+                                        @if($hasOverdue || $hasDue)
+                                        <a href="{{ route('get.paymentplanform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-yellow-700 bg-yellow-50 hover:bg-yellow-100 border-l-2 border-yellow-400" role="menuitem">
+                                            <svg class="mr-3 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Process Payment
+                                        </a>
+                                        @endif
+
                                         @hasanyrole('Admin|rector')
                                         <a href="{{ route('student.edit', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                                             <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -192,7 +326,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
+                        <td colspan="7" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
@@ -215,15 +349,44 @@
         <!-- Mobile View of Student List (Only visible on small screens) -->
         <div class="sm:hidden">
             @forelse ($students as $student)
-            <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150">
+            @php
+                $dueInstallments = $student->getDueInstallments();
+                $overdueInstallments = $student->getOverdueInstallments();
+                $hasOverdue = count($overdueInstallments) > 0;
+                $hasDue = count($dueInstallments) > 0 && !$hasOverdue;
+            @endphp
+            <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150
+                {{ $hasOverdue ? 'bg-red-50 border-l-4 border-l-red-500' : '' }}
+                {{ $hasDue ? 'bg-yellow-50 border-l-4 border-l-yellow-500' : '' }}">
                 <div class="p-4">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                            <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 relative">
                                 {{ substr($student->user->name ?? "N/A", 0, 1) }}
+                                @if($hasOverdue)
+                                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                </span>
+                                @elseif($hasDue)
+                                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                                </span>
+                                @endif
                             </div>
                             <div class="ml-3">
-                                <div class="text-sm font-medium text-gray-900">{{ $student->user->name ?? "N/A" }}</div>
+                                <div class="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                    {{ $student->user->name ?? "N/A" }}
+                                    @if($hasOverdue)
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Overdue
+                                        </span>
+                                    @elseif($hasDue)
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Due
+                                        </span>
+                                    @endif
+                                </div>
                                 <div class="text-xs text-gray-500">{{ $student->index_number }}</div>
                             </div>
                         </div>
@@ -238,12 +401,12 @@
                             </button>
                             
                             <div class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 dropdown-menu" data-menu-for="{{ $student->id }}-mobile">
-                                <!-- Same menu options as desktop view -->
                                 <div class="py-1" role="none">
                                     <a href="{{ route('student.show', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">View Details</a>
-                                    @hasanyrole('Admin|rector')
-                                    <a href="{{ route('student.edit', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Edit</a>
-                                    @endhasanyrole
+                                    <a href="{{ route('get.paymentplanform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Payment Plan</a>
+                                    @if($hasOverdue || $hasDue)
+                                    <a href="{{ route('get.paymentplanform', $student->id) }}" class="flex items-center px-4 py-2 text-sm text-yellow-700 bg-yellow-50 hover:bg-yellow-100" role="menuitem">Process Payment</a>
+                                    @endif
                                     <!-- Other menu items -->
                                 </div>
                             </div>
@@ -260,6 +423,20 @@
                                 {{ number_format((int)$student->balance, 2) }}
                             </span>
                         </div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="text-xs font-medium text-gray-500">Payment Status</div>
+                        @if($hasOverdue)
+                            <div class="text-xs text-red-600">
+                                {{ count($overdueInstallments) }} overdue installment(s)
+                            </div>
+                        @elseif($hasDue)
+                            <div class="text-xs text-yellow-600">
+                                {{ count($dueInstallments) }} due installment(s)
+                            </div>
+                        @else
+                            <div class="text-xs text-green-600">Up to date</div>
+                        @endif
                     </div>
                 </div>
             </div>

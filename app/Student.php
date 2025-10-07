@@ -89,4 +89,53 @@ class Student extends Model
     {
         return $this->hasMany(FeesPaid::class);
     }
+
+    public function paymentPlans()
+    {
+        return $this->hasMany(PaymentPlan::class, 'student_id');
+    }
+
+    public function getDueInstallments()
+    {
+        $today = now()->format('Y-m-d');
+        $dueInstallments = [];
+        
+        foreach ($this->paymentPlans as $paymentPlan) {
+            foreach ($paymentPlan->installments as $installment) {
+                // Check if installment is not paid and due date is today or past
+                if ($installment->is_paid !== 'Yes' && $installment->due_date <= $today) {
+                    $dueInstallments[] = $installment;
+                }
+            }
+        }
+        
+        return $dueInstallments;
+    }
+
+    public function hasDueInstallments()
+    {
+        return count($this->getDueInstallments()) > 0;
+    }
+
+    public function getOverdueInstallments()
+    {
+        $today = now()->format('Y-m-d');
+        $overdueInstallments = [];
+        
+        foreach ($this->paymentPlans as $paymentPlan) {
+            foreach ($paymentPlan->installments as $installment) {
+                // Check if installment is not paid and due date is in the past
+                if ($installment->is_paid !== 'Yes' && $installment->due_date < $today) {
+                    $overdueInstallments[] = $installment;
+                }
+            }
+        }
+        
+        return $overdueInstallments;
+    }
+
+    public function hasOverdueInstallments()
+    {
+        return count($this->getOverdueInstallments()) > 0;
+    }
 }

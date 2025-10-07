@@ -78,7 +78,7 @@ class  FeesController extends Controller
 
     public function collectfees(Request $request) {
         try {
-            // dd($request->all());
+            dd($request->all());
             $validatedData = $request->validate([
                 'student_index_number' => 'required|string',
                 'student_name' => 'required|string',
@@ -149,6 +149,8 @@ class  FeesController extends Controller
                 'late_fees_charges' => $validatedData['late_fees_charges'],
                 'idempotency_key' => $idempotencyKey
             ]);
+
+            return $feespaid;
 
             if($feespaid) {
                 $student->balance = $validatedData['balance'];
