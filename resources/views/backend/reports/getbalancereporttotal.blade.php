@@ -489,49 +489,6 @@
                 </table>
             </div>
 
-            <div class="table-section page-break">
-                <div class="table-header">
-                    <div class="table-icon">C</div>
-                    <h3>Canteen Income Collections</h3>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                            <th>Mode of Transaction</th>
-                            <th>Branch</th>
-                            <th>Currency</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($canteenIncomeTransactions as $f)
-                        <tr>
-                            <td>{{ $f->item_name ?? "N/A" }}</td>
-                            <td>{{ $f->description ?? "N/A" }}</td>
-                            <td class="amount">{{ number_format($f->amount,2) ?? "N/A" }}</td>
-                            <td>{{ $f->mode_of_transaction ?? "N/A" }}</td>
-                            <td>{{ $f->branch ?? "N/A" }}</td>
-                            <td>{{ $f->currency ?? "N/A" }}</td>
-                            <td>{{ $f->created_at ?? "N/A" }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="empty-state">No canteen income records found</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="5"><strong>Total Canteen Income</strong></td>
-                            <td colspan="2" class="total-amount">GHS {{ number_format($canteenIncomeTotal, 2) }}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
             <!-- Expenses Section -->
             <div class="table-section page-break">
                 <div class="table-header">
@@ -577,7 +534,7 @@
             <div class="table-section page-break">
                 <div class="table-header">
                     <div class="table-icon">C</div>
-                    <h3>Canteen Expenses</h3>
+                    <h3>Canteen Expenses & Income</h3>
                 </div>
                 <table>
                     <thead>
@@ -593,7 +550,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($canteenExpenseTransactions as $f)
+                        @forelse ($canteenTransactions as $f)
                         <tr>
                             <td>{{ $f->item_name ?? "N/A" }}</td>
                             <td>{{ $f->description ?? "N/A" }}</td>
@@ -613,7 +570,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="5"><strong>Total Canteen Expenses</strong></td>
-                            <td colspan="2" class="total-amount">GHS {{ number_format($canteenExpenseTotal, 2) }}</td>
+                            <td colspan="3" class="total-amount">GHS {{ number_format($canteenMoney, 2) }}</td>
                         </tr>
                     </tfoot>
                 </table>

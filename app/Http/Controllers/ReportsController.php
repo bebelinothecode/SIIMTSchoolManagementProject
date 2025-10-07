@@ -975,6 +975,7 @@ class ReportsController extends Controller
     public function calculateBalanceTotal(Request $request)
     {   
         try {
+            // dd($request->all());
         $validatedData = $request->validate([
         'category' =>
         'nullable|string|in:Academic,Professional,Total',
@@ -1092,23 +1093,40 @@ class ReportsController extends Controller
             $canteenQuery->where('created_at', '<=', $endDate);
         }
 
-        $canteenMomoTransactions = $canteenQuery->where('mode_of_transaction', 'Mobile Money')->get();
-        $canteenMomoTotal = $canteenMomoTransactions->sum('amount');
+        if($modeOfPayment === 'Cash' || $modeOfPayment === 'Mobile Money' || $modeOfPayment === 'Bank Transfer') {
+            $canteenQuery->where('mode_of_transaction', $modeOfPayment);
+        } else {
+            $canteenQuery->whereIn('mode_of_transaction',['Cash','Mobile Money','Bank Transfer']);
+        }
 
-        $canteenCashTransactions = $canteenQuery->where('mode_of_transaction', 'Cash')->get();
-        $canteenCashTotal = $canteenCashTransactions->sum('amount');    
-        $canteenBankTransactions = $canteenQuery->where('mode_of_transaction', 'Bank Transfer')->get();
-        $canteenBankTotal = $canteenBankTransactions->sum('amount');
+        if($selectedCategory === 'Income' || $selectedCategory === 'Expense') {
+            $canteenQuery->where('category',$selectedCategory);
+         } else {
+             $canteenQuery->whereIn('category', ['Income', 'Expense']);
+         }
 
-        $canteenIncomeTransactions = $canteenQuery->where('category', 'Income')->get();
-        $canteenIncomeTotal = $canteenIncomeTransactions->sum('amount');
+        $canteenTransactions = $canteenQuery->get();
+        $canteenIncomeTotal = $canteenTransactions->where('category','Income')->sum('amount');  
+        $canteenExpenseTotal = $canteenTransactions->where('category','Expense')->sum('amount');
+        $canteenMoney = $canteenTransactions->sum('amount');
+        
 
-        $canteenExpenseTransactions = $canteenQuery->where('category', 'Expense')->get();
-        // return $canteenExpenseTransactions;
-        $canteenExpenseTotal = $canteenExpenseTransactions->sum('amount');
+        // $canteenMomoTransactions = $canteenQuery->where('mode_of_transaction', 'Mobile Money')->get();
+        // $canteenMomoTotal = $canteenMomoTransactions->sum('amount');
+
+        // $canteenCashTransactions = $canteenQuery->where('mode_of_transaction', 'Cash')->get();
+        // $canteenCashTotal = $canteenCashTransactions->sum('amount');    
+        // $canteenBankTransactions = $canteenQuery->where('mode_of_transaction', 'Bank Transfer')->get();
+        // $canteenBankTotal = $canteenBankTransactions->sum('amount');
+
+        // $canteenIncomeTransactions = $canteenQuery->where('category', 'Income')->get();
+        // $canteenIncomeTotal = $canteenIncomeTransactions->sum('amount');
+
+        // $canteenExpenseTransactions = $canteenQuery->where('category', 'Expense')->get();
+        // $canteenExpenseTotal = $canteenExpenseTransactions->sum('amount');
 
 
-        $canteenIncomeTotal = $canteenIncomeTransactions->sum('amount');
+        // $canteenIncomeTotal = $canteenIncomeTransactions->sum('amount');
 
         // ===============MATURE STUDENTS===========
         $matureStudentsQuery = DB::table('mature_students');
@@ -1218,11 +1236,14 @@ class ReportsController extends Controller
         'startDate' => $startDate,
         'endDate' => $endDate,
         // NEW: Daily balances data
-        'canteenIncomeTransactions' => $canteenIncomeTransactions,
-        'canteenMomoTotal' => $canteenMomoTotal,
-        'canteenCashTotal' => $canteenCashTotal,
-        'canteenBankTotal' => $canteenBankTotal,
-        'canteenExpenseTransactions' => $canteenExpenseTransactions,
+        'modeOfPayment' => $modeOfPayment,
+        'canteenTransactions' => $canteenTransactions,
+        // 'canteenIncomeTransactions' => $canteenIncomeTransactions,
+        // 'canteenMomoTotal' => $canteenMomoTotal,
+        // 'canteenCashTotal' => $canteenCashTotal,
+        // 'canteenBankTotal' => $canteenBankTotal,
+        // 'canteenExpenseTransactions' => $canteenExpenseTransactions,
+        'canteenMoney' => $canteenMoney,
         'canteenIncomeTotal' => $canteenIncomeTotal,
         'canteenExpenseTotal' => $canteenExpenseTotal,
         'dailyBalances' => $dailyBalances,
