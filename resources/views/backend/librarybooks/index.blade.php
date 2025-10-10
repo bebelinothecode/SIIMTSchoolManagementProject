@@ -103,7 +103,11 @@
             </tbody>
         </table>
         <div class="mt-4">
+<<<<<<< HEAD
             {{ $books->links() }}
+=======
+            {{ $books->links() }}   
+>>>>>>> 595bf520610b20218585f6c67de1d5e7e551a3b3
         </div>
     </div>
     @elseif(isset($books))
