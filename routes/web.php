@@ -15,6 +15,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\LecturerEvaluationController;
+use App\Http\Controllers\InventoryController;
 use App\Student;
 use App\Teacher;
 use FontLib\Table\Type\name;
@@ -45,7 +46,7 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian|HR|registrar']], function () 
+Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian|HR|registrar|Supervisor']], function () 
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');
@@ -191,13 +192,22 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/generate/canteen/report',[ReportsController::class, 'generateCanteenReport'])->name('canteen.report');
     Route::get('/edit/enquiry/{id}', [DiplomaController::class, 'editEnquiry'])->name('edit.enquiry');
     Route::post('/update/enquiry/{id}', [DiplomaController::class, 'updateEnquiry'])->name('update.enquiry');
-<<<<<<< HEAD
     Route::get('/get/paymentplan/form/{id}', [StudentController::class, 'getPaymentPlanForm'])->name('get.paymentplanform');
     Route::post('/save/paymentplan/{id}', [StudentController::class, 'savePaymentPlan'])->name('save.paymentplan');
     Route::put('/update/installments/{id}', [StudentController::class, 'updateInstallments'])->name('update.installments');
-=======
-    // Route::post('/update/enquiry/{id}', [StudentController::class, 'updateEnquiry'])->name('update.enquiry');
->>>>>>> 48c18dfbbe5c69be5c095d45a32f424543772b14
+    Route::get('/view/inventory', [InventoryController::class, 'index'])->name('view.inventory');
+    Route::get('/add/stock/item', [InventoryController::class, 'create'])->name('addstock.form');
+    Route::post('/store/stock/item', [InventoryController::class, 'store'])->name('store.stockitem');
+    Route::get('/edit/stock/item/{id}', [InventoryController::class, 'edit'])->name('edit.stockitemform');
+    Route::put('/update/stock/item/{id}', [InventoryController::class, 'update'])->name('update.stock');
+    Route::delete('delete/stock/{id}',[InventoryController::class, 'delete'])->name('delete.stockitem');
+    Route::get('/inventory/stockin/form/{id}', [InventoryController::class, 'stockInForm'])->name('stockin.form');
+    Route::post('/save/stockin/{id}', [InventoryController::class, 'saveStockIn'])->name('save.stockin');
+    Route::get('/inventory/stockout/form/{id}', [InventoryController::class, 'stockOutForm'])->name('stockout.form');
+    Route::post('/save/stockout/{id}', [InventoryController::class, 'saveStockOut'])->name('save.stockout');
+    Route::get('/inventory/transaction/list/{id}',[InventoryController::class, 'stockTransactionList'])->name('stock.transactionlist');
+    Route::get('/generate/stock/purchase/slip',[InventoryController::class, 'generateStockPurchaseSlip'])->name('generate.stockpurchaseslip');
+    // Route::get('/inventory/transaction/form/{id}',[InventoryController::class, 'stockTransaction'])->name('stock.transactionform');
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

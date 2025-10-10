@@ -27,6 +27,10 @@
         @include('dashboard.teacher')
     @endrole
 
+    @role('Supervisor')
+        @include('dashboard.supervisor')
+    @endrole
+
     @role('Student')
         @include('dashboard.student')
     @endrole

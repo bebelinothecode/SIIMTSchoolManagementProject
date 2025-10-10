@@ -37,7 +37,7 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // return $user;
+        // return $user->hasRole('Supervisor');
         
         if ($user->hasRole(['Admin','StudCoordinator','rector','AsstAccount','frontdesk','Librarian','HR','registrar'])) {
 
@@ -72,6 +72,9 @@ class HomeController extends Controller
 
             return view('home', compact('student'));
 
+        } elseif ($user->hasRole('Supervisor')) {
+            // $students = Student::all();
+            return view('dashboard.supervisor');
         } else {
             return 'NO ROLE ASSIGNED YET!';
         }

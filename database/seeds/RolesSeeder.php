@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class RolesSeeder extends Seeder
 {
@@ -30,5 +31,6 @@ class RolesSeeder extends Seeder
         $role = Role::firstOrCreate(['name' => 'HR']);
         $role = Role::firstOrCreate(['name' => 'registrar']);
         $role = Role::firstOrCreate(['name'=>'Librarian']);
+        $role = Role::firstOrCreate(['name'=>'Supervisor']);
     }
 }
