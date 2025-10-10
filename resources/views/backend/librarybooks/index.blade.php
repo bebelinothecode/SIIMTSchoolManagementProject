@@ -102,6 +102,9 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="mt-4">
+            {{ $books->links() }}   
+        </div>
     </div>
     @elseif(isset($books))
     <p class="mt-4 text-red-500">No books found for the selected criteria.</p>

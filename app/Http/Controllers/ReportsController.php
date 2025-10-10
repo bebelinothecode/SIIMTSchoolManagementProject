@@ -1106,6 +1106,8 @@ class ReportsController extends Controller
          }
 
         $canteenTransactions = $canteenQuery->get();
+        $canteenIncomeTransactions = $canteenTransactions->where('category','Income')->all();
+        $canteenExpenseTransactions = $canteenTransactions->where('category','Expense')->all();
         $canteenIncomeTotal = $canteenTransactions->where('category','Income')->sum('amount');  
         $canteenExpenseTotal = $canteenTransactions->where('category','Expense')->sum('amount');
         $canteenMoney = $canteenTransactions->sum('amount');
@@ -1238,6 +1240,8 @@ class ReportsController extends Controller
         // NEW: Daily balances data
         'modeOfPayment' => $modeOfPayment,
         'canteenTransactions' => $canteenTransactions,
+        'canteenIncomeTransactions' => $canteenIncomeTransactions,
+        'canteenExpenseTransactions' => $canteenExpenseTransactions,
         // 'canteenIncomeTransactions' => $canteenIncomeTransactions,
         // 'canteenMomoTotal' => $canteenMomoTotal,
         // 'canteenCashTotal' => $canteenCashTotal,

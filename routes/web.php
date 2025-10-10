@@ -191,6 +191,9 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/generate/canteen/report',[ReportsController::class, 'generateCanteenReport'])->name('canteen.report');
     Route::get('/edit/enquiry/{id}', [DiplomaController::class, 'editEnquiry'])->name('edit.enquiry');
     Route::post('/update/enquiry/{id}', [DiplomaController::class, 'updateEnquiry'])->name('update.enquiry');
+    Route::get('/get/paymentplan/form/{id}', [StudentController::class, 'getPaymentPlanForm'])->name('get.paymentplanform');
+    Route::post('/save/paymentplan/{id}', [StudentController::class, 'savePaymentPlan'])->name('save.paymentplan');
+    Route::put('/update/installments/{id}', [StudentController::class, 'updateInstallments'])->name('update.installments');
     // Route::post('/update/enquiry/{id}', [StudentController::class, 'updateEnquiry'])->name('update.enquiry');
     
     Route::resource('assignrole', 'RoleAssign');
