@@ -2239,12 +2239,6 @@ class StudentController extends Controller
             'installments.*.notes' => 'nullable|string|max:255',
         ]);
 
-            // $totalInstallmentAmount = array_sum(array_column($validatedData['installments'], 'amount'));
-
-            // if ($totalInstallmentAmount != $validatedData['total_amount']) {
-            //     return redirect()->back()->with('error', 'The sum of installment amounts must equal the total amount.');
-            // }
-
             DB::beginTransaction();
 
             $paymentPlan = PaymentPlan::create([

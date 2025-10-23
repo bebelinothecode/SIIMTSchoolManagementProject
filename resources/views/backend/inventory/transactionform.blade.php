@@ -16,25 +16,29 @@
         @csrf
         <div>
             <label class="block text-gray-600">Stock Name</label>
+            @hasrole('Admin|rector')
             <input type="text" name="name" class="w-full border rounded px-3 py-2" value = {{ $stock->stock_name }} required>
+            @else
+            <input type="text" name="name" class="w-full border rounded px-3 py-2" value = {{ $stock->stock_name }} required readonly>
+            @endhasrole
         </div>
-
-        {{-- <div>
-            <label class="block text-gray-600">Description</label>
-            <textarea name="description" class="w-full border rounded px-3 py-2"></textarea>
-        </div> --}}
 
         <div>
             <label class="block text-gray-600">New Stock Quantity</label>
-            <input type="number" name="new_quantity" min="0" class="w-full border rounded px-3 py-2" required>
+            <input type="number" id="new_quantity" name="new_quantity" min="0" class="w-full border rounded px-3 py-2" required>
         </div>
         <div>
             <label class="block text-gray-600">Old Stock Quantity</label>
-            <input type="number" name="old_quantity" class="w-full border rounded px-3 py-2">
+            @hasrole('Admin|rector')
+            <input type="number" id="old_quantity" name="old_quantity" value="{{ $stock->quantity }}" class="w-full border rounded px-3 py-2" required>
+            @else
+            <input type="number" name="old_quantity" value="{{ $stock->quantity }}" class="w-full border rounded px-3 py-2" required readonly>
+            @endhasrole
+
         </div>
         <div>
             <label class="block text-gray-600">Total</label>
-            <input type="number" name="total" class="w-full border rounded px-3 py-2">
+            <input type="number" name="total" id="total" class="w-full border rounded px-3 py-2" readonly>
         </div>
         <div>
             <label class="block text-gray-600">Unit Price</label>
@@ -81,4 +85,23 @@
     @endif   
     </form>
 </div>
+
+{{-- 🔢 Auto-calculate Total --}}
+<script>
+    const oldQtyInput = document.getElementById('old_quantity');
+    const newQtyInput = document.getElementById('new_quantity');
+    const totalInput = document.getElementById('total');
+
+    function updateTotal() {
+        const oldQty = parseFloat(oldQtyInput.value) || 0;
+        const newQty = parseFloat(newQtyInput.value) || 0;
+        totalInput.value = oldQty + newQty;
+    }
+
+    oldQtyInput.addEventListener('input', updateTotal);
+    newQtyInput.addEventListener('input', updateTotal);
+
+    // Initialize total on page load
+    updateTotal();
+</script>
 @endsection

@@ -195,7 +195,6 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/get/paymentplan/form/{id}', [StudentController::class, 'getPaymentPlanForm'])->name('get.paymentplanform');
     Route::post('/save/paymentplan/{id}', [StudentController::class, 'savePaymentPlan'])->name('save.paymentplan');
     Route::put('/update/installments/{id}', [StudentController::class, 'updateInstallments'])->name('update.installments');
-<<<<<<< HEAD
     Route::get('/view/inventory', [InventoryController::class, 'index'])->name('view.inventory');
     Route::get('/add/stock/item', [InventoryController::class, 'create'])->name('addstock.form');
     Route::post('/store/stock/item', [InventoryController::class, 'store'])->name('store.stockitem');
@@ -208,10 +207,9 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::post('/save/stockout/{id}', [InventoryController::class, 'saveStockOut'])->name('save.stockout');
     Route::get('/inventory/transaction/list/{id}',[InventoryController::class, 'stockTransactionList'])->name('stock.transactionlist');
     Route::get('/generate/stock/purchase/slip',[InventoryController::class, 'generateStockPurchaseSlip'])->name('generate.stockpurchaseslip');
-    // Route::get('/inventory/transaction/form/{id}',[InventoryController::class, 'stockTransaction'])->name('stock.transactionform');
-=======
-    // Route::post('/update/enquiry/{id}', [StudentController::class, 'updateEnquiry'])->name('update.enquiry');
->>>>>>> 595bf520610b20218585f6c67de1d5e7e551a3b3
+    Route::get('/inventory/report/form', [ReportsController::class, 'inventoryReportForm'])->name('inventoryreport.form');   
+    Route::post('/generate/inventory/report', [ReportsController::class, 'generateInventoryReport'])->name('inventory.report'); 
+    
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');

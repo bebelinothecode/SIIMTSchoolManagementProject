@@ -18,9 +18,6 @@ class Stock extends Model
         'description',
         'location',
         'unit_of_measure',
-        // 'recipient',
-        // 'date_out',
-        // 'date_in',
     ];
 
     /**

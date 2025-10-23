@@ -15,7 +15,7 @@ class InventoryController extends Controller
         $stocks = Stock::where(function ($query) use ($searchTerm) {
             $query->where('stock_name', 'LIKE', "%{$searchTerm}%")
                 ->orWhere('location', 'LIKE', "%{$searchTerm}%");
-        })->paginate(10);
+        })->latest()->paginate(10);
 
         return view('backend.inventory.index', compact('stocks'));
     }

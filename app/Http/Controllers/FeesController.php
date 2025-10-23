@@ -410,7 +410,7 @@ class  FeesController extends Controller
                     'name' => $transaction->student->user->name ?? $transaction->student_name,
                     'index_number' => $transaction->student_index_number,
                     'amount' => $transaction->amount ?? null,
-                    'balance' => $transaction->balance ?? null,
+                    'balance' => $transaction->student->balance ?? null,
                     'created_at' => $transaction->created_at,
                     'original_record' => $transaction
                 ];

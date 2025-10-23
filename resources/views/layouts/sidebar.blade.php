@@ -324,7 +324,7 @@
             <span class="ml-2 text-sm font-semibold">Enquiry</span>
         </a>
         @endhasanyrole
-        {{-- @hasanyrole('Admin|rector|Supervisor')
+        @hasanyrole('Admin|rector|Supervisor')
         <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
             <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false"
                 data-prefix="fas" data-icon="boxes-stacked"
@@ -334,7 +334,7 @@
             </svg>
             <span class="ml-2 text-sm font-semibold">Inventory</span>
         </a>
-        @endhasanyrole --}}
+        @endhasanyrole 
         @hasanyrole('Admin|rector|registrar')
         <div>
             <a href="#"
@@ -432,6 +432,15 @@
                 </svg>
                 <span class="ml-2 text-sm font-semibold">Enquiry Reports</span>
                 </a>
+
+                <a href="{{ route('inventoryreport.form') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                        <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                    </svg>
+                    <span class="ml-2 text-sm font-semibold">Inventory Reports</span>
+                </a>
+
+               
                 
             </div>
         </div>
@@ -1073,7 +1082,7 @@
             <span class="ml-2 text-sm font-semibold">Inventory</span>
         </a> --}}
 
-        @role('Supervisor')
+        <!-- @role('Supervisor')
             <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
             <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false"
                 data-prefix="fas" data-icon="boxes-stacked"
@@ -1083,7 +1092,7 @@
             </svg>
             <span class="ml-2 text-sm font-semibold">Inventory</span>
         </a>
-        @endrole
+        @endrole -->
 
         @role('Student')
             <div>

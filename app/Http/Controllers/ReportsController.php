@@ -8,11 +8,14 @@ use Exception;
 use App\Diploma;
 use App\Student;
 use App\Subject;
+use App\StockOut;
+use App\Stock;
 use App\Teacher;
 use App\FeesPaid;
 use App\AcademicYear;
 use App\Enquiry;
 use App\Expenses;
+use App\StockIn;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -1940,59 +1943,6 @@ DECIMAL(10,2))')) ?? 0;
         return view('backend.reports.enquiryreportsform', compact('grades', 'diplomas'));
     }
 
-    // public function generateEnquiryReport(Request $request) {
-    //     // dd($request->all());
-    //     $validatedData = $request->validate([
-    //         'acaProf' => 'required|in:Academic,Professional,Total',
-    //         'diploma_id' => 'nullable|exists:diploma,id',
-    //         'course_id' => 'nullable|exists:grades,id',
-    //         'current_date' => 'nullable|date',
-    //         'start_date' => 'nullable|date',
-    //         'bought_forms' => 'nullable|in:Yes,No',
-    //         'end_date' => 'nullable|date|after_or_equal:start_date',
-    //         'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
-    //     ]);
-
-    //     $enquires = Enquiry::with(['course','diploma']);
-
-    //     if($validatedData['start_date'] && $validatedData['end_date']) {
-    //         $enquires->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
-    //     } elseif ($validatedData['start_date']) {
-    //         $enquires->where('created_at', '>=', $validatedData['start_date']);
-    //     } elseif ($validatedData['end_date']) {
-    //         $enquires->where('created_at', '<=', $validatedData['end_date']);
-    //     } elseif ($validatedData['current_date']) {
-    //         $enquires->whereDate('created_at', $validatedData['current_date']);
-    //     }
-
-    //     if ($validatedData['bought_forms']) {
-    //         $enquires->where('bought_forms', $validatedData['bought_forms']);
-    //     }
-
-    //     if ($validatedData['acaProf'] !== 'Total') {
-    //         $enquires->where('type_of_course', $validatedData['acaProf']);
-    //     }
-
-    //     if ($validatedData['diploma_id']) {
-    //         $enquires->where('diploma_id', $validatedData['diploma_id']);
-    //     }
-
-    //     if ($validatedData['course_id']) {
-    //         $enquires->where('course_id', $validatedData['course_id']);
-    //     }
-
-    //     if ($validatedData['branch']) {
-    //         $enquires->where('branch', $validatedData['branch']);
-    //     }
-
-    //     $enquires = $enquires->get();
-
-    //     // return $enquires;
-
-    //     return view('backend.reports.enquiryreports', compact('enquires','validatedData'));
-
-    // }
-
     public function generateEnquiryReport(Request $request)
 {  
     //  dd($request->all());
@@ -2065,7 +2015,7 @@ DECIMAL(10,2))')) ?? 0;
     // return $datas;
 
     return view('backend.reports.enquiryreports', compact('datas','validatedData','course','diploma'));
-}
+    }
 
 
     public function canteenReportForm() {
@@ -2116,6 +2066,136 @@ DECIMAL(10,2))')) ?? 0;
 
         return view('backend.reports.canteenreport', compact('sales','validatedData')); 
     }
+
+    public function inventoryReportForm() {
+        return view('backend.inventory.inventoryreportform');
+    }
+
+    // public function generateInventoryReport(Request $request) {
+    //     // dd($request->all());
+    //     $validatedData = $request->validate([
+    //         'current_date' => 'nullable|date',
+    //         'start_date' => 'nullable|date',
+    //         'end_date' => 'nullable|date|after_or_equal:start_date',
+    //         'category' => 'nullable|string|in:Stock In,Stock Out,Total',
+    //         'current_state' => 'nullable|string',
+    //     ]);
+
+    //     $current_date = $validatedData['current_date'] ?? null; 
+    //     $start_date = $validatedData['start_date'] ?? null;
+    //     $end_date = $validatedData['end_date'] ?? null;
+    //     $category = $validatedData['category'] ?? null;
+    //     $current_state = $validatedData['current_state'] ?? null;
+
+
+    //     $stockInQuery = StockIn::with('stock');
+
+    //     if($validatedData['start_date'] && $validatedData['end_date']) {
+    //         $stockInQuery->whereBetween('created_at', [$validatedData['start_date'], $validatedData['end_date']]);
+    //     } elseif ($validatedData['start_date']) {
+    //         $stockInQuery->where('created_at', '>=', $validatedData['start_date']);
+    //     } elseif ($validatedData['end_date']) {
+    //         $stockInQuery->where('created_at', '<=', $validatedData['end_date']);
+    //     } elseif ($validatedData['current_date']) {
+    //         $stockInQuery->whereDate('created_at', $validatedData['current_date']);
+    //     }
+    // }
+
+
+
+    
+
+    public function generateInventoryReport(Request $request)
+    {
+        $validatedData = $request->validate([
+            'current_date' => 'nullable|date',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'category' => 'nullable|string|in:Stock In,Stock Out,Total',
+            'current_state' => 'nullable|string',
+        ]);
+
+        $current_date = $validatedData['current_date'] ?? null;
+        $start_date = $validatedData['start_date'] ?? null;
+        $end_date = $validatedData['end_date'] ?? null;
+        $category = $validatedData['category'] ?? null;
+        $current_state = $validatedData['current_state'] ?? null;
+
+        // ✅ Handle current state request
+        if ($current_state) {
+            $totalStocks = Stock::count();
+            $totalQuantity = Stock::sum('quantity');
+            $stockDetails = Stock::select('stock_name', 'quantity', 'unit_of_measure', 'location')->get();
+
+            return view('backend.reports.inventory', [
+                'type' => 'Current State',
+                'current_date' => now()->format('Y-m-d'),
+                'total_stocks' => $totalStocks,
+                'total_quantity' => $totalQuantity,
+                'data' => $stockDetails,
+                'category' => $category,
+                'current_state' => $current_state,
+            ]);
+        }
+
+        $reportData = collect();
+
+        // ✅ Stock In report
+        if ($category === 'Stock In') {
+            $stockInQuery = StockIn::with('stock');
+
+            if ($start_date && $end_date) {
+                $stockInQuery->whereBetween('created_at', [$start_date, $end_date]);
+            } elseif ($start_date) {
+                $stockInQuery->where('created_at', '>=', $start_date);
+            } elseif ($end_date) {
+                $stockInQuery->where('created_at', '<=', $end_date);
+            } elseif ($current_date) {
+                $stockInQuery->whereDate('created_at', $current_date);
+            }
+
+            $reportData = $stockInQuery->get();
+        }
+
+        // ✅ Stock Out report
+        elseif ($category === 'Stock Out') {
+            $stockOutQuery = StockOut::with('stock');
+
+            if ($start_date && $end_date) {
+                $stockOutQuery->whereBetween('date_issued', [$start_date, $end_date]);
+            } elseif ($start_date) {
+                $stockOutQuery->where('date_issued', '>=', $start_date);
+            } elseif ($end_date) {
+                $stockOutQuery->where('date_issued', '<=', $end_date);
+            } elseif ($current_date) {
+                $stockOutQuery->whereDate('date_issued', $current_date);
+            }
+
+            $reportData = $stockOutQuery->get();
+        }
+
+        // ✅ Total report (includes both Stock In & Out)
+        elseif ($category === 'Total') {
+            $stockIns = StockIn::with('stock')->get();
+            $stockOuts = StockOut::with('stock')->get();
+
+            $reportData = collect([
+                'stockIns' => $stockIns,
+                'stockOuts' => $stockOuts,
+            ]);
+        }
+
+        return view('backend.reports.inventory', [
+            'data' => $reportData,
+            'category' => $category,
+            'current_state' => $current_state,
+            'current_date' => $current_date,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+    }
+
+
 
 }
 

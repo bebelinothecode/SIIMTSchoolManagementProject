@@ -35,13 +35,32 @@
             <template x-for="(item, index) in items" :key="index">
                 <div class="bg-white p-4 rounded border mb-3">
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-                        <div>
+                        <!-- <div>
                             <label class="block text-gray-600">Stock Name</label>
                             <input type="text"
                                    x-model="item.name"
                                    :name="`items[${index}][name]`"
                                    class="w-full border rounded px-2 py-1" required>
+                        </div> -->
+                        <div x-data>
+                            <label class="block text-gray-600">Student Name</label>
+                            <select
+                                x-model="item.name"
+                                :name="`items[${index}][name]`"
+                                class="choices w-full border rounded px-2 py-1"
+                                requireds
+                            >
+                                <option value="">-- Select Student --</option>
+                                @foreach ($stocks as $stock)
+                                    <option value="{{ $stock->id }}">{{ $stock->stock_name }}</option>
+                                @endforeach
+                            </select>
                         </div>
+
+
+
+
+
                         <div>
                             <label class="block text-gray-600">Quantity</label>
                             <input type="number"

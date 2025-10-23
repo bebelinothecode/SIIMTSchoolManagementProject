@@ -92,14 +92,23 @@
                         @endif
                     </td>
                     <td class="py-3 px-6 text-left">
+                       @if($transaction['type'] == 'regular' && isset($transaction['original_record']->student))
+                          <span class="text-red-600 font-semibold">
+                             {{ number_format($transaction['original_record']->student->balance, 2) }}
+                          </span>
+                       @else
+                          <span class="text-gray-400">N/A</span>
+                       @endif
+                    </td>
+                    {{--    <td class="py-3 px-6 text-left">
                         @if($transaction['type'] == 'regular')
                             <span class="text-red-600 font-semibold">
-                                {{ number_format($transaction['original_record']->balance, 2) }}
+                            {{ number_format($transaction['original_record']->student->balance, 2) }}
                             </span>
                         @else
                             <span class="text-gray-400">N/A</span>
                         @endif
-                    </td>
+                    </td> --}}
                     <td class="py-3 px-6 text-left">
                         {{ $transaction['original_record']->currency ?? 'Ghana Cedi' }}
                     </td>
@@ -180,7 +189,7 @@
     <script>
         Swal.fire({
             title: 'Success!',
-            text: '{{ session('success') }}',
+            text: "{{ session('success') }}",
             icon: 'success',
             confirmButtonText: 'OK'
         });
@@ -190,7 +199,7 @@
     <script>
         Swal.fire({
             title: 'Oops!',
-            text: '{{ session('error') }}',
+            text: "{{ session('error') }}",
             icon: 'error',
             confirmButtonText: 'OK'
         });
