@@ -491,15 +491,90 @@
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="md:flex md:items-center">
-                <div class="md:w-1/3"></div>
-                <div class="md:w-2/3">
-                    <button type="submit" class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
-                        Create Student
-                    </button>
-                </div>
+         <div class="md:flex md:items-center mb-6">
+        <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                Pay fees now?
+            </label>
+        </div>
+        <div class="md:w-2/3 block text-gray-600 font-bold">
+            <div class="relative flex items-center space-x-6">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="pay_fees_now" value="yes"
+                        class="text-blue-600 focus:ring-blue-500 border-gray-300"
+                        onclick="toggleFeesSection(true)">
+                    <span class="ml-2 text-gray-700">Yes</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="pay_fees_now" value="no"
+                        class="text-blue-600 focus:ring-blue-500 border-gray-300"
+                        onclick="toggleFeesSection(false)">
+                    <span class="ml-2 text-gray-700">No</span>
+                </label>
             </div>
+            @error('pay_fees_now')
+                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+    </div>
+
+    <!-- Hidden section for Fees and Balance -->
+    <div id="feesSection" class="hidden">
+        <div class="md:flex md:items-center mb-6">
+            <div class="md:w-1/3">
+                <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                    Amount Paid
+                </label>
+            </div>
+            <div class="md:w-2/3">
+                <input name="amount_paid" type="number" id="amount_paid"
+                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    placeholder="Enter fees paid here">
+                @error('fees')
+                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <div class="md:flex md:items-center mb-6">
+            <div class="md:w-1/3">
+                <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                    Balance
+                </label>
+            </div>
+            <div class="md:w-2/3">
+                <input name="balance" type="number" id="balance"
+                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    placeholder="Enter balance amount">
+                @error('balance')
+                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFeesSection(show) {
+            const section = document.getElementById('feesSection');
+            if (show) {
+                section.classList.remove('hidden');
+            } else {
+                section.classList.add('hidden');
+            }
+        }
+    </script>
+
+
+
+            <!-- Submit Button -->
+    <div class="md:flex md:items-center">
+        <div class="md:w-1/3"></div>
+        <div class="md:w-2/3">
+            <button type="submit" class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
+                Create Student
+            </button>
+        </div>
+    </div>
         </form>
         @if (session('success'))
             <script>
@@ -559,15 +634,32 @@
                 return;
             }
 
+            const amountInput = document.getElementById('amount');
+            const amountPaidInput = document.getElementById('amount_paid');
+            const balanceInput = document.getElementById('balance');
+            console.log("This is amount entered:",amountInput.value)
+
             // Fetch course details from the server
             fetch(`${baseUrl}/get/diplomas/${courseId}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
+
+                    amountInput.value = data.amount || '';
                     // Populate fields with the returned data
                     document.getElementById('currency').value = data.currency || '';
                     document.getElementById('amount').value = data.amount || '';
                     document.getElementById('duration').value = data.duration || '';
+
+                    amountPaidInput.addEventListener('input', () => {
+                const total = parseFloat(data.amount) || 0;
+                const paid = parseFloat(amountPaidInput.value) || 0;
+                const balance = total - paid;
+
+                // Prevent negative balance
+                balanceInput.value = balance >= 0 ? balance : 0;
+            })
+
                 })
                 .catch(error => {
                     console.error('Error fetching course details:', error);
@@ -612,12 +704,6 @@
 });
 </script>
 
-{{-- <script>
-    $(function() {       
-        $( "#datepicker-sc" ).datepicker({ dateFormat: 'yy-mm-dd' });
-    })
-</script> --}}
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const minDate = new Date();
@@ -629,5 +715,15 @@
             maxDate: minDate, // Restrict maximum date to 16 years ago
         });
     });
+</script>
+
+<script>
+    const amountInput = document.getElementById('amount');
+    const amountPaidInput = document.getElementById('amount_paid');
+    const balanceInput = document.getElementById('balance');
+
+
+
+
 </script>
 @endpush

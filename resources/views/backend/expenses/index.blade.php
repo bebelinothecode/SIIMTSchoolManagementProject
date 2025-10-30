@@ -40,17 +40,13 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                 <tr>
-                    {{-- <th class="py-3 px-6 text-left">Source of Expense</th> --}}
                     <th class="py-3 px-6 text-left">Description</th>
                     <th class="py-3 px-6 text-left">Category</th>
                     <th class="py-3 px-6 text-left">Currency</th>
                     <th class="py-3 px-6 text-left">Amount</th>
                     <th class="py-3 px-6 text-left">Mode of Payment</th>
-                    <!-- <th class="py-3 px-6 text-left">Cash Amount Details</th>
-                    <th class="py-3 px-6 text-left">Bank Details</th>
-                    <th class="py-3 px-6 text-left">Cheque Details</th>
-                    <th class="py-3 px-6 text-left">Mobile Money Details</th>   -->
-                    @hasanyrole('Admin|rector')
+                    <th class="py-3 px-6 text-left">Date</th> 
+                    @hasanyrole('Admin|rector') 
                     <th class="py-3 px-6 text-left">Actions</th>
                     @endhasanyrole             
                 </tr>
@@ -58,51 +54,28 @@
             <tbody class="text-gray-600 text-sm font-light">
                 @forelse ($expenses as $expense)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    {{-- <td class="py-3 px-6 text-left whitespace-nowrap">{{ $expense->source_of_expense }}</td> --}}
                     <td class="py-3 px-6 text-left">{{ $expense->description_of_expense }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->expenseCategory->expense_category  ?? $expense->category ?? 'N/A' }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->currency }}</td>
-                    <td class="py-3 px-6 text-left">{{ number_format($expense->amount,2) }}</td>
+                    <td class="py-3 px-6 text-left">{{ number_format($expense->amount, 2) }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
-                    <!-- <td class="py-3 px-6 text-left">{{ $expense->cash_details ?? 'N/A' }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->bank_details ?? 'N/A' }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->cheque_details ?? 'N/A' }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->mobile_money_details ?? 'N/A' }}</td> -->
-                    <td class="py-3 px-6 text-center">
-                            @hasrole('Admin|rector')
-                            <a href="{{ route('expense.edit', $expense->id) }}" class="text-blue-600 hover:underline">Edit</a> 
-                            <form action="{{ route('expense.destroy', $expense->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
-                            </form>
-                            @endhasrole
-                            {{-- @endhasanyrole --}}
-                            @if (session('success'))
-                                <script>
-                                    Swal.fire({
-                                        title: 'Success!',
-                                        text: '{{ session('success') }}',
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    });
-                                </script>
-                            @endif 
-                            @if (session('error'))
-                                <script>
-                                    Swal.fire({
-                                        title: 'Opps!',
-                                        text: '{{ session('error') }}',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                </script>
-                            @endif 
-                        </td>
+                    <td class="py-3 px-6 text-left">{{ $expense->created_at ?? 'N/A' }}</td>
+                    <td class="py-3 px-6 text-left">{{ $expense->cash_details ?? 'N/A' }}</td>
+                    
+                    @hasrole('Admin|rector')
+                    <td class="py-3 px-6 text-left">
+                        <a href="{{ route('expense.edit', $expense->id) }}" class="text-blue-600 hover:underline">Edit</a> 
+                        <form action="{{ route('expense.destroy', $expense->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="ml-4 text-red-600 hover:underline">Delete</button>
+                        </form>
+                    </td>
+                    @endhasrole
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ auth()->user()->hasAnyRole(['Admin', 'rector']) ? 11 : 10 }}" class="py-3 px-6 text-center text-gray-500">
+                    <td colspan="{{ auth()->user()->hasAnyRole(['Admin', 'rector']) ? 7 : 6 }}" class="py-3 px-6 text-center text-gray-500">
                         No expenses found.
                     </td>
                 </tr>

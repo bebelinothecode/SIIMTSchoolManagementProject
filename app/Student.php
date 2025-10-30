@@ -40,6 +40,7 @@ class Student extends Model
         'last_level',
         'last_session',
         'branch',
+        'status',
         'student_type',
         'admission_cycle'
     ];
@@ -137,5 +138,43 @@ class Student extends Model
     public function hasOverdueInstallments()
     {
         return count($this->getOverdueInstallments()) > 0;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($student) {
+            // Get current year
+            $year = now()->year;
+
+            // Determine registration period (2 for Jan–Feb, 8 for Aug–Sep)
+            $month = now()->month;
+            $period = ($month >= 1 && $month <= 2) ? 2 : (($month >= 8 && $month <= 9) ? 8 : null);
+
+            // if (!$period) {
+            //     throw new \Exception("Registration period is closed. Only Jan–Feb or Aug–Sep allowed.");
+            // }
+
+            // Define the course prefix — could also come from $student->course->code
+            $prefix = $student->course->course_code;
+
+            // Build the prefix pattern (e.g., "BSCIT/2025/8/")
+            $basePrefix = "{$prefix}/{$year}/{$period}/";
+
+            // Find the last student within same prefix (same course, year, and period)
+            $lastStudent = self::where('index_number', 'LIKE', "{$basePrefix}%")
+                                ->orderByDesc('id')
+                                ->first();
+
+            if ($lastStudent && preg_match('/\/(\d+)$/', $lastStudent->index_number, $matches)) {
+                $number = intval($matches[1]) + 1;
+            } else {
+                $number = 141; // start fresh if none found
+            }
+
+            // Final index number
+            $student->index_number = $basePrefix . $number;
+        });
     }
 }

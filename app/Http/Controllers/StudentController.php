@@ -397,7 +397,8 @@ class StudentController extends Controller
                     'Scholarship'         => $validatedData['scholarship'],
                     'student_type'        => $validatedData['student_type'],
                     'admission_cycle'     => $validatedData['admission_cycle'],
-                    'Scholarship_amount'  => $validatedData['scholarship_amount']
+                    'Scholarship_amount'  => $validatedData['scholarship_amount'],
+                    'status'          => 'Pending'
                 ]);
             }
     
@@ -406,24 +407,25 @@ class StudentController extends Controller
                 $courseID = $validatedData['course_id'];
                 $query = Grade::findOrFail($courseID);
 
-                $maxRunning = Student::where('course_id', $courseID)
-                ->whereNotNull('running_number')
-                ->max('running_number');
+                // return $query;
+
+                // $maxRunning = Student::where('course_id', $courseID)
+                // ->whereNotNull('running_number')
+                // ->max('running_number');
 
                 // return $maxRunning;
     
                 // ✅ Get max running_number for this course
                 // $maxRunning = Student::where('course_id', $courseID)->max('running_number');
-                $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
-                $formattedCount = sprintf('%03d', $nextRunning);
+                // $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
+                $startNumber = 140;
+                $formattedCount = sprintf('%03d', $startNumber);
     
-                $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
+                // $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
 
                 $uniqueNumber = mt_rand(100, 999999);
 
-                $studentIndexNumber = $query['course_code'] . "/" .
-                                      Carbon::now()->year . "/" . Carbon::now()->month . "/" .
-                                      $attend . "/" . $formattedCount . "/" . $uniqueNumber;
+                $studentIndexNumber = $query['course_code'] . "/" .Carbon::now()->year . "/" . Carbon::now()->month . "/" . $formattedCount;
     
                 if (Student::where('index_number', $studentIndexNumber)->exists()) {
                     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
@@ -436,8 +438,8 @@ class StudentController extends Controller
                     'attendance_time'     => $validatedData['attendance_time'],
                     'dateofbirth'         => $validatedData['dateofbirth'],
                     'current_address'     => $validatedData['current_address'],
-                    'index_number'        => $studentIndexNumber,
-                    'running_number'      => $nextRunning, // ✅ new
+                    // 'index_number'        => $studentIndexNumber,
+                    // 'running_number'      => $nextRunning, // ✅ new
                     'student_parent'      => $validatedData['student_parent'],
                     'parent_phonenumber'  => $validatedData['parent_phonenumber'],
                     'student_category'    => $validatedData['student_category'],
@@ -451,7 +453,8 @@ class StudentController extends Controller
                     'admission_cycle'     => $validatedData['admission_cycle'],
                     'academicyear'        => $validatedData['academicyear'],
                     'Scholarship'         => $validatedData['scholarship'],
-                    'Scholarship_amount'  => $validatedData['scholarship_amount']
+                    'Scholarship_amount'  => $validatedData['scholarship_amount'],
+                    'status'              => 'Pending'
                 ]);
             }
     
@@ -899,25 +902,31 @@ class StudentController extends Controller
    
     public function updateStudent(Request $request, $id) {
         try {
+            // dd($request->all());
             //code...
 
             // dd($request->all());
+            // $validatedData = $request->validate([
+            //                 'name' => 'required|string|max:255',
+            //                 'email' => 'required|email|max:255',
+            //                 'phone' => 'required|string|max:20',
+            //                 'gender' => 'required|in:male,female,other',
+            //                 'dateofbirth' => 'required|date',
+            //                 'current_address' => 'required|string',
+            //                 'fees' => 'required|numeric|min:0',
+            //                 'level' => 'nullable|in:100,200,300,400',
+            //                 'session' => 'nullable|in:1,2',
+            //                 'currency' => 'required|string|max:15',
+            //                 'balance' => 'required|numeric',
+            //                 'course_id' => 'required|integer',
+            //                 'parent_id' => 'required|exists:parents,id',
+            //             ]);
             $validatedData = $request->validate([
-                            'name' => 'required|string|max:255',
-                            'email' => 'required|email|max:255',
-                            'phone' => 'required|string|max:20',
-                            'gender' => 'required|in:male,female,other',
-                            'dateofbirth' => 'required|date',
-                            'current_address' => 'required|string',
-                            'fees' => 'required|numeric|min:0',
-                            'level' => 'nullable|in:100,200,300,400',
-                            'session' => 'nullable|in:1,2',
-                            'currency' => 'required|string|max:15',
-                            'balance' => 'required|numeric',
-                            'course_id' => 'required|integer',
-                            'parent_id' => 'required|exists:parents,id',
-                        ]);
+                'change_status' => 'required|in:active,defer,completed',
+            ]);
             $student = Student::findOrFail($id);
+
+            // return $student;
 
             $profilePicture = $student->user->profile_picture;
             if ($request->hasFile('profile_picture')) {
@@ -926,45 +935,49 @@ class StudentController extends Controller
                 $request->file('profile_picture')->move(public_path('images/profile'), $profilePicture);
             }
 
-            // $student->user()->update($userFieldsToUpdate);
-            $student->user()->update([
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'profile_picture' => $profilePicture
+            $student->student()->update([
+                'status' => $validatedData['change_status'],
             ]);
 
-            $academicStudentFields = [
-                'phone' => $validatedData['phone'],
-                'gender' => $validatedData['gender'],
-                'dateofbirth' => $validatedData['dateofbirth'],
-                'current_address' => $validatedData['current_address'],
-                'balance' => $validatedData['balance'],
-                'level' => $validatedData['level'] ?? $student->level, // Keep existing level if not provided
-                'session' => $validatedData['session'] ?? $student->session, // Keep existing session if not provided
-                'course_id' => $validatedData['course_id'],
-                'currency' => $validatedData['currency'],
-                'fees' => $validatedData['fees'],
-            ];
+            // $student->user()->update($userFieldsToUpdate);
+            // $student->user()->update([
+            //     'name' => $validatedData['name'],
+            //     'email' => $validatedData['email'],
+            //     'profile_picture' => $profilePicture
+            // ]);
 
-            $profStudentFields = [
-                'phone' => $validatedData['phone'],
-                'gender' => $validatedData['gender'],
-                'dateofbirth' => $validatedData['dateofbirth'],
-                'current_address' => $validatedData['current_address'],
-                'balance' => $validatedData['balance'],
-                'fees_prof' => $validatedData['fees'],
-                'course_id_prof' => $validatedData['course_id'],
-            ];
+            // $academicStudentFields = [
+            //     'phone' => $validatedData['phone'],
+            //     'gender' => $validatedData['gender'],
+            //     'dateofbirth' => $validatedData['dateofbirth'],
+            //     'current_address' => $validatedData['current_address'],
+            //     'balance' => $validatedData['balance'],
+            //     'level' => $validatedData['level'] ?? $student->level, // Keep existing level if not provided
+            //     'session' => $validatedData['session'] ?? $student->session, // Keep existing session if not provided
+            //     'course_id' => $validatedData['course_id'],
+            //     'currency' => $validatedData['currency'],
+            //     'fees' => $validatedData['fees'],
+            // ];
 
-            if($student->student_category === 'Academic') {
-                $student->update($academicStudentFields);
-                return redirect()->back()->with('success', 'Student updated successfully');
-            } elseif($student->student_category === 'Professional') {
-                $student->update($profStudentFields);
-                return redirect()->back()->with('success', 'Student updated successfully');
-            } else {
-                return redirect()->back()->with('error', 'Invalid student category');
-            }
+            // $profStudentFields = [
+            //     'phone' => $validatedData['phone'],
+            //     'gender' => $validatedData['gender'],
+            //     'dateofbirth' => $validatedData['dateofbirth'],
+            //     'current_address' => $validatedData['current_address'],
+            //     'balance' => $validatedData['balance'],
+            //     'fees_prof' => $validatedData['fees'],
+            //     'course_id_prof' => $validatedData['course_id'],
+            // ];
+
+            // if($student->student_category === 'Academic') {
+            //     $student->update($academicStudentFields);
+            //     return redirect()->back()->with('success', 'Student updated successfully');
+            // } elseif($student->student_category === 'Professional') {
+            //     $student->update($profStudentFields);
+            //     return redirect()->back()->with('success', 'Student updated successfully');
+            // } else {
+            //     return redirect()->back()->with('error', 'Invalid student category');
+            // }
       
         } catch (Exception $e) {
             Log::error(message: "Error occured updating student" .$e);
@@ -1480,7 +1493,6 @@ class StudentController extends Controller
 
     public function changeStudentsStatus(Request $request, $id)
     {
-        // dd($request->all());
         $validatedData = $request->validate([
             'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
         ]);
@@ -1499,14 +1511,14 @@ class StudentController extends Controller
                 $user->student()->delete();
 
                 return redirect()->back()->with('success', 'Student moved to defer list successfully');
-            } elseif (($validatedData['student_defer'] === 'Completed') && ((int)$student->balance === 0) && ($student->student_category === 'Professional')) {
+            } 
+            
+            if (($validatedData['student_defer'] === 'Completed') && ($student->student_category === 'Professional')) {
                 $student->status = 'Completed';
                 $student->save();
 
                 return redirect()->back()->with('success', 'Student status updated to Completed successfully');
                 // return redirect()->back()->with('error', 'Only defer action is implemented at the moment.');
-            } elseif($validatedData['student_defer'] === 'Completed' && (int)$student->balance > 0 && $student->student_category === 'Professional') {
-                return redirect()->back()->with('error', 'This professional student has an outstanding balance. Please clear the balance before marking as Completed.');
             } 
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

@@ -284,49 +284,6 @@
         </div>
     </div>
 
- 
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded',()=> {
-            const amount = document.getElementById('amount');
-            const balance = document.getElementById('balance');
-            const lateFeesCharges = document.getElementById('late_fees_charges');
-            const student = @json($student);
-            // console.log(student)
-            let totalFees = parseInt(student.fees) || parseInt(student.fees_prof) || 0;
-            // console.log(student);
-
-
-            let scholarshipAmount = parseInt(student.Scholarship_amount) || 0;
-            function calculateBalance() {
-                const enteredAmount = parseInt(amount.value) || 0;
-
-                if(student.Scholarship === 'Yes' && !isNaN(scholarshipAmount)) {
-                    totalFees -= scholarshipAmount;
-                }
-
-                let remainingBalance = parseFloat(student.balance);
-
-                if (isNaN(remainingBalance)) {
-                    // If no specific balance, use adjusted total fees
-                    remainingBalance = totalFees;
-                }
-
-                // Calculate new balance after deducting the entered amount
-                let newBalance = remainingBalance - enteredAmount;
-
-                if (newBalance < 0) {
-                    newBalance = 0;
-                    alert('Payment exceeds the remaining balance. Balance cannot be negative.');
-                }
-
-                // Update the balance field
-                balance.value = newBalance;
-            }
-
-            amount.addEventListener('input', calculateBalance);
-        })
-    </script> --}}
-
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const amount = document.getElementById('amount');

@@ -152,38 +152,32 @@
                             <input type="text" class="bg-gray-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" value="{{ ucfirst($student->student_category) }}" disabled>
                         </div>
                     </div>
-
+<!-- 
                     <div class="md:flex md:items-center mb-6">
                         <div class="md:w-1/4">
                             <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
                                 {{ $student->student_category === 'Academic' ? 'Course' : 'Diploma' }}
                             </label>
                         </div>
-                        <div class="md:w-3/4">
-                            <div class="relative">
-                                <select name="course_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="course-selector">
-                                    <option value="">--Select {{ $student->student_category === 'Academic' ? 'Course' : 'Diploma' }}--</option>
-                                    @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}"
-                                            @if($student->student_category === 'Academic')
-                                                {{ $course->id == old('course_id', $student->course_id) ? 'selected' : '' }}
-                                            @else
-                                                {{ $course->id == old('course_id', $student->course_id_prof) ? 'selected' : '' }}
-                                            @endif
-                                        >
-                                            {{ $student->student_category === 'Academic' ? $course->course_name : $course->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                                </div>
-                            </div>
-                            @error('course_id')
-                                <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                        <div class="md:w-2/3 block text-gray-600 font-bold">
+                        <div class="relative">
+                            <select name="student_defer" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="">--Select Status--</option>
+                                <option value="defer">Defer</option>
+                                @if ($student->student_category === 'Professional' || $student->student_category === 'professional')
+                                  <option value="Completed">Completed</option>
+                                @endif
+                                
+                            </select>
+                            @error('student_defer')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
                             @enderror
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
                         </div>
                     </div>
+                    </div> -->
 
                     @if ($student->student_category === 'Academic')
                     
@@ -216,6 +210,28 @@
                     </div>
                     
                     @endif
+
+                    <div class="md:w-2/3 block text-gray-600 font-bold">
+                    <div class="md:w-1/4">
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                            Select Status
+                        </label>
+                        </div>
+                        <div class="relative">
+                            <select name="change_status" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="">--Change Status--</option>
+                                <option value="defer">Defer</option>
+                                <option value="completed">Completed</option>
+                                <option value="active">Active</option>
+                            </select>
+                            @error('change_status')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+                    </div>
 
 
                     <!-- <div class="md:flex md:items-center mb-6">
@@ -301,6 +317,8 @@
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                                 </div>
                             </div>
+
+                            
                             @error('parent_id')
                                 <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                             @enderror

@@ -49,8 +49,16 @@ class HomeController extends Controller
             $books = DB::table('books')->count();
             $totalFeesCollected = FeesPaid::sum('amount');
             $totalExpensesMade = Expenses::sum('amount');
+            $activeAcademicStudentsCount = Student::where('status', 'active')->where('student_category', 'Academic')->get()->count();
+            $activeProfessionalStudentsCount = Student::where('status', 'active')->where('student_category', 'Professional')->get()->count();
+            $completedProfessionalStudentsCount = Student::where('status', 'graduated')->where('student_category', 'Professional')->get()->count();
+            $inactiveProfessionalStudentsCount = Student::where('status', 'defered')->where('student_category', 'Professional')->get()->count();
 
-            return view('home', compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade','studentsAcademic','studentsProfessional'));
+   
+            // return $inactiveProfessionalStudentsCount;
+           
+
+            return view('home', compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade','studentsAcademic','studentsProfessional','activeAcademicStudentsCount','activeProfessionalStudentsCount','completedProfessionalStudentsCount','inactiveProfessionalStudentsCount'));
 
         } elseif ($user->hasRole('Teacher')) {
 

@@ -1,95 +1,76 @@
-{{-- <div class="w-full block mt-8">
-    <div class="flex flex-wrap sm:flex-no-wrap justify-between">
-        <div class="w-full bg-gray-200 text-center border border-gray-300 px-8 py-6 rounded">
-            <h3 class="text-gray-700 uppercase font-bold">
-                <span class="text-4xl">{{ sprintf("%02d", count($parents)) }}</span>
-                <span class="leading-tight">Parents</span>
-            </h3>
-        </div>
-        <div class="w-full bg-gray-200 text-center border border-gray-300 px-8 py-6 mx-0 sm:mx-6 my-4 sm:my-0 rounded">
-            <h3 class="text-gray-700 uppercase font-bold">
-                <span class="text-4xl">{{ sprintf("%02d", count($teachers)) }}</span>
-                <span class="leading-tight">Teachers</span>
-            </h3>
-        </div>
-        <div class="w-full bg-gray-200 text-center border border-gray-300 px-8 py-6 rounded">
-            <h3 class="text-gray-700 uppercase font-bold">
-                <span class="text-4xl">{{ sprintf("%02d", count($students)) }}</span>
-                <span class="leading-tight">Students</span>
-            </h3>
-        </div>
-    </div>
-    <div class="flex flex-wrap sm:flex-no-wrap justify-between">
-        <div class="w-full bg-gray-200 text-center border border-gray-300 px-8 py-6 my-3 rounded">
-            <h3 class="text-gray-700 uppercase font-bold">
-                <span class="text-4xl">{{ $books }}</span>
-                <span class="leading-tight">Books</span>
-            </h3>
-        </div>
-    </div>
-</div> --}}
-
-{{-- @extends('layouts.app') --}}
-
-{{-- @extends('layouts.app') --}}
-
-{{-- @extends('layouts.app') --}}
+<!-- @extends('layouts.app') -->
 
 @section('content')
 <div class="container mx-auto p-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+    {{-- Header --}}
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-extrabold text-gray-800">📊 Dashboard Overview</h2>
+        <p class="text-gray-500">Welcome back, {{ Auth::user()->name ?? 'Admin' }}</p>
+    </div>
 
     {{-- Grid Layout --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {{-- Parents Card --}}
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Parents</h3>
-            <span class="text-5xl font-bold text-blue-600">{{ sprintf("%02d", count($parents)) }}</span>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {{-- Parents --}}
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-blue-600 uppercase font-bold mb-2">Active Academic Students</h3>
+            <span class="text-5xl font-extrabold text-blue-700">{{  $activeAcademicStudentsCount }}</span>
         </div>
 
-        {{-- Teachers Card --}}
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Teachers</h3>
-            <span class="text-5xl font-bold text-green-600">{{ sprintf("%02d", count($teachers)) }}</span>
+        {{-- Teachers --}}
+        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-green-600 uppercase font-bold mb-2">Active Professional Students</h3>
+            <span class="text-5xl font-extrabold text-green-700">{{ $activeProfessionalStudentsCount }}</span>
         </div>
 
-        {{-- Students Card --}}
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Students</h3>
-            <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", count($students)) }}</span>
+        {{-- Students --}}
+        <div class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-purple-600 uppercase font-bold mb-2">Completed Professional Students</h3>
+            <span class="text-5xl font-extrabold text-purple-700">{{ $completedProfessionalStudentsCount }}</span>
         </div>
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Academic Students</h3>
-            <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", $studentsAcademic) }}</span>
+
+        {{-- Academic Students --}}
+        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-indigo-600 uppercase font-bold mb-2">Inactive/Defered Professional Students</h3>
+            <span class="text-5xl font-extrabold text-indigo-700">{{ $inactiveProfessionalStudentsCount }}</span>
         </div>
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Professional Students</h3>
-            <span class="text-5xl font-bold text-purple-600">{{ sprintf("%02d", $studentsProfessional) }}</span>
-        </div>
+
+        {{-- Professional Students --}}
+        <!-- <div class="bg-gradient-to-br from-pink-50 to-pink-100 border border-pink-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-pink-600 uppercase font-bold mb-2">Professional Students</h3>
+            <span class="text-5xl font-extrabold text-pink-700">{{ $studentsProfessional }}</span>
+        </div> -->
+
         @hasrole('Admin|rector|AsstAccount')
-        {{-- Books Card --}} 
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Total Fees Collected: </h3>
-            <span class="text-5xl font-bold text-red-600">GHS{{ number_format($totalFeesCollected, 2) }}</span>
+        {{-- Fees Collected --}}
+        <div class="bg-gradient-to-br from-amber-50 to-yellow-100 border border-yellow-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-yellow-600 uppercase font-bold mb-2">Total Fees Collected</h3>
+            <span class="text-3xl font-extrabold text-yellow-700">GHS {{ number_format($totalFeesCollected, 2) }}</span>
         </div>
 
         {{-- Expenses Made --}}
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300">
-            <h3 class="text-gray-500 uppercase font-bold">Total Expenses Made: </h3>
-            <span class="text-5xl font-bold text-red-600">GHS{{ number_format($totalExpensesMade, 2) }}</span>
+        <div class="bg-gradient-to-br from-rose-50 to-red-100 border border-red-200 rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition">
+            <h3 class="text-red-600 uppercase font-bold mb-2">Total Expenses Made</h3>
+            <span class="text-3xl font-extrabold text-red-700">GHS {{ number_format($totalExpensesMade, 2) }}</span>
         </div>
         @endhasrole
+    </div>
 
-        {{-- Extra Sections (Can be used for stats or reports) --}}
-        <div class="bg-white shadow-lg rounded-lg p-6 text-center border border-gray-300 col-span-1 sm:col-span-2">
-            <h3 class="text-gray-500 uppercase font-bold">Recent Activity</h3>
-            <ul class="divide-y divide-gray-300 mt-4">
-                <li class="py-2">📌 New books were uploaded this week.</li>
-                <li class="py-2">📌 {{ count($students) }} students enrolled this semester.</li>
-            </ul>
+    {{-- Recent Activity Section --}}
+    <div class="mt-10 bg-white border border-gray-200 rounded-2xl shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-700 uppercase">Recent Activity</h3>
+            <span class="text-sm text-gray-500">Last updated: {{ now()->format('M d, Y') }}</span>
         </div>
+        <ul class="divide-y divide-gray-200">
+            <li class="py-3 flex items-center justify-between">
+                <span>📘 New books were uploaded this week.</span>
+                <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Update</span>
+            </li>
+            <li class="py-3 flex items-center justify-between">
+                <span>🎓 {{ count($students) }} students enrolled this semester.</span>
+                <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">Enrollment</span>
+            </li>
+        </ul>
     </div>
 </div>
 @endsection
-
-
