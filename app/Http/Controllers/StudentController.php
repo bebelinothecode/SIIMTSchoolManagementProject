@@ -290,7 +290,7 @@ class StudentController extends Controller
             $rules = [
                 'branch' => 'required|string|in:Kasoa,Spintex,Kanda',
                 'name' => 'required|string',
-                'email' => 'required|email|unique:users',
+                'email' => 'required|email',
                 'password' => 'required|min:6',
                 'phone' => 'required|string|max:20',
                 'gender' => 'required|in:male,female,other',
@@ -358,6 +358,8 @@ class StudentController extends Controller
                     'current_address'     => $validatedData['current_address'],
                     // 'index_number'        => $studentIndexNumber,
                     // 'running_number'      => $nextRunning, // ✅ new
+                    // 'index_number'        => $studentIndexNumber,
+                    // 'running_number'      => $nextRunning, // ✅ new
                     'student_parent'      => $validatedData['student_parent'],
                     'parent_phonenumber'  => $validatedData['parent_phonenumber'],
                     'student_category'    => $validatedData['student_category'],
@@ -415,6 +417,8 @@ class StudentController extends Controller
                     'new_student_balance' => $validatedData['new_student_balance'] ?? null,
                 ]);
             }
+
+            if($validatedData)
     
             $user->assignRole('Student');
     
@@ -1269,7 +1273,7 @@ class StudentController extends Controller
                 return redirect()->back()->with('success', 'Student moved to defer list successfully');
             } 
             
-            if (($validatedData['student_defer'] === 'Completed') && ($student->student_category === 'Professional')) {
+            if (($validatedData['student_defer'] === 'Completed')) {
                 $student->status = 'Completed';
                 $student->save();
 
