@@ -60,8 +60,6 @@
                     <td class="py-3 px-6 text-left">{{ number_format($expense->amount, 2) }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->mode_of_payment }}</td>
                     <td class="py-3 px-6 text-left">{{ $expense->created_at ?? 'N/A' }}</td>
-                    <td class="py-3 px-6 text-left">{{ $expense->cash_details ?? 'N/A' }}</td>
-                    
                     @hasrole('Admin|rector')
                     <td class="py-3 px-6 text-left">
                         <a href="{{ route('expense.edit', $expense->id) }}" class="text-blue-600 hover:underline">Edit</a> 

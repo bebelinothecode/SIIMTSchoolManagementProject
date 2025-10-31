@@ -285,6 +285,7 @@ class StudentController extends Controller
 
     public function store(Request $request) {
         try {
+            // dd($request->all());
             // Validation rules (same as before)
             $rules = [
                 'branch' => 'required|string|in:Kasoa,Spintex,Kanda',
@@ -303,7 +304,10 @@ class StudentController extends Controller
                 'scholarship' => 'required|in:Yes,No',
                 'student_type' => 'required|in:Local,Foreign',
                 'admission_cycle' => 'nullable|in:February,August',
-                'scholarship_amount' => 'nullable|numeric|required_if:scholarship,Yes'
+                'scholarship_amount' => 'nullable|numeric|required_if:scholarship,Yes',
+                'pay_fees_now' => 'nullable',
+                'amount_paid' => 'nullable|string',
+                'new_student_balance' => 'nullable|string',
             ];
     
             if ($request->student_category === 'Professional') {
@@ -344,38 +348,6 @@ class StudentController extends Controller
             if ($request->student_category === 'Professional') {
                 $courseID = $validatedData['course_id_prof'];
                 $query = Diploma::findOrFail($courseID);
-
-                $maxRunning = Student::where('course_id_prof', $courseID)
-                ->whereNotNull('running_number')
-                ->max('running_number');
-
-                // return $maxRunning;
-    
-                // $maxRunning = Student::where('course_id_prof', $courseID)->max('running_number');
-                $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
-                $formattedCount = sprintf('%03d', $nextRunning);
-
-                // return $formattedCount;
-    
-                $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
-                $branchPrefixes = [
-                    'Kasoa' => 'KS',
-                    'Kanda' => 'KD',
-                    'Spintex' => 'SP',
-                ];
-                $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
-
-                $uniqueNumber = mt_rand(100, 999999);
-    
-                $studentIndexNumber = $branchCode . "/" . $query['code'] . "/" .
-                                      Carbon::now()->year . "/" . Carbon::now()->month . "/" .
-                                      $attend . "/" . $formattedCount . "/" . $uniqueNumber;
-
-                // return $studentIndexNumber;
-    
-                if (Student::where('index_number', $studentIndexNumber)->exists()) {
-                    return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
-                }
     
                 $user->student()->create([
                     'branch'              => $validatedData['branch'],
@@ -384,8 +356,8 @@ class StudentController extends Controller
                     'attendance_time'     => $validatedData['attendance_time'],
                     'dateofbirth'         => $validatedData['dateofbirth'],
                     'current_address'     => $validatedData['current_address'],
-                    'index_number'        => $studentIndexNumber,
-                    'running_number'      => $nextRunning, // ✅ new
+                    // 'index_number'        => $studentIndexNumber,
+                    // 'running_number'      => $nextRunning, // ✅ new
                     'student_parent'      => $validatedData['student_parent'],
                     'parent_phonenumber'  => $validatedData['parent_phonenumber'],
                     'student_category'    => $validatedData['student_category'],
@@ -398,7 +370,10 @@ class StudentController extends Controller
                     'student_type'        => $validatedData['student_type'],
                     'admission_cycle'     => $validatedData['admission_cycle'],
                     'Scholarship_amount'  => $validatedData['scholarship_amount'],
-                    'status'          => 'Pending'
+                    'status'              => ($validatedData['pay_fees_now'] === 'yes') ? 'Active' : 'Pending',
+                    'pay_fees_now'     => $validatedData['pay_fees_now'] ?? null,
+                    'amount_paid'     => $validatedData['amount_paid'] ?? null,
+                    'new_student_balance' => $validatedData['new_student_balance'] ?? null,
                 ]);
             }
     
@@ -406,30 +381,10 @@ class StudentController extends Controller
             elseif ($request->student_category === 'Academic') {
                 $courseID = $validatedData['course_id'];
                 $query = Grade::findOrFail($courseID);
-
-                // return $query;
-
-                // $maxRunning = Student::where('course_id', $courseID)
-                // ->whereNotNull('running_number')
-                // ->max('running_number');
-
-                // return $maxRunning;
     
-                // ✅ Get max running_number for this course
-                // $maxRunning = Student::where('course_id', $courseID)->max('running_number');
-                // $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
-                $startNumber = 140;
-                $formattedCount = sprintf('%03d', $startNumber);
-    
-                // $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
-
-                $uniqueNumber = mt_rand(100, 999999);
-
-                $studentIndexNumber = $query['course_code'] . "/" .Carbon::now()->year . "/" . Carbon::now()->month . "/" . $formattedCount;
-    
-                if (Student::where('index_number', $studentIndexNumber)->exists()) {
-                    return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
-                }
+                // if (Student::where('index_number', $s)->exists()) {
+                //     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
+                // }
     
                 $user->student()->create([
                     'branch'              => $validatedData['branch'],
@@ -454,7 +409,10 @@ class StudentController extends Controller
                     'academicyear'        => $validatedData['academicyear'],
                     'Scholarship'         => $validatedData['scholarship'],
                     'Scholarship_amount'  => $validatedData['scholarship_amount'],
-                    'status'              => 'Pending'
+                    'status'              => ($validatedData['pay_fees_now'] === 'yes') ? 'Active' : 'Pending',
+                    'pay_fees_now'        => $validatedData['pay_fees_now'] ?? null,
+                    'amount_paid'         => $validatedData['amount_paid'] ?? null,
+                    'new_student_balance' => $validatedData['new_student_balance'] ?? null,
                 ]);
             }
     
@@ -621,118 +579,7 @@ class StudentController extends Controller
         return view('backend.students.enquiry', compact('enquiries'));
     }
 
-    // public function studentEnquiry(Request $request)
-    // {
-    //     try {
-    //         //code...
-
-    //     $query = DB::table('student_enquires')
-    //         ->select(
-    //             '*',
-    //             DB::raw("CASE 
-    //                         WHEN student_enquires.type_of_course = 'Academic' THEN grade.course_name 
-    //                         WHEN student_enquires.type_of_course = 'Professional' THEN diploma.name 
-    //                     END as course_name")
-    //         )
-    //         ->leftJoin('grades', function ($join) {
-    //             $join->on('student_enquires.interested_course', '=', 'grades.id')
-    //                 ->where('student_enquires.type_of_course', 'Academic');
-    //         })
-    //         ->leftJoin('diploma', function ($join) {
-    //             $join->on('student_enquires.interested_course', '=', 'diploma.id')
-    //                 ->where('student_enquires.type_of_course', 'Professional');
-    //         });
-
-    //       return $query->get();
-
-
     
-
-
-    //         if($request->has('search') && !empty($request->search)) {
-    //             $searchTerm = $request->search;
-                
-    //             $query->where(function($q) use ($searchTerm) {
-    //                 $q->where('name', 'like', "%{$searchTerm}%")
-    //                   ->orWhere('telephone_number', 'like', "%{$searchTerm}%")
-    //                   ->orWhere('interested_course', 'like', "%{$searchTerm}%")
-    //                   ->orWhere('type_of_course', 'like', "%{$searchTerm}%");
-    //             });
-    //         }
-
-    //         // Apply sorting filter if sort parameter is present
-    //         if ($request->has('sort') && !empty($request->sort)) {
-    //             $query->where('type_of_course', $request->sort);
-    //         }
-
-    //         // Order by latest first and paginate
-    //         $enquiries = $query->get();
-
-    //         return $enquiries;
-
-    //         return view('backend.students.enquiry', compact('enquiries'));
-    //     } catch (Exception $e) {
-    //         //throw $th;
-    //         Log::error('Error searching enquiry:' . $e);
-    //     }
-    // }
-
-//     public function studentEnquiry(Request $request)
-// {
-//     try {
-//         $query = DB::table('student_enquires')
-//             ->select(
-//                 'student_enquires.*',
-//                 DB::raw("CASE 
-//                             WHEN student_enquires.type_of_course = 'Academic' THEN grades.course_name 
-//                             WHEN student_enquires.type_of_course = 'Professional' THEN diploma.name 
-//                         END as course_name")
-//             )
-//             ->leftJoin('grades', function ($join) {
-//                 $join->on('student_enquires.interested_course', '=', 'grades.id')
-//                     ->where('student_enquires.type_of_course', '=', 'Academic'); // 👈 quotes
-//             })
-//             ->leftJoin('diploma', function ($join) {
-//                 $join->on('student_enquires.interested_course', '=', 'diploma.id')
-//                     ->where('student_enquires.type_of_course', '=', 'Professional'); // 👈 quotes
-//             });
-//             // ->get();
-
-//         // 🔎 Search filter
-//         if ($request->filled('search')) {
-//             $searchTerm = $request->search;
-//             $query->where(function($q) use ($searchTerm) {
-//                 $q->where('student_enquires.name', 'like', "%{$searchTerm}%")
-//                   ->orWhere('student_enquires.telephone_number', 'like', "%{$searchTerm}%")
-//                   ->orWhere('student_enquires.interested_course', 'like', "%{$searchTerm}%")
-//                   ->orWhere('student_enquires.type_of_course', 'like', "%{$searchTerm}%");
-//             });
-//         }
-
-//         // 🔽 Sorting filter (you probably want orderBy, not where)
-//         if ($request->filled('sort')) {
-//             $query->orderBy('student_enquires.type_of_course', $request->sort === 'desc' ? 'desc' : 'asc');
-//         }
-
-//         // ⏰ Order latest first and paginate
-//         $enquiries = $query->orderBy('student_enquires.created_at', 'desc')->paginate(15);
-
-//         return $enquiries;
-
-//         return view('backend.students.enquiry', compact('enquiries'));
-
-//     } catch (\Exception $e) {
-//         Log::error('Error searching enquiry: ' . $e->getMessage());
-//         return back()->with('error', 'Something went wrong while fetching enquiries.');
-//     }
-// }
-
-
-   
-
-
-
-
     public function index22(Request $request)
     {
         // Fetch enquiries with sorting
@@ -1178,9 +1025,10 @@ class StudentController extends Controller
 
         $user = User::findOrFail($userId);
         // Get student record
-        $student = DB::table('students')
-            ->where('user_id', $userId)
-            ->first();
+        $student = Student::with('user')->where('user_id', $userId)->first();
+
+
+        // return $student;
         
         if (!$student) {
             return redirect()->back()->with('error', 'Student record not found');
@@ -1199,45 +1047,35 @@ class StudentController extends Controller
             return redirect()->back()->with('error', 'No course assigned to student');
         }   
 
-        // Get course with subjects grouped by level and semester
+   
+      $subjects = Subject::where('course_id', $student->course_id)
+        ->orderBy('level')
+        ->orderBy('semester')
+        ->get()
+        ->groupBy(['level', 'semester']);
 
-        $data = DB::table('subject_course as sc')
-            ->join('subjects as s', 'sc.subject_id', '=', 's.id')
-            ->join('grades as c', 'sc.course_id', '=', 'c.id')
-            ->join('level as l', DB::raw('sc.level::bigint'), '=', 'l.id')
-            ->join('session as sem', DB::raw('sc.semester::bigint'), '=', 'sem.id')
-            ->select(
-                'sc.id',
-                's.subject_name',
-                'c.course_name',
-                'l.name as level_name',
-                'sem.name as semester_name',
-                's.credit_hours'
-            )
-            ->orderBy('l.name')
-            ->orderBy('sem.name')
-            ->orderBy('s.subject_name')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->level_name . '-' . $item->semester_name;
-            });
+        return view('backend.students.getcourseoutline',compact('subjects', 'student'));
+    }
 
-        // Format into desired structure
-        $formatted = $data->map(function ($group) {
-            return [
-                'course_name' => $group->first()->course_name,
-                'level_name' => $group->first()->level_name,
-                'semester_name' => $group->first()->semester_name,
-                'subjects' => $group->map(function ($row) {
-                    return [
-                        'subject_name' => $row->subject_name,
-                        'credit_hours' => $row->credit_hours
-                    ];
-                })->values()
-            ];
-        })->values();
+    public function registerCoursesForm($id) {
+        $student = Student::with(['user','course','diploma'])->findOrFail($id);
 
-        return view('backend.students.getcourseoutline',compact('formatted', 'student','user'));
+        $subjects = Subject::where('course_id', $student->course_id)
+        ->semester()
+        ->orderBy('level')
+        ->orderBy('semester')
+        ->get()
+        ->groupBy(['level', 'semester']);
+
+        $courses = null;
+
+        if($student->student_category === 'Academic') {
+            $courses = Grade::all();
+        } elseif($student->student_category === 'Professional') {
+            $courses = Diploma::all();
+        }
+
+        return view('backend.students.registercoursesform',compact('student','courses'));
     }
 
     // public function getCourseOutlineForm()
@@ -1298,23 +1136,6 @@ class StudentController extends Controller
 
         $query = Subject::query();
 
-        
-        // if($student->level == '100' && $student->session == '1') {
-        //     $query = Subject::where('level','100')
-        //     ->whereIn('semester',["1", "2"]);
-        // } elseif($student->level == '100' && $student->session == '2') {
-        //     $query = Subject::where('level','200')
-        //     ->whereIn('semester',["1","2"]);
-        // } elseif($student->level == '300' && $student->session == '1') {
-        //     $query = Subject::where('level','300')
-        //     ->whereIn('semester',["1","2"]);
-        // } elseif($student->level == '400' && $student->session == '1') {
-        //     $query = Subject::where('level','400')
-        //     ->whereIn('semester',['1','2']);
-        // }
-
-
-
         if(($student->level == '100' && $student->session == '1') || ($student->level == '200' && $student->session == '1')) {
             $query = Subject::where('level',$student->level)
             ->whereIn('semester',["1", "2"]);
@@ -1326,10 +1147,6 @@ class StudentController extends Controller
         }
         
         $allSubjects = $query->get();
-
-        // return $allSubjects;
-
-        // return $student;
 
         return view('backend.students.registercourse',compact('course','allSubjects','student','studentId'));
     }
@@ -1429,67 +1246,6 @@ class StudentController extends Controller
 
         return view('backend.students.changestatus',compact('id','student'));
     }
-
-//     public function changeStudentsStatus(Request $request, $id)
-// {
-//     $validatedData = $request->validate([
-//         'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
-//     ]);
-
-//     try {
-//         $student = Student::findOrFail($id);
-
-//         switch ($validatedData['student_defer']) {
-//             case 'defer':
-//                 DB::transaction(function () use ($student) {
-//                     // Insert only the fields you need
-//                     Defer::create([
-//                         'student_id' => $student->id,
-//                         'name' => $student->name,
-//                         'course' => $student->course,
-//                         'expected_start_date' => $student->expected_start_date,
-//                         // add more fields as required
-//                     ]);
-
-//                     // soft delete (if using SoftDeletes) or hard delete
-//                     $student->delete();
-//                 });
-
-//                 return redirect()->back()->with('success', 'Student moved to defer list successfully');
-
-//             case 'Completed':
-//                 if ($student->student_category === 'Professional') {
-//                     if ((int) $student->balance === 0) {
-//                         $student->status = 'Completed';
-//                         $student->save();
-//                         return redirect()->back()->with('success', 'Student status updated to Completed successfully');
-//                     } else {
-//                         return redirect()->back()->with('error', 'This professional student has an outstanding balance. Please clear the balance before marking as Completed.');
-//                     }
-//                 }
-//                 break;
-
-//             case 'withdrawn':
-//                 $student->status = 'Withdrawn';
-//                 $student->save();
-//                 return redirect()->back()->with('success', 'Student marked as Withdrawn successfully');
-
-//             case 'expelled':
-//                 $student->status = 'Expelled';
-//                 $student->save();
-//                 return redirect()->back()->with('success', 'Student marked as Expelled successfully');
-//         }
-
-//         return redirect()->back()->with('error', 'Invalid status update request.');
-
-//     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-//         return redirect()->back()->with('error', 'Student not found.');
-//     } catch (Exception $e) {
-//         Log::error('Error changing student status: ' . $e->getMessage());
-//         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
-//     }
-// }
-
 
     public function changeStudentsStatus(Request $request, $id)
     {
@@ -2286,69 +2042,6 @@ class StudentController extends Controller
             return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
-
-    // public function updateInstallments(Request $request, $id) {
-    //     try {
-    //         //code...
-    //         // dd($request->all());
-    //         $plan = PaymentPlan::with('installments')->findOrFail($id);
-
-    //         $validatedData = $request->validate([
-    //             'student_id' => 'required|exists:students,id',
-    //             'total_fees_due' => 'required|numeric|min:0',
-    //             'amount_already_paid' => 'required|numeric|min:0',
-    //             'outstanding_balance' => 'required|numeric|min:0',
-    //             'currency' => 'required|string|in:Ghana Cedi,Dollar',
-    //             'installments.*.id' => 'nullable|exists:installments,id',
-    //             'installments.*.installments_num' => 'nullable|integer',
-    //             'installments.*.due_date' => 'nullable|date',
-    //             'installments.*.amount' => 'nullable|numeric|min:0',
-    //             'installments.*.payment_method' => 'nullable|string|max:50',
-    //             'installments.*.notes' => 'nullable|string|max:255',
-    //         ]);
-
-    //         DB::beginTransaction();
-
-    //         $plan->update([
-    //             'total_fees_due' => floatval($validatedData['total_fees_due']),
-    //             'outstanding_balance' => floatval($validatedData['outstanding_balance']),
-    //             'amount_already_paid' => floatval($validatedData['amount_already_paid']),
-    //             'currency' => $validatedData['currency']
-    //         ]);
-
-    //         foreach ($validatedData['installments'] as $installmentData) {
-    //             if (isset($installmentData['id'])) {
-    //                 $installment = Installments::findOrFail($installmentData['id']);
-    //                 $installment->update([
-    //                     'due_date' => $installmentData['due_date'],
-    //                     'amount' => floatval($installmentData['amount']),
-    //                     'currency' => $validatedData['currency'],
-    //                     'notes' => $installmentData['notes'] ?? null,
-    //                     'payment_method' => $installmentData['payment_method'] ?? null,
-    //                     'installments_num' => $installmentData['installments_num'],
-    //                 ]);
-    //             } else {
-    //                 Installments::create([
-    //                     'payment_plan_id' => $plan->id,
-    //                     'due_date' => $installmentData['due_date'],
-    //                     'amount' => floatval($installmentData['amount']),
-    //                     'currency' => $validatedData['currency'],
-    //                     'notes' => $installmentData['notes'] ?? null,
-    //                     'payment_method' => $installmentData['payment_method'] ?? null,
-    //                     'installments_num' => $installmentData['installments_num'],
-    //                 ]); 
-                        
-    //             }
-    //         }
-    //         DB::commit();   
-    //         return redirect()->back()->with('success', 'Installments updated successfully.');
-    //     } catch (Exception $e) {
-    //         //throw $th;    
-    //         DB::rollBack();
-    //         Log::error('Error: ' . $e->getMessage());
-    //         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
-    //     }
-    // }
 
     public function updateInstallments(Request $request, $planId)
     {

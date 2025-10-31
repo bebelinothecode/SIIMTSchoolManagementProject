@@ -543,7 +543,7 @@
                 </label>
             </div>
             <div class="md:w-2/3">
-                <input name="balance" type="number" id="balance"
+                <input name="new_student_balance" type="number" id="balance"
                     class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                     placeholder="Enter balance amount">
                 @error('balance')
@@ -601,106 +601,207 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Handle student category selection
-    const studentCategorySelect = document.getElementById('student_category');
-    const conditionalFields = document.getElementById('conditionalFields');
-    const conditionalFieldsAcademic = document.getElementById('conditionalFieldsAcademic');
+document.addEventListener('DOMContentLoaded', function() {
     const baseUrl = window.location.origin;
 
-    studentCategorySelect.addEventListener('change', function() {
-        const selectedCategory = this.value;
-        
-        // Hide all fields first
-        conditionalFields.classList.add('hidden');
-        conditionalFieldsAcademic.classList.add('hidden');
-        
-        // Show relevant fields based on selection
-        if (selectedCategory === 'Professional') {
-            conditionalFields.classList.remove('hidden');
-        } else if (selectedCategory === 'Academic') {
-            conditionalFieldsAcademic.classList.remove('hidden');
-        }
-    });
+    // Elements (may be null if not present on this page)
+    const studentCategory   = document.getElementById('student_category');
+    const profCourseSelect  = document.getElementById('course_id');        
+    const acaCourseSelect   = document.getElementById('course_id_aca');    
+    const conditionalProf   = document.getElementById('conditionalFields'); 
+    const conditionalAca    = document.getElementById('conditionalFieldsAcademic'); 
+    const profAmountInput   = document.getElementById('amount');          
+    const acaFeesInput      = document.getElementById('fees');            
+    const amountPaidInput   = document.getElementById('amount_paid');    
+    const balanceInput      = document.getElementById('balance');         
 
-    // Handle Professional Course Selection
-    const courseSelect = document.getElementById('course_id');
-    if (courseSelect) {
-        courseSelect.addEventListener('change', function() {
-            const courseId = this.value;
-            if (!courseId) {
-                clearFields();
+    // Helper: safe parse float
+    function parseNum(v) {
+        const n = parseFloat(String(v || '').replace(/,/g, ''));
+        return isNaN(n) ? 0 : n;
+    }
+
+    // Update balance based on current fee (either profAmountInput or acaFeesInput) minus amountPaidInput
+    function updateBalance() {
+        if (!balanceInput) return;
+
+        const profVal = profAmountInput ? parseNum(profAmountInput.value) : 0;
+        const acaVal  = acaFeesInput ? parseNum(acaFeesInput.value) : 0;
+
+        // prefer professional amount if > 0 else academic fees
+        const feeTotal = profVal > 0 ? profVal : acaVal;
+
+        const paid = amountPaidInput ? parseNum(amountPaidInput.value) : 0;
+        let balance = feeTotal - paid;
+        if (balance < 0) balance = 0;
+
+        balanceInput.value = balance.toFixed(2);
+    }
+
+    // Clear helper that accepts an array of element ids (safe)
+    function clearFields(fieldIds = []) {
+        fieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+    }
+
+    // Toggle which course block is visible when student category changes
+    function handleCategoryChange() {
+        const val = studentCategory ? studentCategory.value : '';
+        if (val === 'Professional') {
+            if (conditionalProf) conditionalProf.classList.remove('hidden');
+            if (conditionalAca) conditionalAca.classList.add('hidden');
+
+            // make professional select required, academic not required
+            if (profCourseSelect) profCourseSelect.setAttribute('required', 'required');
+            if (acaCourseSelect) acaCourseSelect.removeAttribute('required');
+
+            // if a professional course already selected, trigger change to populate fees
+            if (profCourseSelect && profCourseSelect.value) {
+                profCourseSelect.dispatchEvent(new Event('change'));
+            } else {
+                // clear academic fee field if switching
+                if (acaFeesInput) acaFeesInput.value = '';
+                updateBalance();
+            }
+        } else if (val === 'Academic') {
+            if (conditionalAca) conditionalAca.classList.remove('hidden');
+            if (conditionalProf) conditionalProf.classList.add('hidden');
+
+            // make academic select required, professional not required
+            if (acaCourseSelect) acaCourseSelect.setAttribute('required', 'required');
+            if (profCourseSelect) profCourseSelect.removeAttribute('required');
+
+            // if an academic course already selected, trigger change to populate fees
+            if (acaCourseSelect && acaCourseSelect.value) {
+                acaCourseSelect.dispatchEvent(new Event('change'));
+            } else {
+                // clear professional amount if switching
+                if (profAmountInput) profAmountInput.value = '';
+                updateBalance();
+            }
+        } else {
+            // none selected: hide both blocks
+            if (conditionalProf) conditionalProf.classList.add('hidden');
+            if (conditionalAca) conditionalAca.classList.add('hidden');
+            if (profCourseSelect) profCourseSelect.removeAttribute('required');
+            if (acaCourseSelect) acaCourseSelect.removeAttribute('required');
+            // clear fees
+            if (acaFeesInput) acaFeesInput.value = '';
+            if (profAmountInput) profAmountInput.value = '';
+            updateBalance();
+        }
+    }
+
+    // PROFESSIONAL course selection -> fetch diploma details (populates top fees input)
+    if (profCourseSelect) {
+        profCourseSelect.addEventListener('change', function() {
+            const option = this.options[this.selectedIndex];
+            // if data attributes exist on option, use them (faster than fetch)
+            const dataAmount = option ? option.dataset.amount : null;
+            const dataCurrency = option ? option.dataset.currency : null;
+            const dataDuration = option ? option.dataset.duration : null;
+
+            if (dataAmount !== undefined && dataAmount !== null) {
+                if (profAmountInput) profAmountInput.value = dataAmount;
+                if (acaFeesInput) acaFeesInput.value = dataAmount; // keep single #fees updated
+                if (document.getElementById('currency')) document.getElementById('currency').value = dataCurrency || '';
+                if (document.getElementById('duration')) document.getElementById('duration').value = dataDuration || '';
+                updateBalance();
                 return;
             }
 
-            const amountInput = document.getElementById('amount');
-            const amountPaidInput = document.getElementById('amount_paid');
-            const balanceInput = document.getElementById('balance');
-            console.log("This is amount entered:",amountInput.value)
+            // fallback to fetching from server if no data- attributes
+            const courseId = this.value;
+            if (!courseId) {
+                clearFields(['currency','amount','duration']);
+                updateBalance();
+                return;
+            }
 
-            // Fetch course details from the server
             fetch(`${baseUrl}/get/diplomas/${courseId}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
-
-                    amountInput.value = data.amount || '';
-                    // Populate fields with the returned data
-                    document.getElementById('currency').value = data.currency || '';
-                    document.getElementById('amount').value = data.amount || '';
-                    document.getElementById('duration').value = data.duration || '';
-
-                    amountPaidInput.addEventListener('input', () => {
-                const total = parseFloat(data.amount) || 0;
-                const paid = parseFloat(amountPaidInput.value) || 0;
-                const balance = total - paid;
-
-                // Prevent negative balance
-                balanceInput.value = balance >= 0 ? balance : 0;
-            })
-
+                    if (document.getElementById('currency')) document.getElementById('currency').value = data.currency || '';
+                    if (profAmountInput) profAmountInput.value = data.amount || '';
+                    if (acaFeesInput) acaFeesInput.value = data.amount || '';
+                    if (document.getElementById('duration')) document.getElementById('duration').value = data.duration || '';
+                    updateBalance();
                 })
-                .catch(error => {
-                    console.error('Error fetching course details:', error);
-                    clearFields();
+                .catch(err => {
+                    console.error('Error fetching professional course:', err);
+                    clearFields(['currency','amount','duration']);
+                    updateBalance();
                 });
         });
     }
 
-    const academicSelect = document.getElementById("course_id_aca");
-    if (academicSelect) {
-        academicSelect.addEventListener('change', function() {
-            const acaID = this.value;
-            console.log("acaID:",acaID)
-            if(!acaID) {
-                clearFields();
+    // ACADEMIC course selection -> populate top fees input
+    if (acaCourseSelect) {
+        acaCourseSelect.addEventListener('change', function() {
+            const option = this.options[this.selectedIndex];
+            const dataAmount = option ? option.dataset.amount : null;
+            const dataCurrency = option ? option.dataset.currency : null;
+
+            if (dataAmount !== undefined && dataAmount !== null) {
+                if (acaFeesInput) acaFeesInput.value = dataAmount;
+                if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = dataCurrency || '';
+                updateBalance();
                 return;
             }
-        
 
-        //Fetch Academic courses
-        fetch(`${baseUrl}/get/academic/${acaID}`)
+            const acaID = this.value;
+            if (!acaID) {
+                clearFields(['currency_academic','fees']);
+                updateBalance();
+                return;
+            }
+
+            fetch(`${baseUrl}/get/academic/${acaID}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
-                    // Populate fields with the returned data
-                    document.getElementById('currency_academic').value = data.currency || '';
-                    document.getElementById('fees').value = data.amount || '';
-                    // document.getElementById('duration').value = data.duration || '';
+                    if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = data.currency || '';
+                    if (acaFeesInput) acaFeesInput.value = data.amount || '';
+                    updateBalance();
                 })
-                .catch(error => {
-                    console.error('Error fetching course details:', error);
-                    clearFields();
+                .catch(err => {
+                    console.error('Error fetching academic course:', err);
+                    clearFields(['currency_academic','fees']);
+                    updateBalance();
                 });
         });
     }
 
-    function clearFields(fieldIds) {
-        fieldIds.forEach(id => {
-            document.getElementById(id).value = '';
-        });
+    // Listen to amount_paid input to update balance live
+    if (amountPaidInput) {
+        amountPaidInput.addEventListener('input', updateBalance);
     }
+
+    // Recalc if fee inputs are manually edited
+    if (profAmountInput) profAmountInput.addEventListener('input', updateBalance);
+    if (acaFeesInput) acaFeesInput.addEventListener('input', updateBalance);
+
+    // Initialize category on load (in case of old inputs)
+    if (studentCategory) {
+        studentCategory.addEventListener('change', handleCategoryChange);
+        handleCategoryChange();
+    } else {
+        // If no selector present, still try to initialize fees from selected course
+        if (profCourseSelect && profCourseSelect.value) profCourseSelect.dispatchEvent(new Event('change'));
+        if (acaCourseSelect && acaCourseSelect.value) acaCourseSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Scholarship radio toggling (existing jQuery handler preserved)
+    $('input[name="scholarship"]').change(function () {
+        if ($('#scholarship_yes').is(':checked')) {
+            $('#scholarship_amount_field').show();
+        } else {
+            $('#scholarship_amount_field').hide();
+        }
+    }).trigger('change');
 });
 </script>
 
@@ -715,15 +816,5 @@
             maxDate: minDate, // Restrict maximum date to 16 years ago
         });
     });
-</script>
-
-<script>
-    const amountInput = document.getElementById('amount');
-    const amountPaidInput = document.getElementById('amount_paid');
-    const balanceInput = document.getElementById('balance');
-
-
-
-
 </script>
 @endpush

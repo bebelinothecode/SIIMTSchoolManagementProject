@@ -148,6 +148,7 @@
                             <tr>
                                 <th>Index No.</th>
                                 <th>Student Name</th>
+                                <th>Phone Number</th>
                                 <th>Fees</th>
                                 <th>Balance</th>
                             </tr>
@@ -157,6 +158,7 @@
                                 <tr>
                                     <td>{{ $student->index_number }}</td>
                                     <td>{{ $student->user->name ?? "N/A" }}</td>
+                                    <td>{{ $student->phone ?? "N/A" }}</td>
                                     <td>{{ $student->course->fees ?? $student->diploma->fees ?? "N/A" }}</td>
                                     <td>{{ number_format($student->balance,2) }}</td>
                                 </tr>

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB; // add near top with other use statements
 // use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -10,9 +11,6 @@ class Student extends Model
 {
     // use SoftDeletes;
     protected $fillable = [
-        // 'user_id',
-        // 'parent_id',
-        // 'class_id',
         'level',
         'gender',
         'phone',
@@ -42,7 +40,10 @@ class Student extends Model
         'branch',
         'status',
         'student_type',
-        'admission_cycle'
+        'admission_cycle',
+        'pay_fees_now',
+        'amount_paid',
+        'new_student_balance',
     ];
 
     public function user() 
@@ -145,36 +146,31 @@ class Student extends Model
         parent::boot();
 
         static::creating(function ($student) {
-            // Get current year
             $year = now()->year;
-
-            // Determine registration period (2 for Jan–Feb, 8 for Aug–Sep)
             $month = now()->month;
             $period = ($month >= 1 && $month <= 2) ? 2 : (($month >= 8 && $month <= 9) ? 8 : null);
 
-            // if (!$period) {
-            //     throw new \Exception("Registration period is closed. Only Jan–Feb or Aug–Sep allowed.");
-            // }
-
-            // Define the course prefix — could also come from $student->course->code
-            $prefix = $student->course->course_code;
-
-            // Build the prefix pattern (e.g., "BSCIT/2025/8/")
+            $prefix = $student->course->course_code ?? $student->diploma->code;
             $basePrefix = "{$prefix}/{$year}/{$period}/";
 
-            // Find the last student within same prefix (same course, year, and period)
-            $lastStudent = self::where('index_number', 'LIKE', "{$basePrefix}%")
-                                ->orderByDesc('id')
-                                ->first();
+            // Generate index_number inside a transaction and lock matching rows to avoid race conditions
+            DB::transaction(function () use ($student, $basePrefix) {
+                $table = (new self)->getTable();
 
-            if ($lastStudent && preg_match('/\/(\d+)$/', $lastStudent->index_number, $matches)) {
-                $number = intval($matches[1]) + 1;
-            } else {
-                $number = 141; // start fresh if none found
-            }
+                $lastStudent = DB::table($table)
+                    ->where('index_number', 'like', "{$basePrefix}%")
+                    ->lockForUpdate()
+                    ->orderByDesc('id')
+                    ->first();
 
-            // Final index number
-            $student->index_number = $basePrefix . $number;
+                if ($lastStudent && preg_match('/\/(\d+)$/', $lastStudent->index_number, $matches)) {
+                    $number = intval($matches[1]) + 1;
+                } else {
+                    $number = 141;
+                }
+
+                $student->index_number = $basePrefix . $number;
+            });
         });
     }
 }

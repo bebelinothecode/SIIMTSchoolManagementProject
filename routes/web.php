@@ -209,6 +209,7 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/generate/stock/purchase/slip',[InventoryController::class, 'generateStockPurchaseSlip'])->name('generate.stockpurchaseslip');
     Route::get('/inventory/report/form', [ReportsController::class, 'inventoryReportForm'])->name('inventoryreport.form');   
     Route::post('/generate/inventory/report', [ReportsController::class, 'generateInventoryReport'])->name('inventory.report'); 
+    Route::get('/register/courses/form', [StudentController::class, 'registerCoursesForm'])->name('courses.registerform');
     
     
     Route::resource('assignrole', 'RoleAssign');
