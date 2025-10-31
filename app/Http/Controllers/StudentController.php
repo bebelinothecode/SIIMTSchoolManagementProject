@@ -349,7 +349,37 @@ class StudentController extends Controller
                 $courseID = $validatedData['course_id_prof'];
                 $query = Diploma::findOrFail($courseID);
     
+<<<<<<< Updated upstream
+                $student = $user->student()->create([
+=======
+                // $maxRunning = Student::where('course_id_prof', $courseID)->max('running_number');
+                $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
+                $formattedCount = sprintf('%03d', $nextRunning);
+
+                // return $formattedCount;
+    
+                $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" : "WE";
+                $branchPrefixes = [
+                    'Kasoa' => 'KS',
+                    'Kanda' => 'KD',
+                    'Spintex' => 'SP',
+                ];
+                $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
+
+                $uniqueNumber = mt_rand(100, 999999);
+    
+                $studentIndexNumber = $branchCode . "/" . $query['code'] . "/" .
+                                      Carbon::now()->year . "/" . Carbon::now()->month . "/" .
+                                      $attend . "/" . $formattedCount . "/" . $uniqueNumber;
+
+                // return $studentIndexNumber;
+    
+                // if (Student::where('index_number', $studentIndexNumber)->exists()) {
+                //     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
+                // }
+    
                 $user->student()->create([
+>>>>>>> Stashed changes
                     'branch'              => $validatedData['branch'],
                     'phone'               => $validatedData['phone'],
                     'gender'              => $validatedData['gender'],
@@ -358,8 +388,11 @@ class StudentController extends Controller
                     'current_address'     => $validatedData['current_address'],
                     // 'index_number'        => $studentIndexNumber,
                     // 'running_number'      => $nextRunning, // ✅ new
+<<<<<<< Updated upstream
                     // 'index_number'        => $studentIndexNumber,
                     // 'running_number'      => $nextRunning, // ✅ new
+=======
+>>>>>>> Stashed changes
                     'student_parent'      => $validatedData['student_parent'],
                     'parent_phonenumber'  => $validatedData['parent_phonenumber'],
                     'student_category'    => $validatedData['student_category'],
@@ -388,7 +421,7 @@ class StudentController extends Controller
                 //     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
                 // }
     
-                $user->student()->create([
+                $student = $user->student()->create([
                     'branch'              => $validatedData['branch'],
                     'phone'               => $validatedData['phone'],
                     'gender'              => $validatedData['gender'],
@@ -418,9 +451,41 @@ class StudentController extends Controller
                 ]);
             }
 
+<<<<<<< Updated upstream
+=======
             if($validatedData)
     
+>>>>>>> Stashed changes
             $user->assignRole('Student');
+
+            $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8));
+
+            $idempotencyKey = (string) Str::uuid();
+
+            if($validatedData['pay_fees_now'] === 'yes') {
+                // Here, you can implement the logic to record the payment in FeesPaid or any other relevant table.
+                $feespaid = FeesPaid::create([
+                    'student_index_number' => $student->index_number,
+                    'student_name' => $student->user->name,
+                    'student_id' => $student->id,
+                    'method_of_payment' => "Cash",
+                    'amount' => $student->amount_paid,
+                    'balance' => $student->new_student_balance,
+                    'currency' => "Ghana Cedi",
+                    'Momo_number' => $validatedData['Momo_number'] ?? null,
+                    'cheque_number' => $validatedData['cheque_number'] ?? null,
+                    'remarks' => $validatedData['remarks'] ?? null,
+                    'receipt_number' => $receipt_number,
+                    'fees_type' => $validatedData['fees_type'] ?? null,
+                    'other_fees' => $validatedData['other_fees'] ?? null,
+                    'late_fees_charges' => $validatedData['late_fees_charges'] ?? null,
+                    'idempotency_key' => $idempotencyKey
+                ]);
+
+                return view('backend.fees.newstudentfees', compact('feespaid','student'))->with('success', 'School Fees has been collected');
+            }
+
+           
     
             DB::commit();
     
@@ -1251,6 +1316,10 @@ class StudentController extends Controller
         return view('backend.students.changestatus',compact('id','student'));
     }
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     public function changeStudentsStatus(Request $request, $id)
     {
         $validatedData = $request->validate([
