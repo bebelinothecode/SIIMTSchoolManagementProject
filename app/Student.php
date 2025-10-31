@@ -154,14 +154,7 @@ class Student extends Model
 
             $period = in_array($month, [2, 3, 10, 11, 12, 1]) ? 2 : 8;
 
-<<<<<<< Updated upstream
             $prefix = $student->course->course_code ?? $student->diploma->code;
-=======
-            // Define the course prefix — could also come from $student->course->code
-            $prefix = $student->course->course_code ?? $student->diploma->code;
-
-            // Build the prefix pattern (e.g., "BSCIT/2025/8/")
->>>>>>> Stashed changes
             $basePrefix = "{$prefix}/{$year}/{$period}/";
 
             // Generate index_number inside a transaction and lock matching rows to avoid race conditions

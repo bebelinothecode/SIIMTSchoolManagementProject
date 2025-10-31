@@ -45,9 +45,6 @@
         }
     @endphp
 
-    {{-- {{ $totalDue }}
-    {{ $totalOverdue }} --}}
-
     @if($totalOverdue > 0)
     <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
         <div class="flex items-center">
@@ -139,7 +136,10 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Index Number</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+
+                        <!-- replaced Branch column with Status -->
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -233,8 +233,18 @@
                             {{ $student->course->course_name ?? $student->diploma->name ?? 'N/A' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">{{ $student->index_number }}</td>
+
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $student->branch }}
+                            @php $s = strtolower($student->status ?? 'unknown'); @endphp
+                            @if($s === 'completed' || $s === 'graduated')
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                            @elseif($s === 'active')
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Active</span>
+                            @elseif($s === 'defered' || $s === 'deferred')
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Deferred</span>
+                            @else
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($student->status ?? 'Unknown') }}</span>
+                            @endif
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -418,10 +428,17 @@
                             <div class="text-sm text-gray-900 truncate">{{ $student->course->course_name ?? $student->diploma->name ?? 'N/A' }}</div>
                         </div>
                         <div>
-                            <div class="text-xs font-medium text-gray-500">Balance</div>
-                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $student->balance < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                {{ number_format((int)$student->balance, 2) }}
-                            </span>
+                            <div class="text-xs font-medium text-gray-500">Status</div>
+                            @php $s = strtolower($student->status ?? 'unknown'); @endphp
+                            @if($s === 'completed' || $s === 'graduated')
+                                <div class="text-sm"><span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span></div>
+                            @elseif($s === 'active')
+                                <div class="text-sm"><span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Active</span></div>
+                            @elseif($s === 'defered' || $s === 'deferred')
+                                <div class="text-sm"><span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Deferred</span></div>
+                            @else
+                                <div class="text-sm"><span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($student->status ?? 'Unknown') }}</span></div>
+                            @endif
                         </div>
                     </div>
                     <div class="mt-2">

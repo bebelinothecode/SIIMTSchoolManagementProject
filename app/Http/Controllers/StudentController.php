@@ -349,9 +349,6 @@ class StudentController extends Controller
                 $courseID = $validatedData['course_id_prof'];
                 $query = Diploma::findOrFail($courseID);
     
-<<<<<<< Updated upstream
-                $student = $user->student()->create([
-=======
                 // $maxRunning = Student::where('course_id_prof', $courseID)->max('running_number');
                 $nextRunning = $maxRunning ? $maxRunning + 1 : 1;
                 $formattedCount = sprintf('%03d', $nextRunning);
@@ -379,7 +376,6 @@ class StudentController extends Controller
                 // }
     
                 $user->student()->create([
->>>>>>> Stashed changes
                     'branch'              => $validatedData['branch'],
                     'phone'               => $validatedData['phone'],
                     'gender'              => $validatedData['gender'],
@@ -388,11 +384,6 @@ class StudentController extends Controller
                     'current_address'     => $validatedData['current_address'],
                     // 'index_number'        => $studentIndexNumber,
                     // 'running_number'      => $nextRunning, // ✅ new
-<<<<<<< Updated upstream
-                    // 'index_number'        => $studentIndexNumber,
-                    // 'running_number'      => $nextRunning, // ✅ new
-=======
->>>>>>> Stashed changes
                     'student_parent'      => $validatedData['student_parent'],
                     'parent_phonenumber'  => $validatedData['parent_phonenumber'],
                     'student_category'    => $validatedData['student_category'],
@@ -451,11 +442,8 @@ class StudentController extends Controller
                 ]);
             }
 
-<<<<<<< Updated upstream
-=======
             if($validatedData)
     
->>>>>>> Stashed changes
             $user->assignRole('Student');
 
             $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8));
@@ -1316,10 +1304,6 @@ class StudentController extends Controller
         return view('backend.students.changestatus',compact('id','student'));
     }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     public function changeStudentsStatus(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -2003,7 +1987,8 @@ class StudentController extends Controller
             'level' => 'nullable|in:100,200,300,400',
             'semester' => 'nullable|in:1,2',
             'nationality' => 'nullable|in:Local,Foreign,Total',
-            'branch' => 'nullable|in:Kasoa,Spintex,Kanda'
+            'branch' => 'nullable|in:Kasoa,Spintex,Kanda',
+            'status' => 'nullable|in:active,defered,Completed'
         ]);
 
         $acaProf = $validatedData['acaProf'];
@@ -2013,6 +1998,7 @@ class StudentController extends Controller
         $semester = $validatedData['semester'];
         $nationality = $validatedData['nationality'];
         $branch = $validatedData['branch'];
+        $status = $validatedData['status'];
 
         $query = Student::with(['user','course','diploma']);
 
@@ -2045,13 +2031,17 @@ class StudentController extends Controller
             $query->where('branch', $branch);
         }
 
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
         $students = $query->get();
 
         // return $students;
 
         $totalStudents = $students->count();
 
-        return view('backend.reports.studentsacademicreport',compact('students','acaProf','diploma_id','course_id','level','semester','nationality','branch','totalStudents'));
+        return view('backend.reports.studentsacademicreport',compact('students','acaProf','diploma_id','course_id','level','semester','nationality','branch','totalStudents','status'));
     }
 
     public function getPaymentPlanForm($id) {
@@ -2162,3 +2152,4 @@ class StudentController extends Controller
         }
     }
 }
+

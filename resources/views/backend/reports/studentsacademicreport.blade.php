@@ -130,6 +130,13 @@
                         <span class="badge badge-primary">{{ $nationality }}</span>
                     </div>
                 @endif
+
+                    @if ($status)
+                    <div class="col-md-3">
+                        <strong>Status:</strong><br>
+                        <span class="badge badge-primary">{{ $status }}</span>
+                    </div>
+                @endif
                 
                 @if ($totalStudents)
                     <div class="col-md-3">
