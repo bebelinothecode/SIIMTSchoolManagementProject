@@ -102,11 +102,6 @@ class  FeesController extends Controller
                 ->where('index_number', $validatedData['student_index_number'])
                 ->first();
 
-            // return $student;
-            
-
-
-            // return $student;
 
             if (!$student) {
                 return back()->withErrors(['error' => 'Student not found.']);
@@ -151,9 +146,11 @@ class  FeesController extends Controller
             ]);
 
             // return $feespaid;
+            // 'type' => $transaction->is_resit ? 'Resit' : 'regular',
 
             if($feespaid) {
                 $student->balance = $validatedData['balance'];
+                $student->status = $student->status === 'Pending' ? 'active': $student->status;
                 $student->save();                                                              
                 Log::info('Balance saved successfully');
             }
@@ -382,6 +379,8 @@ class  FeesController extends Controller
 
             $payments = $paymentsQuery->latest()->get();
 
+            // return $payments;   
+
             // return $payments;
 
             // Mature students
@@ -406,7 +405,7 @@ class  FeesController extends Controller
             $normalizedTransactions = $payments->map(function ($transaction) {
                 return [
                     'id' => $transaction->id,
-                    'type' => 'regular',
+                    'type' => $transaction->fees_type === 'Resit' ? 'Resit' : 'regular',
                     'name' => $transaction->student->user->name ?? $transaction->student_name,
                     'index_number' => $transaction->student_index_number,
                     'amount' => $transaction->amount ?? null,
@@ -565,7 +564,7 @@ class  FeesController extends Controller
             $courseAcademic = $student->course()->first();
             $courseProfessional = $student->diploma()->first();
 
-            return view('backend.fees.transactionreceipt', compact('transaction','student','courseAcademic','courseProfessional'));
+            return view('backend.fees.transactionreceipt', compact('student','courseAcademic','courseProfessional','transaction'));
         } catch (\Throwable $th) {
             return redirect()->back()->with('error','Error generating receipt');
         }

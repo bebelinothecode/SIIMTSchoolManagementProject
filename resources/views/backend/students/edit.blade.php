@@ -152,32 +152,6 @@
                             <input type="text" class="bg-gray-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" value="{{ ucfirst($student->student_category) }}" disabled>
                         </div>
                     </div>
-<!-- 
-                    <div class="md:flex md:items-center mb-6">
-                        <div class="md:w-1/4">
-                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                                {{ $student->student_category === 'Academic' ? 'Course' : 'Diploma' }}
-                            </label>
-                        </div>
-                        <div class="md:w-2/3 block text-gray-600 font-bold">
-                        <div class="relative">
-                            <select name="student_defer" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                                <option value="">--Select Status--</option>
-                                <option value="defer">Defer</option>
-                                @if ($student->student_category === 'Professional' || $student->student_category === 'professional')
-                                  <option value="Completed">Completed</option>
-                                @endif
-                                
-                            </select>
-                            @error('student_defer')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-                    </div> -->
 
                     @if ($student->student_category === 'Academic')
                     
@@ -210,43 +184,6 @@
                     </div>
                     
                     @endif
-
-                    <div class="md:w-2/3 block text-gray-600 font-bold">
-                    <div class="md:w-1/4">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Select Status
-                        </label>
-                        </div>
-                        <div class="relative">
-                            <select name="change_status" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                                <option value="">--Change Status--</option>
-                                <option value="defer">Defer</option>
-                                <option value="completed">Completed</option>
-                                <option value="active">Active</option>
-                            </select>
-                            @error('change_status')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- <div class="md:flex md:items-center mb-6">
-                        <div class="md:w-1/4">
-                            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                                Level
-                            </label>
-                        </div>
-                        <div class="md:w-3/4">
-                            <input name="level" id="fees-field" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('level', $student->level) }}">
-                            @error('fees')
-                                <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div> -->
 
                     <div class="md:flex md:items-center mb-6">
                         <div class="md:w-1/4">
@@ -298,12 +235,13 @@
                     <div class="md:flex md:items-center mb-6">
                         <div class="md:w-1/4">
                             <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                                Parent/Guardian
+                                Parent/Guardian Phone Number
                             </label>
                         </div>
                         <div class="md:w-3/4">
                             <div class="relative">
-                                <select name="parent_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <input name="parent_phonenumber" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" type="text" >
+                                <!-- <select name="parent_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                                     <option value="">--Select Parent/Guardian--</option>
                                     @foreach ($parents as $parent)
                                         <option value="{{ $parent->id }}"
@@ -312,10 +250,10 @@
                                             {{ $parent->user->name ?? "" }} ({{ $parent->phone ?? "" }})
                                         </option>
                                     @endforeach
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                </select> -->
+                                <!-- <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                                </div>
+                                </div> -->
                             </div>
 
                             
@@ -365,94 +303,10 @@
 @endsection
 
 @push('scripts')
-<!-- <script>
-    $(function() {
-        // Initialize datepicker
-        $("#datepicker-se").datepicker({ 
-            dateFormat: 'yy-mm-dd',
-            changeMonth: true,
-            changeYear: true,
-            yearRange: "-100:+0"
-        });
 
-        // Course selection change handler
-        $('#course-selector').change(function() {
-            const courseId = $(this).val();
-            console.log(courseId)
-            const studentCategory = "{{ $student->student_category }}";
-            const baseUrl = "{{ url('/') }}";
-            
-            if (!courseId) {
-                $('#currency-field').val('');
-                $('#fees-field').val('');
-                $('#balance-field').val('');
-                return;
-            }
-
-            const endpoint = studentCategory === 'Academic' 
-                ? `${baseUrl}/get/academic/${courseId}`
-                : `${baseUrl}/get/diplomas/${courseId}`;
-            console.log(endpoint)
-            $.get(endpoint)
-                .done(function(data) {
-                    $('#currency-field').val(data.currency || '');
-                    $('#fees-field').val(data.amount || '');
-                    
-                    // Auto-calculate balance if fees changes
-                    const currentBalance = parseFloat("{{ $student->balance }}");
-                    const currentFees = parseFloat("{{ $student->student_category === 'Academic' ? $student->fees : $student->fees_prof }}");
-                    const paidAmount = currentFees - currentBalance;
-                    const newFees = parseFloat(data.amount) || 0;
-                    const newBalance = newFees - paidAmount;
-                    
-                    $('#balance-field').val(newBalance.toFixed(2));
-                })
-                .fail(function(error) {
-                    console.error('Error fetching course details:', error);
-                    $('#currency-field').val('');
-                    $('#fees-field').val('');
-                });
-        });
-
-        // Balance field validation
-        $('#balance-field').on('blur', function() {
-            const fees = parseFloat($('#fees-field').val()) || 0;
-            const balance = parseFloat($(this).val()) || 0;
-            
-            if (balance > fees) {
-                Swal.fire({
-                    title: 'Invalid Balance',
-                    text: 'Balance cannot be greater than total fees',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                $(this).val(fees.toFixed(2));
-            } else if (balance < 0) {
-                Swal.fire({
-                    title: 'Invalid Balance',
-                    text: 'Balance cannot be negative',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                $(this).val('0.00');
-            }
-        });
-    });
-</script> -->
 @endpush
 
 
 
-
-    <!-- @if (session('success'))
-            <script>
-                Swal.fire({
-                    title: 'Success!',
-                    text: '{{ session('success') }}',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-            </script>
-        @endif  -->
 
 

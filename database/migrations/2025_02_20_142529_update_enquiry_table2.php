@@ -26,7 +26,7 @@ class UpdateEnquiryTable2 extends Migration
     public function down()
     {
         Schema::table('student_enquires', function (Blueprint $table) {
-            //
+            $table->dropColumn('type_of_course');
         });
     }
 }

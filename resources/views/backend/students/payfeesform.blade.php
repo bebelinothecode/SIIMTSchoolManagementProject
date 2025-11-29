@@ -81,7 +81,7 @@
                         <div class="relative">
                             <select name="currency" id="currency" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"  required>
                                 <option value="">--Select Currency--</option>
-                                <option value="$">Dollar</option>
+                                <option value="Dollar">Dollar</option>
                                 <option value="Ghana Cedi">Ghana Cedi</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">

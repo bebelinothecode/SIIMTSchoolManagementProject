@@ -143,7 +143,7 @@
                                 @foreach($plan->installments as $index => $inst)
                                     @php
                                         $dueDate = \Carbon\Carbon::parse($inst->due_date);
-                                        $today = now()->startOfDay();
+                                        $today = now();
                                         $daysUntilDue = $today->diffInDays($dueDate, false);
                                         
                                         $dueStatus = '';

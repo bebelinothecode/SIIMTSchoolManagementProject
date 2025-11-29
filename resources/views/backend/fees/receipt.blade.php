@@ -168,7 +168,14 @@
                 </tr>
                 @endif
 
-                @if ($feespaid->late_fees_charges !== '0')
+                <!-- @if ($feespaid->remarks)
+                <tr>
+                    <th>MoMo Number</th>
+                    <td>{{ $feespaid->remarks }}</td>
+                </tr>
+                @endif -->
+
+                @if ($feespaid->late_fees_charges > 0)
                 <tr>
                     <th>Late Fees Charges</th>
                     <td>{{ $feespaid->late_fees_charges }}</td>

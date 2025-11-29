@@ -188,7 +188,17 @@
                     confirmButtonText: 'OK'
                 });
             </script>
-        @endif   
+        @endif  
+        @if (session('error'))
+            <script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        @endif    
         </div>
         <script>
             document.getElementById('bought_forms').addEventListener('change', function () {
@@ -202,7 +212,7 @@
                 }
             });
         </script>
-        <script>
+        <!-- <script>
         document.getElementById('enquiry-form').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -240,7 +250,7 @@
             Swal.fire('Error!', 'An unexpected error occurred.', 'error');
         });
     });
-        </script>
+        </script> -->
 
     </div>
 @endsection

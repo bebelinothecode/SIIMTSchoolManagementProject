@@ -63,6 +63,8 @@
                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Regular Payment</span>
                         @elseif($transaction['type'] == 'mature')
                             <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Mature Payment</span>
+                        @elseif($transaction['type'] == 'Resit')
+                            <span class="bg-yellow-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Resit Payment</span>
                         @else
                             <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">Enquiry Payment</span>
                         @endif
@@ -122,7 +124,7 @@
                         {{ \Carbon\Carbon::parse($transaction['created_at'])->format('Y-m-d') }}
                     </td>
                     <td class="py-3 px-6 text-center">
-                        @if($transaction['type'] == 'regular')
+                        @if($transaction['type'] == 'regular'  || $transaction['type'] == 'Resit')
                             @role('Admin|rector')
                                 <a href="{{route('edit.transactionform', $transaction['original_record']->id)}}" class="ml-4 text-green-600 hover:underline">Edit</a>
                                 <a href="{{route('print.transactionreceipt', $transaction['original_record']->id)}}" target="_blank" class="ml-4 text-blue-600 hover:underline">Print</a>

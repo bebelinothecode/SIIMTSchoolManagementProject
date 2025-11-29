@@ -195,53 +195,63 @@ class DiplomaController extends Controller
         return view('backend.students.editenquiry', compact('enquiry','courses','diplomas'));
     }
 
-    public function updateEnquiry($id, Request $request) {
+    public function updateEnquiry($id, Request $request)
+    {
         try {
-            dd($request->all());
-
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'telephone_number' => 'nullable|string|max:255',
                 'type_of_course' => 'nullable|string|max:255',
                 'course_id' => 'nullable|integer',
-                // 'diploma_id' => 'nullable|integer',
+                'diploma_id' => 'nullable|integer',
                 'bought_forms' => 'nullable|string|max:255',
                 'currency' => 'nullable|string|max:255',
-                'expected_start_date' => 'nullable|string|max:255'
-                // 'method_of_payment' => 'nullable|string|max:255',
-                // 'amount_paid' => 'nullable|numeric',
-                // 'branch' => 'nullable|string|max:255',
-                // 'source_of_enquiry' => 'nullable|string|max:255',
-                // 'preferred_time' => 'nullable|string|max:255',
-            ]);
-
-            $enquiry = Enquiry::findOrFail($id);
-
-            // Update the enquiry record with the new data
-            $enquiry->update([
-                'name' => $validatedData['name'],
-                'telephone_number' => $validatedData['telephone_number'],
-                'type_of_course' => $validatedData['type_of_course'],
-                'course_id' => $validatedData['course_id'],
-                'diploma_id' => $validatedData['diploma_id'],
-                'bought_forms' => $validatedData['bought_forms'],
-                'currency' => $validatedData['currency'],
-                'expected_start_date' => $validatedData['expected_start_date'],
-                'method_of_payment' => $validatedData['method_of_payment'],
-                'amount' => $validatedData['amount_paid'],
-                'branch' => $validatedData['branch'],
-                'source_of_enquiry' => $validatedData['source_of_enquiry'], 
-                'preferred_time' => $validatedData['preferred_time'],
+                'expected_start_date' => 'nullable|string|max:255',
+                'amount_paid' => 'nullable|numeric',
+                'method_of_payment' => 'nullable|string|max:255',
+                'branch' => 'nullable|string|max:255',
+                'source_of_enquiry' => 'nullable|string|max:255',
+                'preferred_time' => 'nullable|string|max:255',
             ]);
     
-            // Redirect back with a success message
+            $enquiry = Enquiry::findOrFail($id);
+    
+            // Base fields
+            $data = [
+                'name' => $validatedData['name'],
+                'telephone_number' => $validatedData['telephone_number'] ?? null,
+                'type_of_course' => $validatedData['type_of_course'] ?? null,
+                'bought_forms' => $validatedData['bought_forms'] ?? null,
+                'currency' => $validatedData['currency'] ?? null,
+                'expected_start_date' => $validatedData['expected_start_date'] ?? null,
+                'method_of_payment' => $validatedData['method_of_payment'] ?? null,
+                'amount' => $validatedData['amount_paid'] ?? null,
+                'branch' => $validatedData['branch'] ?? null,
+                'source_of_enquiry' => $validatedData['source_of_enquiry'] ?? null,
+                'preferred_time' => $validatedData['preferred_time'] ?? null,
+            ];
+    
+            // Handle course/diploma logic
+            if ($validatedData['type_of_course'] === 'Academic') {
+                $data['course_id'] = $validatedData['course_id'] ?? null;
+                $data['diploma_id'] = null;
+            } elseif ($validatedData['type_of_course'] === 'Professional') {
+                $data['diploma_id'] = $validatedData['diploma_id'] ?? null;
+                $data['course_id'] = null;
+            } else {
+                $data['course_id'] = null;
+                $data['diploma_id'] = null;
+            }
+    
+            $enquiry->update($data);
+    
             return redirect()->back()->with('success', 'Enquiry updated successfully!');
-        } catch (Exception $e) {
-            //throw $th;
-            Log::error('Error updating enquiry',[$e->getMessage()]);     
-            
+        } catch (\Exception $e) {
+    
+            Log::error('Error updating enquiry', [$e->getMessage()]);     
             return redirect()->back()->with('error', 'Error Updating Enquiry');
-
+    
         }
     }
+    
 }

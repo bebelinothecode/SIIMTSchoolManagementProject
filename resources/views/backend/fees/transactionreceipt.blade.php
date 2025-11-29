@@ -123,12 +123,12 @@
 
         <div class="details">
             <h3>Student Details</h3>
-            <p><strong>Index Number:</strong> {{ $transaction->student->index_number }}</p>
-            <p><strong>Name:</strong> {{ $transaction->student->user->name }}</p>
+            <p><strong>Index Number:</strong> {{ $student->index_number }}</p>
+            <p><strong>Name:</strong> {{ $student->user->name }}</p>
             <p><strong>Programme:</strong> {{ $courseAcademic->course_name ?? $courseProfessional->name }}</p>
              @if($student->student_category === 'Academic')
-               <p><strong>Level:</strong> {{ $transaction->student->level }}</p>
-               <p><strong>Semester:</strong> {{ $transaction->student->session }}</p>
+               <p><strong>Level:</strong> {{ $student->level }}</p>
+               <p><strong>Semester:</strong> {{ $student->session }}</p>
             @endif
 
 
@@ -145,19 +145,19 @@
                     <td>{{ $transaction->currency }} {{ number_format($transaction->balance, 2) }}</td>
                 </tr>
                 <tr>
+                    <th>Fees Type</th>
+                    <td>{{ $transaction->fees_type }}</td>
+                </tr>
+                <tr>
                     <th>Method of Payment</th>
                     <td>{{ $transaction->method_of_payment }}</td>
                 </tr>
-                {{-- @if($student->student_category === 'Academic')
+                @if ($transaction->late_fees_charges > 0)
                 <tr>
-                    <th>Level</th>
-                    <td>{{ $student->level }}</td>
+                    <th>Late Fees Charges</th>
+                    <td>GHS{{ $transaction->late_fees_charges }}</td>
                 </tr>
-                <tr>
-                    <th>Semester</th>
-                    <td>{{ $student->session }}</td>
-                </tr>
-                @endif       --}}
+                @endif
             </table>
         </div>
 
