@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
     protected $fillable = [
-        'class_id',
+        'type',
         'teacher_id',
-        'student_id',
         'attendence_date',
-        'attendence_status'
+        'attendence_status',
+        'subject_id',
+    ];
+
+     protected $casts = [
+        'attendance_date' => 'date',
     ];
 
     public function student() {
@@ -24,5 +28,10 @@ class Attendance extends Model
 
     public function class() {
         return $this->belongsTo(Grade::class);
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo(Diploma::class);
     }
 }

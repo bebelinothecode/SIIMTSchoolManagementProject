@@ -109,185 +109,8 @@ class StudentController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    // public function store(Request $request) {
-    //     try { 
-    //         // dd($request->all());
-    //         //Validate common fields
-    //         $rules = [
-    //             'branch' => 'required|string|in:Kasoa,Spintex,Kanda',
-    //             'name' => 'required|string',
-    //             'email' => 'required|email|unique:users',
-    //             'password' => 'required|min:6',
-    //             'phone' => 'required|string|max:20',
-    //             'gender' => 'required|in:male,female,other',
-    //             'attendance_time' => 'required|in:weekday,weekend',
-    //             'dateofbirth' => 'required|date',
-    //             'current_address' => 'required|string',
-    //             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //             'student_parent' => 'required|string|max:255',
-    //             'parent_phonenumber' => 'required|string|max:15',
-    //             'student_category' => 'required|in:Professional,Academic',
-    //             'scholarship' => 'required|in:Yes,No',
-    //             'student_type' => 'required|in:Local,Foreign',
-    //             'admission_cycle' => 'required|in:February,August',
-    //             'scholarship_amount' => 'nullable|numeric|required_if:scholarship,Yes'
-    //         ];
-
-    //          // Conditional validation based on student category
-    //          if ($request->student_category === 'Professional') {
-    //             $rules['course_id_prof'] = 'required|exists:diploma,id';
-    //             $rules['currency_prof'] = 'required|string';
-    //             $rules['fees_prof'] = 'required|numeric';
-    //             $rules['duration_prof'] = 'required|string';
-    //         } elseif ($request->student_category === 'Academic') {
-    //             $rules['course_id'] = 'required|exists:grades,id';
-    //             $rules['currency'] = 'required|string';
-    //             $rules['fees'] = 'required|numeric';
-    //             $rules['level'] = 'required|in:100,200,300,400';
-    //             $rules['session'] = 'required|in:1,2';
-    //             $rules['academicyear'] = 'required';
-    //         }
-
-    //         $validatedData = $request->validate($rules);
-
-    //         DB::beginTransaction();
-
-    //         $user = User::create([
-    //                     'name'              => $validatedData['name'],
-    //                     'email'             => $validatedData['email'],
-    //                     'password'          => Hash::make($validatedData['password'])
-    //                 ]);
-
-    //         if ($request->hasFile('profile_picture')) {
-    //                 $profile = Str::slug($user->name).'-'.$user->id.'.'.$request->profile_picture->getClientOriginalExtension();
-    //                 $request->profile_picture->move(public_path('images/profile'), $profile);
-    //             } else {
-    //                 $profile = 'avatar.png';
-    //             }
-    //             $user->update([
-    //                 'profile_picture' => $profile
-    //             ]);
-
-    //         if ($request->student_category === 'Professional') {
-    //             $courseID = $validatedData['course_id_prof'];
-    //             $query = Diploma::findOrFail($courseID);
-    //             $studentCount = Student::where('course_id_prof', $query['id'])->count();
-    //             $formattedCount = sprintf('%03d', $studentCount + 1);
-    //             $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
-    //             $branchPrefixes = [
-    //                 'Kasoa' => 'KS',
-    //                 'Kanda' => 'KD',
-    //                 'Spintex' => 'SP',
-    //             ];
-
-    //             $branchCode = $branchPrefixes[$validatedData['branch']] ?? "XX";
-
-    //             $latestRunning = Student::where('course_id_prof', $query->id)
-    //             ->whereYear('created_at', now()->year)
-    //             ->whereMonth('created_at', now()->month)
-    //             ->max('running_number');
-
-    //             $nextNumber = $latestRunning ? $latestRunning + 1 : 1;
-
-    //             $formattedCount = sprintf('%03d', $nextNumber);
-    //             // return $branchCode;
-    //             $studentIndexNumber = $branchCode ."/". $query['code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
-
-    //             if (Student::where('index_number', $studentIndexNumber)->exists()) {
-    //                 return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
-    //             }
-               
-    //             $user->student()->create([
-    //                 'branch' => $validatedData['branch'],
-    //                 'phone' => $validatedData['phone'],
-    //                 'gender' => $validatedData['gender'],
-    //                 'attendance_time' => $validatedData['attendance_time'],
-    //                 'dateofbirth' => $validatedData['dateofbirth'],
-    //                 'current_address' => $validatedData['current_address'],
-    //                 'index_number' => $studentIndexNumber,
-    //                 'student_parent' => $validatedData['student_parent'],
-    //                 'parent_phonenumber' => $validatedData['parent_phonenumber'],
-    //                 'student_category' => $validatedData['student_category'],
-    //                 'course_id_prof' => $validatedData['course_id_prof'],
-    //                 'currency_prof' => $validatedData['currency_prof'],
-    //                 'fees_prof' => $validatedData['fees_prof'],
-    //                 'balance' => $validatedData['fees_prof'],
-    //                 'duration_prof' => $validatedData['duration_prof'],
-    //                 'Scholarship' => $validatedData['scholarship'],
-    //                 'student_type' => $validatedData['student_type'],
-    //                 'admission_cycle' => $validatedData['admission_cycle'],
-    //                 'Scholarship_amount' => $validatedData['scholarship_amount']
-    //             ]);
-    //         }  elseif ($request->student_category === 'Academic') {
-    //             $courseID = $validatedData['course_id'];
-    //             $query = Grade::findOrFail($courseID);
-    //             // $studentCount = Student::where('course_id', $query['id'])->count();
-    //             // $formattedCount = sprintf('%03d', $studentCount + 1);
-    //             $attend = ($validatedData['attendance_time'] === 'weekday') ? "WD" :"WE";
-
-    //             $latestRunning = Student::where('course_id', $query->id)
-    //             ->whereYear('created_at', now()->year)
-    //             ->whereMonth('created_at', now()->month)
-    //             ->max('running_number');
-
-    //             $nextNumber = $latestRunning ? $latestRunning + 1 : 1;
-
-    //             $formattedCount = sprintf('%03d', $nextNumber);
-
-    //             $studentIndexNumber = $query['course_code'] ."/". Carbon::now()->year ."/". Carbon::now()->month . "/" . $attend ."/".$formattedCount; 
-    //             // return $studentIndexNumber;
-
-    //             if (Student::where('index_number', $studentIndexNumber)->exists()) {
-    //                 return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
-    //             }
-                
-    //             $user->student()->create([
-    //                 'branch' => $validatedData['branch'],
-    //                 'phone' => $validatedData['phone'],
-    //                 'gender' => $validatedData['gender'],
-    //                 'attendance_time' => $validatedData['attendance_time'],
-    //                 'dateofbirth' => $validatedData['dateofbirth'],
-    //                 'current_address' => $validatedData['current_address'],
-    //                 'index_number' => $studentIndexNumber,
-    //                 'student_parent' => $validatedData['student_parent'],
-    //                 'parent_phonenumber' => $validatedData['parent_phonenumber'],
-    //                 'student_category' => $validatedData['student_category'],
-    //                 'course_id' => $validatedData['course_id'],
-    //                 'currency' => $validatedData['currency'],
-    //                 'fees' => $validatedData['fees'],
-    //                 'balance' => $validatedData['fees'],
-    //                 'level' => $validatedData['level'],
-    //                 'session' => $validatedData['session'],
-    //                 'student_type' => $validatedData['student_type'],
-    //                 'admission_cycle' => $validatedData['admission_cycle'],
-    //                 'academicyear' => $validatedData['academicyear'],
-    //                 'Scholarship' => $validatedData['scholarship'],
-    //                 'Scholarship_amount' => $validatedData['scholarship_amount']
-    //             ]);
-    //         }  
-
-    //     $user->assignRole('Student');
-
-    //     DB::commit();
-
-    //     return redirect()->back()->with('success', 'Student created successfully');    
-    //     } catch (SchemaValidationException $e) {
-    //         //throw $th;
-    //         DB::rollBack();
-
-    //         Log::info('Request Data:', $request->all());
-
-    //         Log::error('Error creating student: ' . $e);
-
-    //         // Return error response
-    //         return back()->withInput()->withErrors(['error' => 'An error occurred while creating the student. Please try again.']);
-    //     }
-    // }
-
     public function store(Request $request) {
         try {
-            // dd($request->all());
-            // Validation rules (same as before)
             $rules = [
                 'branch' => 'required|string|in:Kasoa,Spintex,Kanda',
                 'name' => 'required|string',
@@ -346,11 +169,11 @@ class StudentController extends Controller
             $user->update(['profile_picture' => $profile]);
     
             // === Professional Student ===
-            if ($request->student_category === 'Professional') {
+            if ($validatedData['student_category'] === 'Professional') {
                 $courseID = $validatedData['course_id_prof'];
                 $query = Diploma::findOrFail($courseID);
     
-                $user->student()->create([
+                $student = $user->student()->create([
                     'branch'              => $validatedData['branch'],
                     'phone'               => $validatedData['phone'],
                     'gender'              => $validatedData['gender'],
@@ -377,13 +200,9 @@ class StudentController extends Controller
             }
     
             // === Academic Student ===
-            elseif ($request->student_category === 'Academic') {
+            elseif ($validatedData['student_category'] === 'Academic') {
                 $courseID = $validatedData['course_id'];
                 $query = Grade::findOrFail($courseID);
-    
-                // if (Student::where('index_number', $s)->exists()) {
-                //     return redirect()->back()->with('error', 'The generated index number already exists. Please try again.');
-                // }
     
                 $student = $user->student()->create([
                     'branch'              => $validatedData['branch'],
@@ -411,16 +230,17 @@ class StudentController extends Controller
                     'amount_paid'         => $validatedData['amount_paid'] ?? null,
                     'new_student_balance' => $validatedData['new_student_balance'] ?? null,
                 ]);
-            
-    
+            }
+
             $user->assignRole('Student');
-
-            $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8));
-
-            $idempotencyKey = (string) Str::uuid();
-
+            DB::commit();
+    
+      
             if($validatedData['pay_fees_now'] === 'yes') {
-                // Here, you can implement the logic to record the payment in FeesPaid or any other relevant table.
+                
+                $receipt_number = "RCPT-".date('Y-m-d')."-".strtoupper(Str::random(8));
+                $idempotencyKey = (string) Str::uuid();
+
                 $feespaid = FeesPaid::create([
                     'student_index_number' => $student->index_number,
                     'student_name' => $student->user->name,
@@ -439,14 +259,14 @@ class StudentController extends Controller
                     'idempotency_key' => $idempotencyKey
                 ]);
 
-                return view('backend.fees.newstudentfees', compact('feespaid','student'))->with('success', 'School Fees has been collected');
-            }
-        }
+                // Redirect back with success message and receipt URL to open in a new tab
+                $receiptUrl = route('backend.fees.receipt', $feespaid->id);
 
-           
-    
-            DB::commit();
-    
+                return redirect()->back()->with([
+                    'success' => 'Student created successfully and fees collected.',
+                    'open_receipt' => $receiptUrl
+                ]);
+            }
             return redirect()->back()->with('success', 'Student created successfully');
         } catch (Exception $e) {
             DB::rollBack();
@@ -454,6 +274,27 @@ class StudentController extends Controller
             return back()->withInput()->withErrors(['error' => 'An error occurred while creating the student. Please try again.']);
         }
     }
+
+    protected function handleImmediatePayment($student, $validatedData)
+    {
+        $receipt_number = "RCPT-" . date('Y-m-d') . "-" . strtoupper(Str::random(8));
+        $idempotencyKey = (string) Str::uuid();
+
+        $feespaid = FeesPaid::create([
+            'student_index_number' => $student->index_number,
+            'student_name'         => $student->user->name,
+            'student_id'           => $student->id,
+            'method_of_payment'    => "Cash",
+            'amount'               => $student->amount_paid,
+            'balance'              => $student->new_student_balance,
+            'currency'             => "Ghana Cedi",
+            'receipt_number'       => $receipt_number,
+            'idempotency_key'      => $idempotencyKey,
+        ]);
+
+        return redirect()->route('fees.receipt', $feespaid->id)->with('open_receipt', true);
+    }
+
     
 
 
@@ -1273,6 +1114,45 @@ class StudentController extends Controller
         return view('backend.students.changestatus',compact('id','student'));
     }
 
+    // public function changeStudentsStatus(Request $request, $id)
+    // {
+    //     $validatedData = $request->validate([
+    //         'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
+    //     ]);
+
+    //     try {
+
+    //         $student = Student::findOrFail($id);
+
+    //         if ($validatedData['student_defer'] === 'defer') {
+    //             $student = Student::findOrFail($id);
+
+    //             $user = User::findOrFail($student->user_id);
+
+    //             Defer::create($student->toArray());
+
+    //             $user->student()->delete();
+
+    //             return redirect()->back()->with('success', 'Student moved to defer list successfully');
+    //         } 
+            
+    //         if (($validatedData['student_defer'] === 'Completed')) {
+    //             $student->status = 'Completed';
+    //             $student->save();
+
+    //             return redirect()->back()->with('success', 'Student status updated to Completed successfully');
+
+    //         } 
+            
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         return redirect()->back()->with('error', 'Student not found.');
+    //     } catch (Exception $e) {
+    //         Log::error('Error changing student status: ' . $e->getMessage());
+
+    //         return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
+    //     }
+    // }
+
     public function changeStudentsStatus(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -1280,37 +1160,40 @@ class StudentController extends Controller
         ]);
 
         try {
-
             $student = Student::findOrFail($id);
+            $user = User::findOrFail($student->user_id);
 
-            if ($validatedData['student_defer'] === 'defer') {
-                $student = Student::findOrFail($id);
+            switch ($validatedData['student_defer']) {
+                case 'defer':
+                    // Create a defer record safely
+                    Defer::create($student->toArray());
 
-                $user = User::findOrFail($student->user_id);
+                    // Soft delete the student (not hard delete!)
+                    $student->delete();
 
-                Defer::create($student->toArray());
+                    return redirect()->back()->with('success', 'Student moved to defer list successfully');
 
-                $user->student()->delete();
+                case 'Completed':
+                    $student->status = 'Completed';
+                    $student->save();
+                    return redirect()->back()->with('success', 'Student status updated to Completed successfully');
 
-                return redirect()->back()->with('success', 'Student moved to defer list successfully');
-            } 
-            
-            if (($validatedData['student_defer'] === 'Completed')) {
-                $student->status = 'Completed';
-                $student->save();
+                case 'withdrawn':
+                    $student->status = 'Withdrawn';
+                    $student->save();
+                    return redirect()->back()->with('success', 'Student marked as Withdrawn successfully');
 
-                return redirect()->back()->with('success', 'Student status updated to Completed successfully');
-                // return redirect()->back()->with('error', 'Only defer action is implemented at the moment.');
-            } 
-            
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->back()->with('error', 'Student not found.');
-        } catch (Exception $e) {
+                case 'expelled':
+                    $student->status = 'Expelled';
+                    $student->save();
+                    return redirect()->back()->with('success', 'Student marked as Expelled successfully');
+            }
+        } catch (\Exception $e) {
             Log::error('Error changing student status: ' . $e->getMessage());
-
             return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
+
 
     public function getDeferListForm() {
         $courses = Grade::all();

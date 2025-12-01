@@ -280,6 +280,11 @@
                         });
                     </script>
                 @endif
+                @if (session('open_receipt') && session('receipt_id'))
+                    <script>
+                        window.open("{{ route('fees.receipt', session('receipt_id')) }}", "_blank");
+                    </script>
+                @endif
             </form>        
         </div>
     </div>

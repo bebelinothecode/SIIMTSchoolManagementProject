@@ -5,11 +5,11 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB; // add near top with other use statements
 // use Illuminate\Database\Eloquent\Relations\HasMany;
-// use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
-    // use SoftDeletes;
+    use SoftDeletes;
     protected $fillable = [
         'level',
         'gender',

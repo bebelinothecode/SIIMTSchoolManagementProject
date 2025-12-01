@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,7 @@
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>  
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <div id="app">
@@ -49,5 +50,24 @@
     @stack('scripts')
     @stack('select_form')
 
+    @if(session('open_receipt'))
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const url = @json(session('open_receipt'));
+        // try to open receipt in new tab
+        const newWin = window.open(url, '_blank');
+
+        // fallback if popup blocked
+        if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+            const notice = document.createElement('div');
+            notice.innerHTML = 'Receipt attempted to open in a new tab. If it did not open, <a href="'+url+'" target="_blank" class="underline text-blue-600">click here</a>.';
+            notice.className = 'fixed bottom-4 right-4 bg-yellow-100 border border-yellow-300 p-3 rounded shadow';
+            document.body.appendChild(notice);
+            // auto-remove after 10s
+            setTimeout(() => notice.remove(), 10000);
+        }
+    });
+    </script>
+    @endif
 </body>
 </html>

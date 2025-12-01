@@ -167,6 +167,45 @@
                 </div>
             </div>
         </div>
+
+        <!-- Parent Menu Item -->
+        <div x-data="{ open: false }" class="relative">
+            <a href="{{ route('show.course') }}" 
+            @click.prevent="open = !open" 
+            class="flex items-center text-gray-600 py-2 hover:text-blue-700 cursor-pointer">
+                <svg class="h-4 w-4 fill-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                    <path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128z"/>
+                </svg>
+                <span class="ml-2 text-sm font-semibold">Teachers</span>
+                <svg class="ml-1 w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </a>
+
+            <!-- Dropdown Menu -->
+            <div 
+                x-show="open"
+                @click.away="open = false"
+                class="absolute left-6 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10"
+                x-transition>
+                <a href="{{ route('create.teacherform') }} " class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Create Teacher
+                </a>
+                <a href="{{ route('assignteacher.roleform') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Assign Subjects to Teacher
+                </a>
+                <a href="{{ route('teachersessions.form') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Teacher Sessions
+                </a>
+                <a href="{{ route('teacher-salary.report') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Teacher Salary
+                </a>
+                <a href="{{ route('manage.teacher') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                Manage Teachers
+                </a>
+            </div>
+        </div>
+
         
         <script>
             function toggleSubMenu444(submenuId, iconId) {
@@ -257,7 +296,7 @@
                         <span class="ml-2 text-sm font-semibold">Canteen</span>
                     </a>
                     <a href="{{ route('profit.andloss') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                        <svg class="h-4 w-4 fill-current" xmlns="http:// www.w3.org/2000/svg" viewBox="0 0 576 512">
                             <path fill="currentColor" d="M512 80c8.8 0 16 7.2 16 16v32H48V96c0-8.8 7.2-16 16-16H512zm16 144V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V224H528zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm56 304c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm128 0c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H248z"/>
                         </svg>
                         <span class="ml-2 text-sm font-semibold">Profits & Loss</span>
@@ -438,6 +477,13 @@
                         <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
                     </svg>
                     <span class="ml-2 text-sm font-semibold">Inventory Reports</span>
+                </a>
+
+                  <a href="{{ route('salary.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                        <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                    </svg>
+                    <span class="ml-2 text-sm font-semibold">Salary Reports</span>
                 </a>
 
                

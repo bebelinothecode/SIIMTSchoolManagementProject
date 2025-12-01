@@ -566,6 +566,7 @@ class  FeesController extends Controller
 
             return view('backend.fees.transactionreceipt', compact('student','courseAcademic','courseProfessional','transaction'));
         } catch (\Throwable $th) {
+            Log::error('Error generating receipt',[$th->getMessage()]);
             return redirect()->back()->with('error','Error generating receipt');
         }
     }

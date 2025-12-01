@@ -637,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let balance = feeTotal - paid;
         if (balance < 0) balance = 0;
 
-        balanceInput.value = balance.toFixed(2);
+        balanceInput.value = balance;
     }
 
     // Clear helper that accepts an array of element ids (safe)

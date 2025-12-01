@@ -210,12 +210,34 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/inventory/report/form', [ReportsController::class, 'inventoryReportForm'])->name('inventoryreport.form');   
     Route::post('/generate/inventory/report', [ReportsController::class, 'generateInventoryReport'])->name('inventory.report'); 
     Route::get('/register/courses/form', [StudentController::class, 'registerCoursesForm'])->name('courses.registerform');
+    Route::get('/teachers/sessions',[TeacherController::class,'teachersSessionsIndex'])->name('teachers.sessions');
+    Route::get('/create/teacher/form',[TeacherController::class,'createTeacherForm'])->name('create.teacherform');
+    Route::post('/store/teacher',[TeacherController::class,'storeTeacher'])->name('teacherdetails.store');
+    Route::get('/assign/role/form', [TeacherController::class,'assignSubjectsForm'])->name('assignteacher.roleform');
+    Route::post('/assign/subjects/to/teacher',[TeacherController::class,'assignSubjectsToTeacher'])->name('assign.subjectstoteacher');
+    Route::get('/teacher/sessions/form',[TeacherController::class,'teacherSessionsForm'])->name('teachersessions.form');
+    Route::get('/attendance/teacher/{id}', [AttendanceController::class, 'loadTeacherAttendance']);
+    Route::post('/attendance/mark/{id}', [AttendanceController::class, 'markAttendance']);
+    Route::get('/teacher-attendance', [TeacherController::class, 'index'])->name('teacher-attendance.index');
+    Route::get('/teacher-attendance/teacher-subjects/{teacherId}', [TeacherController::class, 'getTeacherSubjects']);
+    Route::get('/teacher-attendance/record/{teacherId}/{subjectId}', [TeacherController::class, 'getAttendanceRecord']);
+    Route::post('/teacher-attendance', [TeacherController::class, 'storeTeacherAttendance'])->name('teacher-attendance.store');
+    Route::get('/report', [TeacherController::class, 'salaryReport'])->name('teacher-salary.report');
+    Route::post('/process-payment', [TeacherController::class, 'processPayment'])->name('teacher-salary.process-payment');
+    Route::get('/payment-history', [TeacherController::class, 'paymentHistory'])->name('teacher-salary.payment-history');
+    Route::get('/salary/reports/forms', [TeacherController::class, 'salaryReportsForm'])->name('salary.reportsform');
+    Route::post('/generate/salary/reports', [TeacherController::class, 'getTeacherSalaryReport'])->name('salary.report');
+    Route::get('/manage/teacher', [TeacherController::class, 'manageTeacher'])->name('manage.teacher');
+    Route::get('/get-teacher-sessions/{teacherId}/{subjectId}', [TeacherController::class, 'getTeacherSessions'])->name('get.teacher.sessions');
+    Route::post('/manage/teacher/sessions', [TeacherController::class, 'updateTeacherSessions'])->name('store.teacher.sessions');
+
+
     
     
     Route::resource('assignrole', 'RoleAssign');
     Route::resource('classes', 'GradeController');
     Route::resource('subject', 'SubjectController');
-    Route::resource('teacher', 'TeacherController');
+    // Route::resource('teacher', 'TeacherController');
     Route::resource('parents', 'ParentsController');
     Route::resource('student', 'StudentController');
     Route::get('attendance', 'AttendanceController@index')->name('attendance.index');
