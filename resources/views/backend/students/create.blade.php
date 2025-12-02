@@ -1,4 +1,8 @@
-@extends('layouts.app') 
+@extends('layouts.app')
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
 
 @section('content')
 <div class="roles">
@@ -602,6 +606,7 @@
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const baseUrl = window.location.origin;
@@ -814,6 +819,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const datepicker = flatpickr("#datepicker-sc", {
             dateFormat: "Y-m-d",
             maxDate: minDate, // Restrict maximum date to 16 years ago
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#course_id').select2({
+            placeholder: '--Select Course--',
+            allowClear: true,
+            width: '100%'
+        });
+        $('#course_id_aca').select2({
+            placeholder: '--Select Course--',
+            allowClear: true,
+            width: '100%'
         });
     });
 </script>

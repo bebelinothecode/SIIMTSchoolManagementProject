@@ -338,12 +338,10 @@ class StudentController extends Controller
         } elseif ($student->student_category === 'Professional') {
             $courses = Diploma::all();
         } else {
-            return redirect()->back()->with('error', 'Error loading Courses');    
+            return redirect()->back()->with('error', 'Error loading Courses');
         }
-        
-        $parents = Parents::with('user')->latest()->get();
 
-        return view('backend.students.edit', compact('courses','parents','student'));
+        return view('backend.students.edit', compact('courses','student'));
     }
 
     /**
@@ -634,6 +632,7 @@ class StudentController extends Controller
                             'balance' => 'required|numeric',
                             // 'course_id' => 'required|integer',
                             'parent_phonenumber' => 'nullable|string|max:15',
+                            'change_status' => 'nullable|in:active,defer,completed',
                         ]);
             // $validatedData = $request->validate([
             //     'change_status' => 'required|in:active,defer,completed',
@@ -685,13 +684,19 @@ class StudentController extends Controller
 
             if($student->student_category === 'Academic') {
                 $student->update($academicStudentFields);
-                return redirect()->back()->with('success', 'Student updated successfully');
             } elseif($student->student_category === 'Professional') {
                 $student->update($profStudentFields);
-                return redirect()->back()->with('success', 'Student updated successfully');
             } else {
                 return redirect()->back()->with('error', 'Invalid student category');
             }
+
+            // Update common fields
+            $student->update([
+                'parent_phonenumber' => $validatedData['parent_phonenumber'] ?? $student->parent_phonenumber,
+                'status' => $validatedData['change_status'] ?? $student->status,
+            ]);
+
+            return redirect()->back()->with('success', 'Student updated successfully');
       
         } catch (Exception $e) {
             Log::error(message: "Error occured updating student" .$e);
