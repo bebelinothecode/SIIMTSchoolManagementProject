@@ -652,6 +652,31 @@ document.addEventListener('DOMContentLoaded', function() {
             if (el) el.value = '';
         });
     }
+// Populate functions
+function populateProf() {
+    const select = $('#course_id');
+    const option = select.find('option:selected')[0];
+    if (!option) return;
+    const dataAmount = option.dataset.amount;
+    const dataCurrency = option.dataset.currency;
+    const dataDuration = option.dataset.duration;
+    if (profAmountInput) profAmountInput.value = dataAmount || '';
+    if (acaFeesInput) acaFeesInput.value = dataAmount || '';
+    document.getElementById('currency').value = dataCurrency || '';
+    document.getElementById('duration').value = dataDuration || '';
+    updateBalance();
+}
+
+function populateAca() {
+    const select = $('#course_id_aca');
+    const option = select.find('option:selected')[0];
+    if (!option) return;
+    const dataAmount = option.dataset.amount;
+    const dataCurrency = option.dataset.currency;
+    if (acaFeesInput) acaFeesInput.value = dataAmount || '';
+    document.getElementById('currency_academic').value = dataCurrency || '';
+    updateBalance();
+}
 
     // Toggle which course block is visible when student category changes
     function handleCategoryChange() {
@@ -664,11 +689,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (profCourseSelect) profCourseSelect.setAttribute('required', 'required');
             if (acaCourseSelect) acaCourseSelect.removeAttribute('required');
 
-            // if a professional course already selected, trigger change to populate fees
+            // if a professional course already selected, populate fees
             if (profCourseSelect && profCourseSelect.value) {
-                profCourseSelect.dispatchEvent(new Event('change'));
+                populateProf();
             } else {
-                // clear academic fee field if switching
+                clearFields(['currency','amount','duration']);
                 if (acaFeesInput) acaFeesInput.value = '';
                 updateBalance();
             }
@@ -680,11 +705,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (acaCourseSelect) acaCourseSelect.setAttribute('required', 'required');
             if (profCourseSelect) profCourseSelect.removeAttribute('required');
 
-            // if an academic course already selected, trigger change to populate fees
+            // if an academic course already selected, populate fees
             if (acaCourseSelect && acaCourseSelect.value) {
-                acaCourseSelect.dispatchEvent(new Event('change'));
+                populateAca();
             } else {
-                // clear professional amount if switching
+                clearFields(['currency_academic','fees']);
                 if (profAmountInput) profAmountInput.value = '';
                 updateBalance();
             }
@@ -701,84 +726,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // PROFESSIONAL course selection -> fetch diploma details (populates top fees input)
-    if (profCourseSelect) {
-        profCourseSelect.addEventListener('change', function() {
-            const option = this.options[this.selectedIndex];
-            // if data attributes exist on option, use them (faster than fetch)
-            const dataAmount = option ? option.dataset.amount : null;
-            const dataCurrency = option ? option.dataset.currency : null;
-            const dataDuration = option ? option.dataset.duration : null;
+    // PROFESSIONAL course selection
+    $('#course_id').on('select2:select', populateProf);
+    $('#course_id').on('select2:clear', function() {
+        clearFields(['currency','amount','duration']);
+        updateBalance();
+    });
 
-            if (dataAmount !== undefined && dataAmount !== null) {
-                if (profAmountInput) profAmountInput.value = dataAmount;
-                if (acaFeesInput) acaFeesInput.value = dataAmount; // keep single #fees updated
-                if (document.getElementById('currency')) document.getElementById('currency').value = dataCurrency || '';
-                if (document.getElementById('duration')) document.getElementById('duration').value = dataDuration || '';
-                updateBalance();
-                return;
-            }
-
-            // fallback to fetching from server if no data- attributes
-            const courseId = this.value;
-            if (!courseId) {
-                clearFields(['currency','amount','duration']);
-                updateBalance();
-                return;
-            }
-
-            fetch(`${baseUrl}/get/diplomas/${courseId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (document.getElementById('currency')) document.getElementById('currency').value = data.currency || '';
-                    if (profAmountInput) profAmountInput.value = data.amount || '';
-                    if (acaFeesInput) acaFeesInput.value = data.amount || '';
-                    if (document.getElementById('duration')) document.getElementById('duration').value = data.duration || '';
-                    updateBalance();
-                })
-                .catch(err => {
-                    console.error('Error fetching professional course:', err);
-                    clearFields(['currency','amount','duration']);
-                    updateBalance();
-                });
-        });
-    }
-
-    // ACADEMIC course selection -> populate top fees input
-    if (acaCourseSelect) {
-        acaCourseSelect.addEventListener('change', function() {
-            const option = this.options[this.selectedIndex];
-            const dataAmount = option ? option.dataset.amount : null;
-            const dataCurrency = option ? option.dataset.currency : null;
-
-            if (dataAmount !== undefined && dataAmount !== null) {
-                if (acaFeesInput) acaFeesInput.value = dataAmount;
-                if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = dataCurrency || '';
-                updateBalance();
-                return;
-            }
-
-            const acaID = this.value;
-            if (!acaID) {
-                clearFields(['currency_academic','fees']);
-                updateBalance();
-                return;
-            }
-
-            fetch(`${baseUrl}/get/academic/${acaID}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = data.currency || '';
-                    if (acaFeesInput) acaFeesInput.value = data.amount || '';
-                    updateBalance();
-                })
-                .catch(err => {
-                    console.error('Error fetching academic course:', err);
-                    clearFields(['currency_academic','fees']);
-                    updateBalance();
-                });
-        });
-    }
+    // ACADEMIC course selection
+    $('#course_id_aca').on('select2:select', populateAca);
+    $('#course_id_aca').on('select2:clear', function() {
+        clearFields(['currency_academic','fees']);
+        updateBalance();
+    });
 
     // Listen to amount_paid input to update balance live
     if (amountPaidInput) {
@@ -795,8 +755,8 @@ document.addEventListener('DOMContentLoaded', function() {
         handleCategoryChange();
     } else {
         // If no selector present, still try to initialize fees from selected course
-        if (profCourseSelect && profCourseSelect.value) profCourseSelect.dispatchEvent(new Event('change'));
-        if (acaCourseSelect && acaCourseSelect.value) acaCourseSelect.dispatchEvent(new Event('change'));
+        if (profCourseSelect && profCourseSelect.value) populateProf();
+        if (acaCourseSelect && acaCourseSelect.value) populateAca();
     }
 
     // Scholarship radio toggling (existing jQuery handler preserved)
