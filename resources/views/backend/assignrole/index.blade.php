@@ -29,9 +29,11 @@
                     <div class="w-3/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $user->name }}</div>
                     <div class="w-5/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $user->email }}</div>
                     <div class="w-2/12 px-4 py-3 flex flex-wrap">
-                        @foreach ($user->roles as $role)
+                        @forelse ($user->roles as $role)
                             <span class="bg-gray-200 text-xs font-semibold text-gray-600 tracking-tight px-3 py-1 border rounded-full">{{ $role->name }}</span>
-                        @endforeach
+                        @empty
+                            <span class="text-red-600 text-xs font-semibold">NO ROLE ASSIGNED YET!</span>
+                        @endforelse
                     </div>
                     @hasrole('Admin|rector')
                     <div class="w-2/12 flex justify-end px-3">

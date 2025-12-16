@@ -44,6 +44,7 @@ class Student extends Model
         'pay_fees_now',
         'amount_paid',
         'new_student_balance',
+        'country',
     ];
 
     public function user() 

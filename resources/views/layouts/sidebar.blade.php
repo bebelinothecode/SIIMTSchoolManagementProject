@@ -398,7 +398,7 @@
         </a>
         @endhasanyrole
         @hasanyrole('Admin|rector|Supervisor')
-        <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+        <a href="{{ route('view.inventory.admin') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
            <svg class="h-4 w-4 fill-current" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
             <path fill="currentColor"

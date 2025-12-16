@@ -185,15 +185,13 @@ class BookController extends Controller
     public function searchBooks(Request $request) {
         $query = $request->search_term;
 
-        $books = DB::table('pdf')
-            ->where('isbn_number', 'LIKE', "%{$query}%")
+        $books = Book::where('isbn_number', 'LIKE', "%{$query}%")
             ->orWhere('author', 'LIKE', "%{$query}%")
             ->orWhere('title', 'LIKE', "%{$query}%")
-            ->get();
-        
+            ->paginate(10);
+
         return view('backend.librarybooks.index', [
             'books' => $books,
-            'sessions' => Session::all(), // Pass sessions for the dropdown
         ]);
     }
 

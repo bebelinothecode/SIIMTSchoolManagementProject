@@ -81,6 +81,9 @@ class DatabaseSeeder extends Seeder
         ]);
         $user8->assignRole('registrar');
 
+        // Create Supervisor role
+        Role::firstOrCreate(['name' => 'Supervisor']);
+
         $user2 = User::create([
             'name'          => 'Teacher',
             'email'         => 'teacher@demo.com',

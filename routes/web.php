@@ -198,7 +198,7 @@ Route::group(['middleware' => ['auth','role:' . implode('|', config('roles.admin
     Route::get('/get/paymentplan/form/{id}', [StudentController::class, 'getPaymentPlanForm'])->name('get.paymentplanform');
     Route::post('/save/paymentplan/{id}', [StudentController::class, 'savePaymentPlan'])->name('save.paymentplan');
     Route::put('/update/installments/{id}', [StudentController::class, 'updateInstallments'])->name('update.installments');
-    Route::get('/view/inventory', [InventoryController::class, 'index'])->name('view.inventory');
+    Route::get('/view/inventory/admin', [InventoryController::class, 'index'])->name('view.inventory.admin');
     Route::get('/add/stock/item', [InventoryController::class, 'create'])->name('addstock.form');
     Route::post('/store/stock/item', [InventoryController::class, 'store'])->name('store.stockitem');
     Route::get('/edit/stock/item/{id}', [InventoryController::class, 'edit'])->name('edit.stockitemform');
@@ -332,7 +332,7 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
 
 
 Route::group(['middleware' => ['auth','role:Supervisor']], function () {
-    Route::get('/view/inventory', [InventoryController::class, 'index'])->name('view.inventory');
+    Route::get('/show/inventory', [InventoryController::class, 'index'])->name('view.inventory');
     Route::get('/add/stock/item', [InventoryController::class, 'create'])->name('addstock.form');
     Route::post('/store/stock/item', [InventoryController::class, 'store'])->name('store.stockitem');
     Route::get('/edit/stock/item/{id}', [InventoryController::class, 'edit'])->name('edit.stockitemform');

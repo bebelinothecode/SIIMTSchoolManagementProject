@@ -2,6 +2,7 @@
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 @endpush
 
 @section('content')
@@ -350,13 +351,21 @@
                         Phone
                     </label>
                 </div>
+
                 <div class="md:w-2/3">
-                    <input name="phone" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('phone') }}" required>
+                    <input type="tel" id="phone_number" 
+                        class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight 
+                        focus:outline-none focus:bg-white focus:border-blue-500"
+                        value="{{ old('phone_number') }}" required>
+
+                    <input type="hidden" name="phone" id="phone" value="{{ old('phone') }}">
+
                     @error('phone')
                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
+
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -494,6 +503,27 @@
                     </div>
                 </div>
             </div>
+
+              {{-- <div class="md:flex md:items-center mb-6">
+                <div class="md:w-1/3">
+                    <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                        Parent's Phone
+                    </label>
+                </div>
+
+                <div class="md:w-2/3">
+                    <input type="tel" id="phone_number" 
+                        class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight 
+                        focus:outline-none focus:bg-white focus:border-blue-500"
+                        value="{{ old('phone_number') }}" required>
+
+                    <input type="hidden" name="parent_phonenumber" id="parent_phonenumber" value="{{ old('phone') }}">
+
+                    @error('phone')
+                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div> --}}
 
          <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
@@ -652,31 +682,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (el) el.value = '';
         });
     }
-// Populate functions
-function populateProf() {
-    const select = $('#course_id');
-    const option = select.find('option:selected')[0];
-    if (!option) return;
-    const dataAmount = option.dataset.amount;
-    const dataCurrency = option.dataset.currency;
-    const dataDuration = option.dataset.duration;
-    if (profAmountInput) profAmountInput.value = dataAmount || '';
-    if (acaFeesInput) acaFeesInput.value = dataAmount || '';
-    document.getElementById('currency').value = dataCurrency || '';
-    document.getElementById('duration').value = dataDuration || '';
-    updateBalance();
-}
-
-function populateAca() {
-    const select = $('#course_id_aca');
-    const option = select.find('option:selected')[0];
-    if (!option) return;
-    const dataAmount = option.dataset.amount;
-    const dataCurrency = option.dataset.currency;
-    if (acaFeesInput) acaFeesInput.value = dataAmount || '';
-    document.getElementById('currency_academic').value = dataCurrency || '';
-    updateBalance();
-}
 
     // Toggle which course block is visible when student category changes
     function handleCategoryChange() {
@@ -691,9 +696,17 @@ function populateAca() {
 
             // if a professional course already selected, populate fees
             if (profCourseSelect && profCourseSelect.value) {
-                populateProf();
+                const option = profCourseSelect.options[profCourseSelect.selectedIndex];
+                const dataAmount = option ? option.dataset.amount : null;
+                const dataCurrency = option ? option.dataset.currency : null;
+                const dataDuration = option ? option.dataset.duration : null;
+                if (profAmountInput) profAmountInput.value = dataAmount || '';
+                if (acaFeesInput) acaFeesInput.value = dataAmount || '';
+                if (document.getElementById('currency')) document.getElementById('currency').value = dataCurrency || '';
+                if (document.getElementById('duration')) document.getElementById('duration').value = dataDuration || '';
+                updateBalance();
             } else {
-                clearFields(['currency','amount','duration']);
+                // clear academic fee field if switching
                 if (acaFeesInput) acaFeesInput.value = '';
                 updateBalance();
             }
@@ -707,9 +720,14 @@ function populateAca() {
 
             // if an academic course already selected, populate fees
             if (acaCourseSelect && acaCourseSelect.value) {
-                populateAca();
+                const option = acaCourseSelect.options[acaCourseSelect.selectedIndex];
+                const dataAmount = option ? option.dataset.amount : null;
+                const dataCurrency = option ? option.dataset.currency : null;
+                if (acaFeesInput) acaFeesInput.value = dataAmount || '';
+                if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = dataCurrency || '';
+                updateBalance();
             } else {
-                clearFields(['currency_academic','fees']);
+                // clear professional amount if switching
                 if (profAmountInput) profAmountInput.value = '';
                 updateBalance();
             }
@@ -726,19 +744,6 @@ function populateAca() {
         }
     }
 
-    // PROFESSIONAL course selection
-    $('#course_id').on('select2:select', populateProf);
-    $('#course_id').on('select2:clear', function() {
-        clearFields(['currency','amount','duration']);
-        updateBalance();
-    });
-
-    // ACADEMIC course selection
-    $('#course_id_aca').on('select2:select', populateAca);
-    $('#course_id_aca').on('select2:clear', function() {
-        clearFields(['currency_academic','fees']);
-        updateBalance();
-    });
 
     // Listen to amount_paid input to update balance live
     if (amountPaidInput) {
@@ -755,8 +760,25 @@ function populateAca() {
         handleCategoryChange();
     } else {
         // If no selector present, still try to initialize fees from selected course
-        if (profCourseSelect && profCourseSelect.value) populateProf();
-        if (acaCourseSelect && acaCourseSelect.value) populateAca();
+        if (profCourseSelect && profCourseSelect.value) {
+            const option = profCourseSelect.options[profCourseSelect.selectedIndex];
+            const dataAmount = option ? option.dataset.amount : null;
+            const dataCurrency = option ? option.dataset.currency : null;
+            const dataDuration = option ? option.dataset.duration : null;
+            if (profAmountInput) profAmountInput.value = dataAmount || '';
+            if (acaFeesInput) acaFeesInput.value = dataAmount || '';
+            if (document.getElementById('currency')) document.getElementById('currency').value = dataCurrency || '';
+            if (document.getElementById('duration')) document.getElementById('duration').value = dataDuration || '';
+            updateBalance();
+        }
+        if (acaCourseSelect && acaCourseSelect.value) {
+            const option = acaCourseSelect.options[acaCourseSelect.selectedIndex];
+            const dataAmount = option ? option.dataset.amount : null;
+            const dataCurrency = option ? option.dataset.currency : null;
+            if (acaFeesInput) acaFeesInput.value = dataAmount || '';
+            if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = dataCurrency || '';
+            updateBalance();
+        }
     }
 
     // Scholarship radio toggling (existing jQuery handler preserved)
@@ -769,6 +791,45 @@ function populateAca() {
     }).trigger('change');
 });
 </script>
+
+
+    <script>
+        const input = document.querySelector("#phone_number");
+        const hiddenInput = document.querySelector("#phone");
+
+        const iti = window.intlTelInput(input, {
+            separateDialCode: true,
+            initialCountry: "gh", // or "auto"
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        input.addEventListener("countrychange", function() {
+            hiddenInput.value = iti.getNumber();
+        });
+
+        input.addEventListener("keyup", function() {
+            hiddenInput.value = iti.getNumber();
+        });
+    </script>
+
+    <script>
+        const input = document.querySelector("#parent_phonenumber");
+        const hiddenInput = document.querySelector("#phone");
+
+        const iti = window.intlTelInput(input, {
+            separateDialCode: true,
+            initialCountry: "gh", // or "auto"
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        input.addEventListener("countrychange", function() {
+            hiddenInput.value = iti.getNumber();
+        });
+
+        input.addEventListener("keyup", function() {
+            hiddenInput.value = iti.getNumber();
+        });
+    </script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -794,6 +855,44 @@ function populateAca() {
             placeholder: '--Select Course--',
             allowClear: true,
             width: '100%'
+        });
+
+        // Professional course selection
+        $('#course_id').on('select2:select', function() {
+            const option = this.options[this.selectedIndex];
+            const dataAmount = option ? option.dataset.amount : null;
+            const dataCurrency = option ? option.dataset.currency : null;
+            const dataDuration = option ? option.dataset.duration : null;
+
+            if (document.getElementById('amount')) document.getElementById('amount').value = dataAmount || '';
+            if (document.getElementById('fees')) document.getElementById('fees').value = dataAmount || '';
+            if (document.getElementById('currency')) document.getElementById('currency').value = dataCurrency || '';
+            if (document.getElementById('duration')) document.getElementById('duration').value = dataDuration || '';
+            updateBalance();
+        });
+
+        $('#course_id').on('select2:clear', function() {
+            if (document.getElementById('currency')) document.getElementById('currency').value = '';
+            if (document.getElementById('amount')) document.getElementById('amount').value = '';
+            if (document.getElementById('duration')) document.getElementById('duration').value = '';
+            updateBalance();
+        });
+
+        // Academic course selection
+        $('#course_id_aca').on('select2:select', function() {
+            const option = this.options[this.selectedIndex];
+            const dataAmount = option ? option.dataset.amount : null;
+            const dataCurrency = option ? option.dataset.currency : null;
+
+            if (document.getElementById('fees')) document.getElementById('fees').value = dataAmount || '';
+            if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = dataCurrency || '';
+            updateBalance();
+        });
+
+        $('#course_id_aca').on('select2:clear', function() {
+            if (document.getElementById('currency_academic')) document.getElementById('currency_academic').value = '';
+            if (document.getElementById('fees')) document.getElementById('fees').value = '';
+            updateBalance();
         });
     });
 </script>

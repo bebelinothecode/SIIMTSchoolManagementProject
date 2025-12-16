@@ -325,49 +325,120 @@ class TeacherController extends Controller
         $assignedSubjects = TeacherSubject::with(['teacher.user', 'subject'])
                 ->orderBy('created_at', 'desc')
                 ->get();
-
         // return $assignedSubjects;
-
         return view('backend.teachers.assignsubjectsform', compact('teachers','diplomas', 'assignedSubjects'));
     }
 
-    public function assignSubjectsToTeacher(Request $request) {
-        try {
-            // dd($request->all());
-            $validatedData = $request->validate([
-                'teacher_type' => 'required|string',
-                'teacher_id' => 'required|exists:teachers,id',
-                'subject_id' => 'exists:diploma,id',
-                'num_of_sessions' => 'nullable|integer',
-            ]);
+    // public function assignSubjectsToTeacher(Request $request) {
+    //     try {
+    //         $rules = [
+    //             'teacher_type' => 'required|string',
+    //             'teacher_id' => 'required|exists:teachers,id',
+    //             'subject_id' => 'required|exists:diploma,id',
+    //         ];
 
-            $teacher = Teacher::findOrFail($validatedData['teacher_id']);
-            $teacherType = $validatedData['teacher_type'];   // Academic or Professional
-            $teacherId   = $validatedData['teacher_id'];
-            $subjects    = $validatedData['subject_id'];
-            $sessions    = $validatedData['num_of_sessions'] ?? null;
+    //         if ($request->teacher_type === 'Academic') {
+    //             $rules['num_of_sessions'] = 'required|integer|min:0';
+    //         } elseif ($request->teacher_type === 'Professional') {
+    //             $rules['num_of_sessions'] = 'required|array';
+    //             $rules['num_of_sessions.*'] = 'integer|min:0';
+    //         }
 
-            
-            DB::table('teacher_subject')->insert([
-                'teacher_id' => $teacherId,
-                'subject_id' => $subjects,
-                'num_of_sessions' => $sessions,
-                'remaining_sessions' => $sessions,
-                'aca_prof' => $teacherType,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            
-            // $teacher->subjects()->sync($validatedData['subject_ids']);
+    //         $validatedData = $request->validate($rules);
 
-            return redirect()->back()->with('success', 'Subjects assigned to teacher successfully!');
-        } catch (\Throwable $th) {
-            //throw $th;
-            Log::error("Error occured",['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
+    //         $teacher = Teacher::findOrFail($validatedData['teacher_id']);
+    //         $teacherType = $validatedData['teacher_type'];   // Academic or Professional
+    //         $teacherId   = $validatedData['teacher_id'];
+    //         $subjects    = $validatedData['subject_id'];
 
-            return redirect()->back()->with('error', 'Error assigning subjects to teacher');
+    //         if ($teacherType === 'Academic') {
+    //             $sessions = $validatedData['num_of_sessions'];
+    //             $totalSessions = $sessions;
+    //         } else { // Professional
+    //             $sessionsArray = $validatedData['num_of_sessions'];
+    //             $sessions = json_encode($sessionsArray);
+    //             $totalSessions = array_sum($sessionsArray);
+    //         }
+
+    //         DB::table('teacher_subject')->insert([
+    //             'teacher_id' => $teacherId,
+    //             'subject_id' => $subjects,
+    //             'num_of_sessions' => $sessions,
+    //             'remaining_sessions' => $totalSessions,
+    //             'aca_prof' => $teacherType,
+    //             'created_at' => now(),
+    //             'updated_at' => now(),
+    //         ]);
+
+    //         return redirect()->back()->with('success', 'Subjects assigned to teacher successfully!');
+    //     } catch (\Throwable $th) {
+    //         //throw $th;
+    //         Log::error("Error occured",['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
+
+    //         return redirect()->back()->with('error', 'Error assigning subjects to teacher');
+    //     }
+    // }
+
+public function assignSubjectsToTeacher(Request $request) {
+    try {
+
+        // FIX: sanitize array BEFORE validation
+        if ($request->has('num_of_sessions') && is_array($request->num_of_sessions)) {
+            foreach ($request->num_of_sessions as $k => $v) {
+                if ($v === null || $v === "" || $v === "none") {
+                    $request->num_of_sessions[$k] = 0;
+                }
+            }
         }
+
+        $rules = [
+            'teacher_type' => 'required|string',
+            'teacher_id' => 'required|exists:teachers,id',
+            'subject_id' => 'required|exists:diploma,id',
+        ];
+
+        if ($request->teacher_type === 'Academic') {
+            $rules['num_of_sessions'] = 'nullable|integer|min:0';
+        } elseif ($request->teacher_type === 'Professional') {
+            $rules['num_of_sessions'] = 'required|array';
+            $rules['num_of_sessions.*'] = 'integer|min:0';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        $teacher = Teacher::findOrFail($validatedData['teacher_id']);
+        $teacherType = $validatedData['teacher_type'];
+        $teacherId   = $validatedData['teacher_id'];
+        $subjects    = $validatedData['subject_id'];
+
+        if ($teacherType === 'Academic') {
+            $sessions = $validatedData['num_of_sessions'] ?? 0;
+            $totalSessions = $sessions;
+        } else {
+            $sessionsArray = $validatedData['num_of_sessions'];
+            $sessions = json_encode($sessionsArray);
+            $totalSessions = array_sum($sessionsArray);
+        }
+
+        DB::table('teacher_subject')->insert([
+            'teacher_id' => $teacherId,
+            'subject_id' => $subjects,
+            'num_of_sessions' => $sessions,
+            'remaining_sessions' => $totalSessions,
+            'aca_prof' => $teacherType,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Subjects assigned to teacher successfully!');
+    } catch (\Throwable $th) {
+        Log::error("Error occured",['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
+        return redirect()->back()->with('error', 'Error assigning subjects to teacher');
     }
+}
+
+
+
 
     public function generateSalarySlip(Request $request) {
         $month = $request->input('month');

@@ -131,6 +131,12 @@
                         <span class="badge badge-success">{{ $filters['modeOfPayment'] }}</span>
                     </div>
                 @endif
+                  @if ($count)
+                    <div class="col-md-3">
+                        <strong>Count:</strong><br>
+                        <span class="badge badge-success">{{ $count }}</span>
+                    </div>
+                @endif
             </div>
         </div>
 

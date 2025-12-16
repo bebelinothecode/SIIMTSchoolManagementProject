@@ -61,26 +61,6 @@ class ExpensesController extends Controller
 
         return view('backend.reports.expensesreportform', compact('categorys'));
     }
-    
-    // public function indexTable(Request $request) 
-    //     {
-    //         $search = $request->input('search');
-    //         $query = Expenses::with('expenseCategory');
-           
-
-    //         if($request->has('search') && $request->search != '') {
-    //             $search = $request->search;
-    //             $query->where(function($q) use ($search) {
-    //                 $q->where('amount', 'like', '%' . $search . '%')
-    //                     ->orWhere('category', 'like', '%' . $search . '%')
-    //                 ->orWhere('mode_of_payment', 'like', '%' . $search . '%');
-    //             });
-    //         }
-
-    //         $expenses = $query->latest()->paginate(10);
-
-    //         return view('backend.expenses.index', compact('expenses'));
-    // }
 
     public function indexTable(Request $request) 
     {
@@ -107,69 +87,70 @@ class ExpensesController extends Controller
     }
 
     public function generateExpensesReport(Request $request)
-{
-    try {
-        // dd($request->all());
-        $validatedData = $request->validate([
-            'current_date' => 'nullable|date',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
-            'expensecategory_id' => 'nullable',
-            'branch' => 'nullable|in:Kasoa,Kanda,Spintex'
-        ]);
-
-        $filters = [
-            'currentDate' => $validatedData['current_date'] ?? null,
-            'startDate' => $validatedData['start_date'] ?? null,
-            'endDate' => $validatedData['end_date'] ?? null,
-            'branch' => $validatedData['branch'] ?? null,
-            'expensecategory_id' => $validatedData['expensecategory_id'] ?? null,
-            'modeOfPayment' => $validatedData['mode_of_payment'] ?? null,
-        ];
-
-        // Build dynamic query based on filters
-        // $buildQuery = function ($categoryId = null) use ($filters) {
-        $query = Expenses::with('expenseCategory');
-
-        if ($filters['startDate'] && $filters['endDate']) {
-            $query->whereBetween('created_at', [
-                Carbon::parse($filters['startDate'])->startOfDay(),
-                Carbon::parse($filters['endDate'])->endOfDay()
+    {
+        try {
+            $validatedData = $request->validate([
+                'current_date' => 'nullable|date',
+                'start_date' => 'nullable|date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'mode_of_payment' => 'nullable|string|in:Cash,Mobile Money,Bank Transfer',
+                'expensecategory_id' => 'nullable',
+                'branch' => 'nullable|in:Kasoa,Kanda,Spintex'
             ]);
+
+            $filters = [
+                'currentDate' => $validatedData['current_date'] ?? null,
+                'startDate' => $validatedData['start_date'] ?? null,
+                'endDate' => $validatedData['end_date'] ?? null,
+                'branch' => $validatedData['branch'] ?? null,
+                'expensecategory_id' => $validatedData['expensecategory_id'] ?? null,
+                'modeOfPayment' => $validatedData['mode_of_payment'] ?? null,
+            ];
+
+            $query = Expenses::with('expenseCategory');
+
+            if ($filters['startDate'] && $filters['endDate']) {
+                $query->whereBetween('created_at', [
+                    Carbon::parse($filters['startDate'])->startOfDay(),
+                    Carbon::parse($filters['endDate'])->endOfDay()
+                ]);
+            }
+
+            if ($filters['currentDate']) {
+                $query->whereDate('created_at', Carbon::parse($filters['currentDate']));
+            }
+
+            if ($filters['expensecategory_id']) {
+                $query->where('expensecategory_id', $filters['expensecategory_id']);
+            }
+
+            if ($filters['modeOfPayment']) {
+                $query->where('mode_of_payment', $filters['modeOfPayment']);
+            }
+
+            if($filters['branch']) {
+                $query->where('branch',$filters['branch']);
+            }
+
+            $query->orderBy('created_at', 'desc');
+
+            $count = $query->count();
+
+            $datas = $query->get();
+
+            // return $datas;
+
+            $totalAmount = collect($datas)->sum(function ($item) {
+                return (float) $item['amount'];
+            });
+
+            return view('backend.reports.expensesreport',compact('datas','totalAmount','filters','count'));
+        
+        } catch (Exception $e) {
+            Log::error("Error generating expenses report: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Error generating expenses report: ' . $e->getMessage());
         }
-
-        if ($filters['currentDate']) {
-            $query->whereDate('created_at', Carbon::parse($filters['currentDate']));
-        }
-
-        if ($filters['expensecategory_id']) {
-            $query->where('expensecategory_id', $filters['expensecategory_id']);
-        }
-
-        if ($filters['modeOfPayment']) {
-            $query->where('mode_of_payment', $filters['modeOfPayment']);
-        }
-
-        if($filters['branch']) {
-            $query->where('branch',$filters['branch']);
-        }
-
-        $datas = $query->get();
-
-        // return $datas;
-
-        $totalAmount = collect($datas)->sum(function ($item) {
-            return (float) $item['amount'];
-        });
-
-        return view('backend.reports.expensesreport',compact('datas','totalAmount','filters'));
-    
-    } catch (Exception $e) {
-        Log::error("Error generating expenses report: " . $e->getMessage());
-        return redirect()->back()->with('error', 'Error generating expenses report: ' . $e->getMessage());
     }
-}
 
     public function deleteExpense(Request $request,$id) {
         $expense = Expenses::findOrFail($id);

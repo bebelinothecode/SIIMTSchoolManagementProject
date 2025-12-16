@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Nette\Schema\ValidationException as SchemaValidationException;
+use PragmaRX\Countries\Package\Countries;
 
 class StudentController extends Controller
 {
@@ -111,6 +112,7 @@ class StudentController extends Controller
 
     public function store(Request $request) {
         try {
+            // dd($request->all());
             $rules = [
                 'branch' => 'required|string|in:Kasoa,Spintex,Kanda',
                 'name' => 'required|string',
@@ -1524,7 +1526,7 @@ class StudentController extends Controller
                 'current_address' => 'required|string',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'student_parent' => 'required|string|max:255',
-                'parent_phonenumber' => 'required|string|max:15',
+                'parent_phonenumber' => 'required|string|max:20',
                 'student_category' => 'required|in:Professional,Academic',
                 'scholarship' => 'required|in:Yes,No',
                 'scholarship_amount' => 'nullable|numeric|required_if:scholarship,Yes'

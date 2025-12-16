@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+@endpush
+
 @section('content')
     <div class="roles">
         <div class="flex items-center justify-between mb-6">
@@ -304,7 +308,8 @@
                             </label>
                         </div>
                         <div class="md:w-3/4">
-                            <input name="parent_phonenumber" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('parent_phonenumber', $student->parent_phonenumber) }}">
+                            <input name="parent_phone_number" id="parent_phone_number_edit" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="tel" value="{{ old('parent_phone_number', $student->parent_phonenumber) }}">
+                            <input type="hidden" name="parent_phonenumber" id="parent_phone_edit" value="{{ old('parent_phonenumber', $student->parent_phonenumber) }}">
                             @error('parent_phonenumber')
                                 <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                             @enderror
@@ -352,6 +357,32 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const parentPhoneInput = document.getElementById('parent_phone_number_edit');
+        const parentPhoneHidden = document.getElementById('parent_phone_edit');
+
+        const parentIti = window.intlTelInput(parentPhoneInput, {
+            initialCountry: "gh"
+        });
+
+        function updateParentPhone() {
+            if (parentIti.isValidNumber()) {
+                parentPhoneHidden.value = parentIti.getNumber();
+            } else {
+                parentPhoneHidden.value = parentPhoneInput.value;
+            }
+        }
+
+        parentPhoneInput.addEventListener('input', updateParentPhone);
+        parentPhoneInput.addEventListener('countrychange', updateParentPhone);
+
+        // Initial update
+        updateParentPhone();
+    });
+</script>
 <!-- <script>
     $(function() {
         // Initialize datepicker

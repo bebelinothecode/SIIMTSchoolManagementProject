@@ -56,12 +56,19 @@
                     @enderror
                 </div>
 
-                <!-- NUMBER OF SESSIONS PER SUBJECT -->
+                <!-- NUMBER OF SESSIONS PER MONTH -->
                 <div id="sessions_div" class="hidden">
-                    <label for="num_of_sessions" class="block text-sm font-medium text-gray-700 mb-1">Number of Sessions Per Month</label>
-                    <input type="number" name="num_of_sessions" id="num_of_sessions"
-                        class="w-full bg-gray-50 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        placeholder="Enter number of sessions">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Number of Sessions Per Month</label>
+                    <div class="grid grid-cols-3 gap-4">
+                        @foreach(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $index => $month)
+                            <div>
+                                <label for="num_of_sessions_{{ $index + 1 }}" class="block text-xs text-gray-600">{{ $month }}</label>
+                                <input type="number" name="num_of_sessions[{{ $index + 1 }}]" id="num_of_sessions_{{ $index + 1 }}"
+                                    class="w-full bg-gray-50 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    placeholder="0" min="0">
+                            </div>
+                        @endforeach
+                    </div>
                     @error('num_of_sessions')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
@@ -84,7 +91,7 @@
                             <tr>
                                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Teacher</th>
                                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Subject</th>
-                                <th class="px-4 py-2 text-sm font-medium text-gray-600">Sessions</th>
+                                <th class="px-4 py-2 text-sm font-medium text-gray-600">Sessions Per Month</th>
                                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Remaining Sessions</th>
                                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Teacher Type</th>
                                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Assigned On</th>
@@ -96,7 +103,23 @@
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-4 py-2">{{ $assign->teacher->user->name ?? 'N/A' }}</td>
                                     <td class="px-4 py-2">{{ $assign->subject->code ?? "N/A" }} - {{ $assign->subject->name ?? "N/A" }}</td>
-                                    <td class="px-4 py-2">{{ $assign->num_of_sessions ?? '—' }}</td>
+                                    <td class="px-4 py-2">
+                                        @if($assign->aca_prof == 'Professional' && $assign->num_of_sessions)
+                                            @php
+                                                $sessions = json_decode($assign->num_of_sessions, true);
+                                                $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                                            @endphp
+                                            @if(is_array($sessions))
+                                                @foreach($sessions as $index => $count)
+                                                    @if($count > 0)
+                                                        {{ $months[$index] }}: {{ $count }}<br>
+                                                    @endif
+                                                @endforeach
+                                            @endif
+                                        @else
+                                            {{ $assign->num_of_sessions ?? '—' }}
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-2">{{ $assign->remaining_sessions ?? '—' }}</td>
                                     <td class="px-4 py-2">{{ $assign->aca_prof ?? "N/A" }}</td>
                                     <td class="px-4 py-2">{{ $assign->created_at?->format('d M Y') ?? 'N/A' }}</td>
@@ -173,8 +196,8 @@
             width: '100%'
         });
 
-        $('#subject_ids').select2({
-            placeholder: 'Select Subjects',
+        $('#subject_id').select2({
+            placeholder: 'Select Subject',
             width: '100%'
         });
     }
@@ -198,14 +221,29 @@ document.addEventListener('DOMContentLoaded', function () {
             teacherDiv.classList.remove('hidden');
             subjectsDiv.classList.remove('hidden');
             sessionsDiv.classList.add('hidden');
+            // Remove required and disable session inputs
+            document.querySelectorAll('input[name^="num_of_sessions"]').forEach(input => {
+                input.removeAttribute('required');
+                input.setAttribute('disabled', 'disabled');
+            });
         } else if (value === 'Professional') {
             teacherDiv.classList.remove('hidden');
             subjectsDiv.classList.remove('hidden');
             sessionsDiv.classList.remove('hidden');
+            // Add required and enable session inputs
+            document.querySelectorAll('input[name^="num_of_sessions"]').forEach(input => {
+                // input.setAttribute('required', 'required');
+                input.removeAttribute('disabled');
+            });
         } else {
             teacherDiv.classList.add('hidden');
             subjectsDiv.classList.add('hidden');
             sessionsDiv.classList.add('hidden');
+            // Remove required and disable session inputs
+            document.querySelectorAll('input[name^="num_of_sessions"]').forEach(input => {
+                input.removeAttribute('required');
+                input.setAttribute('disabled', 'disabled');
+            });
         }
     }
 

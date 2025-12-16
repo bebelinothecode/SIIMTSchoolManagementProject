@@ -426,7 +426,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($formFeesBebelinos as $f)
+                        @forelse ($formFeesTransactions as $f)
                         <tr>
                             <td>{{ $f->name ?? "N/A" }}</td>
                             <td>{{ $f->telephone_number ?? "N/A" }}</td>
@@ -443,7 +443,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="3"><strong>Total Form Fees</strong></td>
-                            <td colspan="2" class="total-amount">GHS {{ number_format($formFeesAllAmount, 2) }}</td>
+                            <td colspan="2" class="total-amount">GHS {{ number_format($formFeesTotals, 2) }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -639,9 +639,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (['Cash', 'Momo', 'Cheque'] as $mode)
+            @foreach (['Cash', 'Mobile Money', 'Bank Transfer'] as $mode)
                 @php
-                    $displayMode = $mode === 'Momo' ? 'Mobile Money' : $mode;
+                    $displayMode = $mode === 'Mobile Money' ? 'Mobile Money' : $mode;
                 @endphp
                 <tr>
                     <td><strong>{{ $displayMode }}</strong></td>

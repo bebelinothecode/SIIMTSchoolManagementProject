@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
+    public function staff()
+    {
+        return $this->hasOne(Staff::class);
+    }
+
 // Mutator for forcing uppercase storage
     public function setNameAttribute($value)
     {
