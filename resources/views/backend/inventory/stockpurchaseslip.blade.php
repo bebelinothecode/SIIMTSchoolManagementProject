@@ -1,4 +1,3 @@
-{{-- filepath: resources/views/backend/purchasing_slip/create.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
@@ -50,16 +49,12 @@
                                 class="choices w-full border rounded px-2 py-1"
                                 requireds
                             >
-                                <option value="">-- Select Student --</option>
+                                <option value="">-- Select Item --</option>
                                 @foreach ($stocks as $stock)
                                     <option value="{{ $stock->id }}">{{ $stock->stock_name }}</option>
                                 @endforeach
                             </select>
                         </div>
-
-
-
-
 
                         <div>
                             <label class="block text-gray-600">Quantity</label>

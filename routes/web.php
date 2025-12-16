@@ -6,6 +6,7 @@ use App\Http\Controllers\CollectionsController;
 use App\Http\Controllers\DiplomaController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\FeesController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\ProfitAndLossController;
@@ -46,7 +47,7 @@ Route::put('/profile/update', 'HomeController@profileUpdate')->name('profile.upd
 Route::get('/profile/changepassword', 'HomeController@changePasswordForm')->name('profile.change.password');
 Route::post('/profile/changepassword', 'HomeController@changePassword')->name('profile.changepassword');
 
-Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|Student|StudCoordinator|Librarian|HR|registrar|Supervisor']], function () 
+Route::group(['middleware' => ['auth','role:' . implode('|', config('roles.admin_roles'))]], function ()
 {
     Route::get('/roles-permissions', 'RolePermissionController@roles')->name('roles-permissions');
     Route::get('/role-create', 'RolePermissionController@createRole')->name('role.create');
@@ -110,6 +111,8 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/teacher/form', [ReportsController::class, 'teachersForm'])->name('teacherreport.form');
     Route::get('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
     Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
+    Route::get('/staff/reports/form', [ReportsController::class, 'staffReportsForm'])->name('staff.reportsform');
+    Route::get('/staff/reports/generate', [ReportsController::class, 'generateStaffReport'])->name('staff.reports.generate');
     Route::get('payments/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
     Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
     Route::get('/delete/assigned/subject/{id}',[SubjectController::class,'getDeleteForm'])->name('deleteassigned.subject');
@@ -216,8 +219,8 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     Route::get('/assign/role/form', [TeacherController::class,'assignSubjectsForm'])->name('assignteacher.roleform');
     Route::post('/assign/subjects/to/teacher',[TeacherController::class,'assignSubjectsToTeacher'])->name('assign.subjectstoteacher');
     Route::get('/teacher/sessions/form',[TeacherController::class,'teacherSessionsForm'])->name('teachersessions.form');
-    Route::get('/attendance/teacher/{id}', [AttendanceController::class, 'loadTeacherAttendance']);
-    Route::post('/attendance/mark/{id}', [AttendanceController::class, 'markAttendance']);
+    // Route::get('/attendance/teacher/{id}', [AttendanceController::class, 'loadTeacherAttendance']);
+    // Route::post('/attendance/mark/{id}', [AttendanceController::class, 'markAttendance']);
     Route::get('/teacher-attendance', [TeacherController::class, 'index'])->name('teacher-attendance.index');
     Route::get('/teacher-attendance/teacher-subjects/{teacherId}', [TeacherController::class, 'getTeacherSubjects']);
     Route::get('/teacher-attendance/record/{teacherId}/{subjectId}', [TeacherController::class, 'getAttendanceRecord']);
@@ -240,7 +243,38 @@ Route::group(['middleware' => ['auth','role:Admin|rector|frontdesk|AsstAccount|S
     // Route::resource('teacher', 'TeacherController');
     Route::resource('parents', 'ParentsController');
     Route::resource('student', 'StudentController');
-    Route::get('attendance', 'AttendanceController@index')->name('attendance.index');
+    
+    // SALARY ROUTES FIRST — Most specific
+    Route::get('staff/salary', 'StaffController@salaryIndex')->name('staff.salary.index');
+    Route::get('staff/salary/create', 'StaffController@salaryCreate')->name('staff.salary.create');
+    Route::post('staff/salary', 'StaffController@salaryStore')->name('staff.salary.store');
+    
+    Route::get('staff/salary/{id}/edit', 'StaffController@salaryEdit')
+        ->where('id', '[0-9]+')
+        ->name('staff.salary.edit');
+    
+    Route::put('staff/salary/{id}', 'StaffController@salaryUpdate')
+        ->where('id', '[0-9]+')
+        ->name('staff.salary.update');
+    
+    Route::delete('staff/salary/{id}', 'StaffController@salaryDestroy')
+        ->where('id', '[0-9]+')
+        ->name('staff.salary.destroy');
+    
+    Route::resource('staff', 'StaffController');
+    Route::resource('leaves', 'LeaveController');
+    
+    // STAFF SHOW — MUST COME LAST
+    Route::get('staff/show/{id}', [StaffController::class, 'show'])
+        ->where('id', '[0-9]+')
+        ->name('staff.show');
+
+
+// OTHER ROUTES
+Route::get('attendance', 'AttendanceController@index')->name('attendance.index');
+
+
+
 });
 
 
@@ -296,13 +330,23 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     // Route::get('/school/fees',[FeesController::class, 'schoolFees'])->name('schoolfees.index');                 
 });
 
-// Route::group(['middleware' => ['auth','role:frontdesk']], function () {
-//     // Route::resource('classes', 'GradeController');
-//     // Route::resource('subject', 'SubjectController');
-//     // Route::get('/diploma', [DiplomaController::class, 'index'])->name('diploma.index');
 
-// });
+Route::group(['middleware' => ['auth','role:Supervisor']], function () {
+    Route::get('/view/inventory', [InventoryController::class, 'index'])->name('view.inventory');
+    Route::get('/add/stock/item', [InventoryController::class, 'create'])->name('addstock.form');
+    Route::post('/store/stock/item', [InventoryController::class, 'store'])->name('store.stockitem');
+    Route::get('/edit/stock/item/{id}', [InventoryController::class, 'edit'])->name('edit.stockitemform');
+    Route::put('/update/stock/item/{id}', [InventoryController::class, 'update'])->name('update.stock');
+    Route::delete('delete/stock/{id}',[InventoryController::class, 'delete'])->name('delete.stockitem');
+    Route::get('/inventory/stockin/form/{id}', [InventoryController::class, 'stockInForm'])->name('stockin.form');
+    Route::post('/save/stockin/{id}', [InventoryController::class, 'saveStockIn'])->name('save.stockin');
+    Route::get('/inventory/stockout/form/{id}', [InventoryController::class, 'stockOutForm'])->name('stockout.form');
+    Route::post('/save/stockout/{id}', [InventoryController::class, 'saveStockOut'])->name('save.stockout');
+    Route::get('/inventory/transaction/list/{id}',[InventoryController::class, 'stockTransactionList'])->name('stock.transactionlist');
+    Route::get('/generate/stock/purchase/slip',[InventoryController::class, 'generateStockPurchaseSlip'])->name('generate.stockpurchaseslip');
 
-// Route::get('/test4',[ReportsController::class,'example']);
-// Route::get('/test22', [StudentController::class, 'all']);
+});
+
+
+
 

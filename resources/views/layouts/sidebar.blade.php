@@ -168,6 +168,40 @@
             </div>
         </div>
 
+        <div x-data="{ open: false }" class="relative">
+            <a href="{{ route('show.course') }}" 
+            @click.prevent="open = !open" 
+            class="flex items-center text-gray-600 py-2 hover:text-blue-700 cursor-pointer">
+                <svg class="h-4 w-4 fill-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                    <path fill="currentColor" d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128z"/>
+                </svg>
+                <span class="ml-2 text-sm font-semibold">Staff</span>
+                <svg class="ml-1 w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </a>
+
+            <!-- Dropdown Menu -->
+            <div
+                x-show="open"
+                @click.away="open = false"
+                class="absolute left-6 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10"
+                x-transition>
+                <a href="{{ route('staff.create') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Create Staff
+                </a>
+                <a href="{{ route('staff.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Manage Staff
+                </a>
+                <a href="{{ route('leaves.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Manage Leave
+                </a>
+                <a href="{{ route('staff.salary.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    Salary Details
+                </a>
+            </div>
+        </div>
+
         <!-- Parent Menu Item -->
         <div x-data="{ open: false }" class="relative">
             <a href="{{ route('show.course') }}" 
@@ -365,11 +399,10 @@
         @endhasanyrole
         @hasanyrole('Admin|rector|Supervisor')
         <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-            <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false"
-                data-prefix="fas" data-icon="boxes-stacked"
-                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img">
-                <path fill="currentColor"
-                    d="M160 0H32C14.33 0 0 14.33 0 32V160c0 17.67 14.33 32 32 32H160c17.67 0 32-14.33 32-32V32C192 14.33 177.7 0 160 0zM160 352H32C14.33 352 0 366.3 0 384V480c0 17.67 14.33 32 32 32H160c17.67 0 32-14.33 32-32V384C192 366.3 177.7 352 160 352zM480 0H352C334.3 0 320 14.33 320 32V160c0 17.67 14.33 32 32 32H480c17.67 0 32-14.33 32-32V32C512 14.33 497.7 0 480 0zM480 352H352C334.3 352 320 366.3 320 384V480c0 17.67 14.33 32 32 32H480c17.67 0 32-14.33 32-32V384C512 366.3 497.7 352 480 352z"/>
+           <svg class="h-4 w-4 fill-current" aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+            <path fill="currentColor"
+                d="M0 488V171.3c0-19 10-36.2 26.2-45.2l256-144c23.4-13.1 51.9-13.1 75.3 0l256 144c16.2 9.1 26.2 26.2 26.2 45.2V488c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24zM96 256v192h128V256H96zm192 0v192h64V256h-64zm128 0v192h128V256H416z"/>
             </svg>
             <span class="ml-2 text-sm font-semibold">Inventory</span>
         </a>
@@ -423,12 +456,6 @@
                     </svg>
                     <span class="ml-2 text-sm font-semibold">Student Reports</span>
                 </a>
-                {{-- <a href="{{ route('academic.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                        <path fill="currentColor" d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/>
-                    </svg>
-                    <span class="ml-2 text-sm font-semibold">Student Reports (Academic)</span>
-                </a> --}}
                 <a href="{{ route('get.deferlistform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
                     <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         <path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/>
@@ -480,11 +507,17 @@
                 </a>
 
                   <a href="{{ route('salary.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                        <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
-                    </svg>
-                    <span class="ml-2 text-sm font-semibold">Salary Reports</span>
-                </a>
+                      <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                          <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                      </svg>
+                      <span class="ml-2 text-sm font-semibold">Salary Reports</span>
+                  </a>
+                  <a href="{{ route('staff.reportsform') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+                      <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                          <path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                      </svg>
+                      <span class="ml-2 text-sm font-semibold">Staff Reports</span>
+                  </a>
 
                
                 
@@ -1214,5 +1247,21 @@
                 }
             </script>
         @endrole
+        @role('Supervisor')
+        <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+            <svg class="h-4 w-4 fill-current" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                <path fill="currentColor"
+                d="M0 488V171.3c0-19 10-36.2 26.2-45.2l256-144c23.4-13.1 51.9-13.1 75.3 0l256 144c16.2 9.1 26.2 26.2 26.2 45.2V488c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24zM96 256v192h128V256H96zm192 0v192h64V256h-64zm128 0v192h128V256H416z"/>
+            </svg>
+            <span class="ml-2 text-sm font-semibold">Inventory</span>
+        </a>
+        @endrole
     </div>
 </div>
+
+<svg class="h-4 w-4 fill-current" aria-hidden="true"
+     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+    <path fill="currentColor"
+          d="M0 488V171.3c0-19 10-36.2 26.2-45.2l256-144c23.4-13.1 51.9-13.1 75.3 0l256 144c16.2 9.1 26.2 26.2 26.2 45.2V488c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24zM96 256v192h128V256H96zm192 0v192h64V256h-64zm128 0v192h128V256H416z"/>
+</svg>

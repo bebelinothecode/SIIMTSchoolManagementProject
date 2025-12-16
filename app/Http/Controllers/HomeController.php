@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Expenses;
 use App\FeesPaid;
-use App\Grade;
 use App\Parents;
-use App\RegisterCourse;
 use App\Student;
 use App\Teacher;
 use Illuminate\Support\Str;
@@ -37,56 +35,104 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // return $user->hasRole('Supervisor');
-        
-        if ($user->hasRole(['Admin','StudCoordinator','rector','AsstAccount','frontdesk','Librarian','HR','registrar'])) {
+        $roleHandlers = [
+            [
+                'check' => fn() => $user->hasAnyRole(config('roles.admin_roles')),
+                'handler' => fn() => $this->getAdminDashboardData(),
+                'view' => 'home'
+            ],
+            [
+                'check' => fn() => $user->hasRole('Teacher'),
+                'handler' => fn() => $this->getTeacherDashboardData(),
+                'view' => 'home'
+            ],
+            [
+                'check' => fn() => $user->hasRole('Parent'),
+                'handler' => fn() => $this->getParentDashboardData(),
+                'view' => 'home'
+            ],
+            [
+                'check' => fn() => $user->hasRole('Student'),
+                'handler' => fn() => $this->getStudentDashboardData(),
+                'view' => 'home'
+            ],
+            [
+                'check' => fn() => $user->hasRole('Supervisor'),
+                'handler' => fn() => [],
+                'view' => 'dashboard.supervisor'
+            ],
+        ];
 
-            $parents = Parents::latest()->get();
-            $teachers = Teacher::latest()->get();
-            $students = Student::latest()->get();
-            $studentsAcademic = Student::where('student_category','Academic')->count();
-            $studentsProfessional = Student::where('student_category','Professional')->count();
-            $books = DB::table('books')->count();
-            $totalFeesCollected = FeesPaid::sum('amount');
-            $totalExpensesMade = Expenses::sum('amount');
-            $activeAcademicStudentsCount = Student::where('status', 'active')->where('student_category', 'Academic')->get()->count();
-            $activeProfessionalStudentsCount = Student::where('status', 'active')->where('student_category', 'Professional')->get()->count();
-            $completedProfessionalStudentsCount = Student::where('status', 'graduated')->where('student_category', 'Professional')->get()->count();
-            $inactiveProfessionalStudentsCount = Student::where('status', 'defered')->where('student_category', 'Professional')->get()->count();
-
-   
-            // return $inactiveProfessionalStudentsCount;
-           
-
-            return view('home', compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade','studentsAcademic','studentsProfessional','activeAcademicStudentsCount','activeProfessionalStudentsCount','completedProfessionalStudentsCount','inactiveProfessionalStudentsCount'));
-
-        } elseif ($user->hasRole('Teacher')) {
-
-            $teacher = Teacher::with(['user','subjects','classes','students'])->withCount('subjects','classes')->findOrFail($user->teacher->id);
-
-            return view('home', compact('teacher'));
-
-        } elseif ($user->hasRole('Parent')) {
-            
-            $parents = Parents::with(['children'])->withCount('children')->findOrFail($user->parent->id); 
-
-            return view('home', compact('parents'));
-
-        } elseif ($user->hasRole('Student')) {
-            $student = Student::with(['course','user','parent','attendances'])->findOrFail($user->student->id); 
-
-            // return $student;
-
-
-            return view('home', compact('student'));
-
-        } elseif ($user->hasRole('Supervisor')) {
-            // $students = Student::all();
-            return view('dashboard.supervisor');
-        } else {
-            return 'NO ROLE ASSIGNED YET!';
+        foreach ($roleHandlers as $rh) {
+            if ($rh['check']()) {
+                $data = $rh['handler']();
+                return view($rh['view'], $data);
+            }
         }
-        
+
+        return 'NO ROLE ASSIGNED YET!';
+    }
+
+    /**
+     * Get dashboard data for admin roles.
+     *
+     * @return array
+     */
+    private function getAdminDashboardData()
+    {
+        $parents = Parents::latest()->get();
+        $teachers = Teacher::latest()->get();
+        $students = Student::latest()->get();
+        $studentsAcademic = Student::where('student_category','Academic')->count();
+        $studentsProfessional = Student::where('student_category','Professional')->count();
+        $books = DB::table('books')->count();
+        $totalFeesCollected = FeesPaid::sum('amount');
+        $totalExpensesMade = Expenses::sum('amount');
+        $activeAcademicStudentsCount = Student::where('status', 'active')->where('student_category', 'Academic')->count();
+        $activeProfessionalStudentsCount = Student::where('status', 'active')->where('student_category', 'Professional')->count();
+        $completedProfessionalStudentsCount = Student::where('status', 'graduated')->where('student_category', 'Professional')->count();
+        $inactiveProfessionalStudentsCount = Student::where('status', 'defered')->where('student_category', 'Professional')->count();
+
+        return compact('parents','teachers','students','books','totalFeesCollected','totalExpensesMade','studentsAcademic','studentsProfessional','activeAcademicStudentsCount','activeProfessionalStudentsCount','completedProfessionalStudentsCount','inactiveProfessionalStudentsCount');
+    }
+
+    /**
+     * Get dashboard data for teacher role.
+     *
+     * @return array
+     */
+    private function getTeacherDashboardData()
+    {
+        $user = Auth::user();
+        $teacher = Teacher::with(['user','subjects','classes','students'])->withCount('subjects','classes')->findOrFail($user->teacher->id);
+
+        return compact('teacher');
+    }
+
+    /**
+     * Get dashboard data for parent role.
+     *
+     * @return array
+     */
+    private function getParentDashboardData()
+    {
+        $user = Auth::user();
+        $parents = Parents::with(['children'])->withCount('children')->findOrFail($user->parent->id);
+
+        return compact('parents');
+    }
+
+    /**
+     * Get dashboard data for student role.
+     *
+     * @return array
+     */
+    private function getStudentDashboardData()
+    {
+        $user = Auth::user();
+        $student = Student::with(['course','user','parent','attendances'])->findOrFail($user->student->id);
+
+        return compact('student');
     }
 
     /**
