@@ -375,20 +375,95 @@ class StudentController extends Controller
         return $courses;
     }
 
-    public function printAdmissionLetter($id) {
-        // $student = Student::findOrFail($id);
-
+    /**
+     * Show form to enter admission letter details
+     */
+    public function printAdmissionLetterForm($id) {
         $student = Student::with('user', 'course', 'diploma')
             ->where(function ($q) {
                 $q->whereNotNull('course_id')
                 ->orWhereNotNull('course_id_prof');
             })->findOrFail($id);
-        
-        // return $student;
 
         $academicyear = AcademicYear::latest()->first();
 
-        return view('backend.students.printletter', compact('student', 'academicyear'));
+        return view('backend.students.admissionLetterForm', compact('student', 'academicyear'));
+    }
+
+    /**
+     * Show preview of admission letter with entered details
+     */
+    public function previewAdmissionLetter(Request $request, $id) {
+        $student = Student::with('user', 'course', 'diploma')
+            ->where(function ($q) {
+                $q->whereNotNull('course_id')
+                ->orWhereNotNull('course_id_prof');
+            })->findOrFail($id);
+
+        $academicyear = AcademicYear::latest()->first();
+
+        // Validate inputs
+        $validated = $request->validate([
+            'academic_year' => 'required|string|max:255',
+            'resumption_date' => 'required|date',
+            'registration_start_date' => 'required|date',
+            'registration_end_date' => 'required|date|after_or_equal:registration_start_date',
+            'orientation_date' => 'required|date',
+            'lectures_begin_date' => 'required|date',
+        ]);
+
+        // Format dates for display
+        $letter_details = [
+            'academic_year' => $validated['academic_year'],
+            'resumption_date' => $validated['resumption_date'],
+            'resumption_date_formatted' => $this->formatDateForLetter($validated['resumption_date']),
+            'registration_start_date' => $validated['registration_start_date'],
+            'registration_start_date_formatted' => $this->formatDateForLetter($validated['registration_start_date']),
+            'registration_end_date' => $validated['registration_end_date'],
+            'registration_end_date_formatted' => $this->formatDateForLetter($validated['registration_end_date']),
+            'orientation_date' => $validated['orientation_date'],
+            'orientation_date_formatted' => $this->formatDateForLetter($validated['orientation_date']),
+            'lectures_begin_date' => $validated['lectures_begin_date'],
+            'lectures_begin_date_formatted' => $this->formatDateForLetter($validated['lectures_begin_date']),
+        ];
+
+        return view('backend.students.admissionLetterPreview', compact('student', 'academicyear', 'letter_details'));
+    }
+
+    /**
+     * Print admission letter with entered details
+     */
+    public function printAdmissionLetter(Request $request, $id) {
+        $student = Student::with('user', 'course', 'diploma')
+            ->where(function ($q) {
+                $q->whereNotNull('course_id')
+                ->orWhereNotNull('course_id_prof');
+            })->findOrFail($id);
+
+        $academicyear = AcademicYear::latest()->first();
+
+        // Get letter details from request
+        $letter_details = [];
+        if ($request->has('letter_details')) {
+            try {
+                $letter_details = json_decode(base64_decode($request->input('letter_details')), true);
+            } catch (\Exception $e) {
+                // If decode fails, show form again
+                return redirect()->route('student.print.form', $id);
+            }
+        } else {
+            // No details provided, show form
+            return redirect()->route('student.print.form', $id);
+        }
+
+        return view('backend.students.printletter', compact('student', 'academicyear', 'letter_details'));
+    }
+
+    /**
+     * Helper method to format date for letter (e.g., "Monday, 17 February 2025")
+     */
+    private function formatDateForLetter($date) {
+        return \Carbon\Carbon::createFromFormat('Y-m-d', $date)->format('l, d F Y');
     }
 
     public function studentSchoolFees(Request $request) {

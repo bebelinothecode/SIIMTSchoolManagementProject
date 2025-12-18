@@ -564,7 +564,7 @@ public function calculateBalanceTotal(Request $request)
             ->when($isDateRange, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
             ->when($selectedCategory, fn($q) => $q->where('type_of_course', $selectedCategory), fn($q) => $q->whereIn('type_of_course', ['Academic', 'Professional']));
 
-        $formFeesTransactions = $formFeesQuery->get();
+        $formFeesTransactions = $formFeesQuery->orderBy('created_at', 'desc')->get();
         $formFeesTotals = $formFeesTransactions->sum(fn($item) => (float) $item->amount);
 
         // ====== Expenses ======
@@ -576,7 +576,7 @@ public function calculateBalanceTotal(Request $request)
             ->when(!$isDateRange, fn($q) => $q->whereDate('created_at', $currentDate))
             ->when($isDateRange, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
 
-        $expensesTransactions = $expensesQuery->get();
+        $expensesTransactions = $expensesQuery->orderBy('created_at', 'desc')->get();
         $expensesTotalAmount = $expensesTransactions->sum(fn($item) => (float) $item->amount);
 
         $expensesTotals = $expensesTransactions->groupBy('source_of_expense')
@@ -593,7 +593,9 @@ public function calculateBalanceTotal(Request $request)
             ->when($isDateRange, fn($q) => $q->whereBetween('collect_fees.created_at', [$startDate, $endDate]))
             ->when(isset($paymentMethodMap[$modeOfPayment]), fn($q) => $q->where('collect_fees.method_of_payment', $paymentMethodMap[$modeOfPayment]));
 
-        $feeCollectionTransactions = $feeCollectionsQuery->select('collect_fees.*', 'students.student_category')->get();
+        $feeCollectionTransactions = $feeCollectionsQuery->select('collect_fees.*', 'students.student_category')
+            ->orderBy('collect_fees.created_at', 'desc')
+            ->get();
         $feesPaymentsTotal = $feeCollectionTransactions->sum(fn($item) => (float) $item->amount);
 
         $feesTransactions = in_array($selectedCategory, ['Academic', 'Professional']) 
@@ -614,7 +616,7 @@ public function calculateBalanceTotal(Request $request)
 
         // ====== Opening & Closing Balance ======
         $openingBalance = $previousClosingBalance;
-        $closingBalance = $openingBalance + $formFeesTotals + $feesPaymentsTotal - $expensesTotalAmount;
+        // Closing balance calculated after mature and canteen below
 
         // ====== Mode breakdowns ======
         $collectionsByCategoryAndMode = $feeCollectionTransactions->groupBy(['student_category', 'method_of_payment'])
@@ -654,7 +656,7 @@ public function calculateBalanceTotal(Request $request)
             ->when(!$isDateRange, fn($q) => $q->whereDate('created_at', $currentDate))
             ->when($isDateRange, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
 
-        $matureTransactions = $matureQuery->get();
+        $matureTransactions = $matureQuery->orderBy('created_at', 'desc')->get();
         $matureTransactionsTotal = $matureTransactions->sum(fn($item) => (float) ($item->amount ?? 0));
 
         // default canteen totals to avoid undefined variable notices in views
@@ -669,7 +671,7 @@ public function calculateBalanceTotal(Request $request)
                 ->when(!$isDateRange, fn($q) => $q->whereDate('created_at', $currentDate))
                 ->when($isDateRange, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
 
-            $canteenAll = $canteenQuery->get();
+            $canteenAll = $canteenQuery->orderBy('created_at', 'desc')->get();
             if ($canteenAll->isNotEmpty()) {
                 $canteenIncomeTransactions = $canteenAll->where('category', 'Income')->values();
                 $canteenExpenseTransactions = $canteenAll->where('category', 'Expense')->values();
@@ -679,6 +681,8 @@ public function calculateBalanceTotal(Request $request)
         } catch (\Exception $e) {
             Log::warning('Failed to load canteen transactions for balance report: ' . $e->getMessage());
         }
+
+        $closingBalance = $openingBalance + $formFeesTotals + $feesPaymentsTotal + $matureTransactionsTotal + $canteenIncomeTotal - ($expensesTotalAmount + $canteenExpenseTotal);
 
         $data = [
             'selectedCategory' => $selectedCategory,
@@ -753,9 +757,15 @@ $selectedCategory, $modeOfPayment);
 // Get daily form fees
 $dailyFormFees = $this->getDailyFormFees($dateString,
 $selectedCategory);
+// Get daily mature
+$dailyMature = $this->getDailyMature($dateString);
+// Get daily canteen income
+$dailyCanteenIncome = $this->getDailyCanteenIncome($dateString);
+// Get daily canteen expense
+$dailyCanteenExpense = $this->getDailyCanteenExpense($dateString);
 // Calculate net transactions for the day
-$totalDailyIncome = $dailyCollections + $dailyFormFees;
-$netDailyTransaction = $totalDailyIncome - $dailyExpenses;
+$totalDailyIncome = $dailyCollections + $dailyFormFees + $dailyMature + $dailyCanteenIncome;
+$netDailyTransaction = $totalDailyIncome - $dailyExpenses - $dailyCanteenExpense;
 // Calculate closing balance
 $closingBalance = $openingBalance + $netDailyTransaction;
 return [
@@ -764,6 +774,9 @@ return [
 'daily_collections' => $dailyCollections,
 'daily_expenses' => $dailyExpenses,
 'daily_form_fees' => $dailyFormFees,
+'daily_mature' => $dailyMature,
+'daily_canteen_income' => $dailyCanteenIncome,
+'daily_canteen_expense' => $dailyCanteenExpense,
 'total_daily_income' => $totalDailyIncome,
 'net_daily_transaction' => $netDailyTransaction,
 'closing_balance' => $closingBalance,
@@ -846,8 +859,8 @@ return $query->sum(DB::raw('CAST(amount AS DECIMAL(10,2))')) ??
 0;
 }
 /**
-* Get daily form fees for a specific date
-*/
+ * Get daily form fees for a specific date
+ */
 private function getDailyFormFees($date, $selectedCategory)
 {
 $query = DB::table('student_enquires')
@@ -861,6 +874,38 @@ $query->where('type_of_course', $selectedCategory);
 $query->whereIn('type_of_course', ['Academic',
 'Professional']);
 }
+return $query->sum(DB::raw('CAST(amount AS DECIMAL(10,2))')) ??
+0;
+}
+/**
+ * Get daily mature for a specific date
+ */
+private function getDailyMature($date)
+{
+$query = DB::table('mature_students')
+->whereDate('created_at', $date);
+return $query->sum(DB::raw('CAST(amount_paid AS DECIMAL(10,2))')) ??
+0;
+}
+/**
+ * Get daily canteen income for a specific date
+ */
+private function getDailyCanteenIncome($date)
+{
+$query = DB::table('canteen')
+->whereDate('created_at', $date)
+->where('category', 'Income');
+return $query->sum(DB::raw('CAST(amount AS DECIMAL(10,2))')) ??
+0;
+}
+/**
+ * Get daily canteen expense for a specific date
+ */
+private function getDailyCanteenExpense($date)
+{
+$query = DB::table('canteen')
+->whereDate('created_at', $date)
+->where('category', 'Expense');
 return $query->sum(DB::raw('CAST(amount AS DECIMAL(10,2))')) ??
 0;
 }
@@ -1069,7 +1114,8 @@ DECIMAL(10,2))')) ?? 0;
     }
 
     public function inventoryReportForm() {
-        return view('backend.inventory.inventoryreportform');
+        $stocks = Stock::all();
+        return view('backend.inventory.inventoryreportform', compact('stocks'));
     }
 
     // public function generateInventoryReport(Request $request) {
@@ -1121,8 +1167,11 @@ DECIMAL(10,2))')) ?? 0;
         $end_date = $validatedData['end_date'] ?? null;
         $category = $validatedData['category'] ?? null;
         $current_state = $validatedData['current_state'] ?? null;
+        $item_id = $validatedData['item_id'] ?? null;
 
         // ✅ Handle current state request
+
+        // Detailed inventory report (moved to class scope below)
         if ($current_state) {
             $totalStocks = Stock::count();
             $totalQuantity = Stock::sum('quantity');
@@ -1162,6 +1211,10 @@ DECIMAL(10,2))')) ?? 0;
         elseif ($category === 'Stock Out') {
             $stockOutQuery = StockOut::with('stock');
 
+            if ($item_id) {
+                $stockOutQuery->where('stock_id', $item_id);
+            }
+
             if ($start_date && $end_date) {
                 $stockOutQuery->whereBetween('date_issued', [$start_date, $end_date]);
             } elseif ($start_date) {
@@ -1196,6 +1249,135 @@ DECIMAL(10,2))')) ?? 0;
         ]);
     }
 
+    /**
+     * New detailed inventory report function.
+     * - If `item_id` provided: returns current amount as of date (or now) and transactions for that item.
+     * - If only `current_date` provided: returns snapshot and transactions for all items on that date.
+     * - If `start_date`/`end_date` provided: returns transactions and balances for all items in range.
+     * This function is additive and does not remove or modify existing functionality.
+     */
+    public function generateInventoryReportDetailed(Request $request)
+    {
+        // Avoid using the `exists:stocks,id` validation rule because when the
+        // `stocks` table is missing the validator will attempt a DB query and
+        // throw a QueryException. Validate as integer then check existence
+        // manually inside a try/catch so we can return a friendly message.
+        $validated = $request->validate([
+            'current_date' => 'nullable|date',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'item_id' => 'nullable|integer',
+        ]);
+
+        $current_date = $validated['current_date'] ?? null;
+        $start_date = $validated['start_date'] ?? null;
+        $end_date = $validated['end_date'] ?? null;
+        $item_id = $validated['item_id'] ?? null;
+
+        // If an item was supplied, attempt to load it safely. If the
+        // `stocks` table does not exist the DB call will throw a
+        // QueryException — catch it and return a clear error.
+        $preloadedStock = null;
+        if ($item_id) {
+            try {
+                $preloadedStock = Stock::find($item_id);
+            } catch (\Illuminate\Database\QueryException $e) {
+                Log::error('Database error while validating stock existence: ' . $e->getMessage());
+                return redirect()->back()->with('error', 'Database table `stocks` not found. Please run your migrations.');
+            }
+
+            if (! $preloadedStock) {
+                return redirect()->back()->with('error', 'Selected stock item was not found.');
+            }
+        }
+
+        $endOf = function ($date) {
+            return Carbon::parse($date)->endOfDay();
+        };
+
+        // If specific item requested
+        if ($item_id) {
+            // use the preloaded stock (already checked above)
+            $stock = $preloadedStock;
+
+            if ($start_date && $end_date) {
+                $inUpTo = StockIn::where('stock_id', $item_id)->where('created_at', '<=', $endOf($end_date))->sum('new_stock_in_quantity');
+                $outUpTo = StockOut::where('stock_id', $item_id)->where('date_issued', '<=', $endOf($end_date))->sum('quantity_issued');
+                $currentAmount = $inUpTo - $outUpTo;
+
+                $ins = StockIn::with('stock')->where('stock_id', $item_id)->whereBetween('created_at', [$start_date, $end_date])->orderBy('created_at','desc')->get();
+                $outs = StockOut::with('stock')->where('stock_id', $item_id)->whereBetween('date_issued', [$start_date, $end_date])->orderBy('date_issued','desc')->get();
+            } elseif ($current_date) {
+                $inUpTo = StockIn::where('stock_id', $item_id)->where('created_at', '<=', $endOf($current_date))->sum('new_stock_in_quantity');
+                $outUpTo = StockOut::where('stock_id', $item_id)->where('date_issued', '<=', $endOf($current_date))->sum('quantity_issued');
+                $currentAmount = $inUpTo - $outUpTo;
+
+                $ins = StockIn::with('stock')->where('stock_id', $item_id)->whereDate('created_at', $current_date)->orderBy('created_at','desc')->get();
+                $outs = StockOut::with('stock')->where('stock_id', $item_id)->whereDate('date_issued', $current_date)->orderBy('date_issued','desc')->get();
+            } else {
+                $currentAmount = StockIn::where('stock_id', $item_id)->sum('new_stock_in_quantity') - StockOut::where('stock_id', $item_id)->sum('quantity_issued');
+                $ins = StockIn::with('stock')->where('stock_id', $item_id)->orderBy('created_at','desc')->get();
+                $outs = StockOut::with('stock')->where('stock_id', $item_id)->orderBy('date_issued','desc')->get();
+            }
+
+            return view('backend.reports.inventory_detailed', [
+                'stock' => $stock,
+                'current_amount' => $currentAmount,
+                'ins' => $ins,
+                'outs' => $outs,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'current_date' => $current_date,
+            ]);
+        }
+
+        // No specific item: build per-item report map
+        $result = [];
+        $stocks = Stock::all();
+        foreach ($stocks as $s) {
+            $sid = $s->id;
+
+            if ($start_date && $end_date) {
+                $inUpTo = StockIn::where('stock_id', $sid)->where('created_at', '<=', $endOf($end_date))->sum('new_stock_in_quantity');
+                $outUpTo = StockOut::where('stock_id', $sid)->where('date_issued', '<=', $endOf($end_date))->sum('quantity_issued');
+                $currentAmount = $inUpTo - $outUpTo;
+
+                $ins = StockIn::with('stock')->where('stock_id', $sid)->whereBetween('created_at', [$start_date, $end_date])->orderBy('created_at','desc')->get();
+                $outs = StockOut::with('stock')->where('stock_id', $sid)->whereBetween('date_issued', [$start_date, $end_date])->orderBy('date_issued','desc')->get();
+            } elseif ($current_date) {
+                $inUpTo = StockIn::where('stock_id', $sid)->where('created_at', '<=', $endOf($current_date))->sum('new_stock_in_quantity');
+                $outUpTo = StockOut::where('stock_id', $sid)->where('date_issued', '<=', $endOf($current_date))->sum('quantity_issued');
+                $currentAmount = $inUpTo - $outUpTo;
+
+                $ins = StockIn::with('stock')->where('stock_id', $sid)->whereDate('created_at', $current_date)->orderBy('created_at','desc')->get();
+                $outs = StockOut::with('stock')->where('stock_id', $sid)->whereDate('date_issued', $current_date)->orderBy('date_issued','desc')->get();
+            } else {
+                $currentAmount = StockIn::where('stock_id', $sid)->sum('new_stock_in_quantity') - StockOut::where('stock_id', $sid)->sum('quantity_issued');
+                $ins = StockIn::with('stock')->where('stock_id', $sid)->orderBy('created_at','desc')->get();
+                $outs = StockOut::with('stock')->where('stock_id', $sid)->orderBy('date_issued','desc')->get();
+            }
+
+            $result[$sid] = [
+                'stock' => $s,
+                'current_amount' => $currentAmount,
+                'ins' => $ins,
+                'outs' => $outs,
+            ];
+        }
+
+        return view('backend.reports.inventory_detailed_all', [
+            'data' => $result,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'current_date' => $current_date,
+        ]);
+    }
+
 
 
 }
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes

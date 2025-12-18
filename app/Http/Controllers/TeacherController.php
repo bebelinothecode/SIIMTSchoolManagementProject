@@ -384,11 +384,13 @@ public function assignSubjectsToTeacher(Request $request) {
 
         // FIX: sanitize array BEFORE validation
         if ($request->has('num_of_sessions') && is_array($request->num_of_sessions)) {
-            foreach ($request->num_of_sessions as $k => $v) {
+            $sessions = $request->num_of_sessions;
+            foreach ($sessions as $k => $v) {
                 if ($v === null || $v === "" || $v === "none") {
-                    $request->num_of_sessions[$k] = 0;
+                    $sessions[$k] = 0;
                 }
             }
+            $request->merge(['num_of_sessions' => $sessions]);
         }
 
         $rules = [

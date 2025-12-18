@@ -187,9 +187,9 @@ class  FeesController extends Controller
 
         $defaulters = $query->orderBy('balance', 'desc')->paginate(10);
 
-        $defaultersAcademicTotal = Student::where('balance', '>', 0)->where('student_category', 'Academic')->sum(DB::raw('CAST(balance AS DECIMAL(10,2))'));
+        $defaultersAcademicTotal = Student::where('balance', '>', 0)->where('student_category', 'Academic')->where('status', 'active')->sum(DB::raw('CAST(balance AS DECIMAL(10,2))'));
 
-        $defaultersAcademicProfessional = Student::where('balance', '>', 0)->where('student_category','Professional')->sum(DB::raw('CAST(balance AS DECIMAL(10,2))'));
+        $defaultersAcademicProfessional = Student::where('balance', '>', 0)->where('student_category','Professional')->where('status', 'active')->sum(DB::raw('CAST(balance AS DECIMAL(10,2))'));
 
         $totalAmount = $defaultersAcademicTotal + $defaultersAcademicProfessional;
 

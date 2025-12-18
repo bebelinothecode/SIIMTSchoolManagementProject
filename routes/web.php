@@ -65,7 +65,9 @@ Route::group(['middleware' => ['auth','role:' . implode('|', config('roles.admin
     Route::put('/updatebook/{book}', [BookController::class, 'updateBook'])->name('updatebook');
     Route::delete('/delete', [BookController::class, 'deleteBook'])->name('deletebook');
     Route::get('/createbook', [BookController::class, 'showCreateBook']);
-    Route::get('/students/{id}/print', [StudentController::class, 'printAdmissionLetter'])->name('student.print');
+    Route::get('/students/{id}/print-form', [StudentController::class, 'printAdmissionLetterForm'])->name('student.print.form');
+    Route::post('/students/{id}/print-preview', [StudentController::class, 'previewAdmissionLetter'])->name('student.print.preview');
+    Route::post('/students/{id}/print', [StudentController::class, 'printAdmissionLetter'])->name('student.print');
     Route::get("/showfees", [FeesController::class, 'show'])->name('fees.show');
     Route::post('/setfees', [FeesController::class, 'create'])->name('fees.set');
     Route::get("/collectfees", [FeesController::class, 'showcollectfees'])->name("fees.collect");
@@ -212,6 +214,7 @@ Route::group(['middleware' => ['auth','role:' . implode('|', config('roles.admin
     Route::get('/generate/stock/purchase/slip',[InventoryController::class, 'generateStockPurchaseSlip'])->name('generate.stockpurchaseslip');
     Route::get('/inventory/report/form', [ReportsController::class, 'inventoryReportForm'])->name('inventoryreport.form');   
     Route::post('/generate/inventory/report', [ReportsController::class, 'generateInventoryReport'])->name('inventory.report'); 
+    Route::post('/generate/inventory/report/detailed', [ReportsController::class, 'generateInventoryReportDetailed'])->name('inventory.report.detailed');
     Route::get('/register/courses/form', [StudentController::class, 'registerCoursesForm'])->name('courses.registerform');
     Route::get('/teachers/sessions',[TeacherController::class,'teachersSessionsIndex'])->name('teachers.sessions');
     Route::get('/create/teacher/form',[TeacherController::class,'createTeacherForm'])->name('create.teacherform');
@@ -278,29 +281,29 @@ Route::get('attendance', 'AttendanceController@index')->name('attendance.index')
 });
 
 
-Route::group(['middleware' => ['auth','role:AsstAccount']], function () {
-    // Route::get('/get/transactions', [FeesController::class, 'getTransactions'])->name('get.transactions');
-    // Route::get("/collectfees", [FeesController::class, 'showcollectfees'])->name("fees.collect");
-    // Route::post('/feescollected',[FeesController::class, 'collectfees'])->name('fees.collected');
-    // // Route::get('fees/defaulters', [FeesController::class, 'selectdefaulters'])->name('fees.defaulters');
-    // // Route::post('/fees/defaulters', [FeesController::class, 'getdefaulters'])->name('defaulters.show');
-    // Route::get('/expenses/table', [ExpensesController::class, 'indexTable'])->name('expenses.table');
-    // Route::get('/expenses',[ExpensesController::class, 'getExpensesForm'])->name('get.expensesForm');
-    // Route::post('/save/expense',[ExpensesController::class, 'storeExpenses'])->name('save.expense');
-    // Route::get('/reports/form',[ReportsController::class, 'getReportsForm'])->name('reports.form');
-    // Route::get('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
-    // Route::get('/reports/form/academic',[ReportsController::class, 'getAcademicReportsForm'])->name('academic.reportsform');
-    // Route::get('/report/academmic',[ReportsController::class, 'generateAcademicReport'])->name('getacademic.reports');
-    // Route::get('/teacher/form', [ReportsController::class, 'teachersForm'])->name('teacherreport.form');
-    // Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
-    // Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
-    // Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
-    // // Route::resource('student', 'StudentController');
-    // Route::get('/expenses/reports/form',[ExpensesController::class, 'getExpensesReportsForm'])->name('form.expenses');
-    // Route::get('/get/expenses/report', [ExpensesController::class, 'generateExpensesReport'])->name('generate.expensesreport');
-    // Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
-    // Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance'); 
-});
+// Route::group(['middleware' => ['auth','role:AsstAccount']], function () {
+//     // Route::get('/get/transactions', [FeesController::class, 'getTransactions'])->name('get.transactions');
+//     // Route::get("/collectfees", [FeesController::class, 'showcollectfees'])->name("fees.collect");
+//     // Route::post('/feescollected',[FeesController::class, 'collectfees'])->name('fees.collected');
+//     // // Route::get('fees/defaulters', [FeesController::class, 'selectdefaulters'])->name('fees.defaulters');
+//     // // Route::post('/fees/defaulters', [FeesController::class, 'getdefaulters'])->name('defaulters.show');
+//     // Route::get('/expenses/table', [ExpensesController::class, 'indexTable'])->name('expenses.table');
+//     // Route::get('/expenses',[ExpensesController::class, 'getExpensesForm'])->name('get.expensesForm');
+//     // Route::post('/save/expense',[ExpensesController::class, 'storeExpenses'])->name('save.expense');
+//     // Route::get('/reports/form',[ReportsController::class, 'getReportsForm'])->name('reports.form');
+//     // Route::get('/reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
+//     // Route::get('/reports/form/academic',[ReportsController::class, 'getAcademicReportsForm'])->name('academic.reportsform');
+//     // Route::get('/report/academmic',[ReportsController::class, 'generateAcademicReport'])->name('getacademic.reports');
+//     // Route::get('/teacher/form', [ReportsController::class, 'teachersForm'])->name('teacherreport.form');
+//     // Route::get('/report/teacher',[ReportsController::class,'generateForm'])->name('teacher.report');
+//     // Route::get('payements/report/form', [ReportsController::class,'getPaymentReportForm'])->name('payments.form');
+//     // Route::get('/payment/report', [ReportsController::class, 'generatePaymentReport'])->name('payment.report');
+//     // // Route::resource('student', 'StudentController');
+//     // Route::get('/expenses/reports/form',[ExpensesController::class, 'getExpensesReportsForm'])->name('form.expenses');
+//     // Route::get('/get/expenses/report', [ExpensesController::class, 'generateExpensesReport'])->name('generate.expensesreport');
+//     // Route::get('/get/balance/form', [ReportsController::class, 'getBalanceForm'])->name('get.balanceform');
+//     // Route::post('/calculate/balance', [ReportsController::class, 'calculateBalanceTotal'])->name('calculate.balance'); 
+// });
 
 Route::group(['middleware' => ['auth','role:Teacher']], function () 
 {
@@ -328,23 +331,6 @@ Route::group(['middleware' => ['auth','role:Student']], function () {
     Route::get('/evalaute/lecturers/form',[StudentController::class, 'lecturerEvaluationForm'])->name('evaluate.lecturersform');
     Route::post('/submit/evaluation',[StudentController::class, 'evaluateLecturer'])->name('submit.evaluation');
     // Route::get('/school/fees',[FeesController::class, 'schoolFees'])->name('schoolfees.index');                 
-});
-
-
-Route::group(['middleware' => ['auth','role:Supervisor']], function () {
-    Route::get('/show/inventory', [InventoryController::class, 'index'])->name('view.inventory');
-    Route::get('/add/stock/item', [InventoryController::class, 'create'])->name('addstock.form');
-    Route::post('/store/stock/item', [InventoryController::class, 'store'])->name('store.stockitem');
-    Route::get('/edit/stock/item/{id}', [InventoryController::class, 'edit'])->name('edit.stockitemform');
-    Route::put('/update/stock/item/{id}', [InventoryController::class, 'update'])->name('update.stock');
-    Route::delete('delete/stock/{id}',[InventoryController::class, 'delete'])->name('delete.stockitem');
-    Route::get('/inventory/stockin/form/{id}', [InventoryController::class, 'stockInForm'])->name('stockin.form');
-    Route::post('/save/stockin/{id}', [InventoryController::class, 'saveStockIn'])->name('save.stockin');
-    Route::get('/inventory/stockout/form/{id}', [InventoryController::class, 'stockOutForm'])->name('stockout.form');
-    Route::post('/save/stockout/{id}', [InventoryController::class, 'saveStockOut'])->name('save.stockout');
-    Route::get('/inventory/transaction/list/{id}',[InventoryController::class, 'stockTransactionList'])->name('stock.transactionlist');
-    Route::get('/generate/stock/purchase/slip',[InventoryController::class, 'generateStockPurchaseSlip'])->name('generate.stockpurchaseslip');
-
 });
 
 

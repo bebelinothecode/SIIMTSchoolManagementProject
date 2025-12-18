@@ -25,24 +25,21 @@
             <form action="{{ route('inventory.report') }}" method="POST" class="w-full max-w-xl px-6 py-12" enctype="multipart/form-data" target="_blank">
                 @csrf
 
-                <!-- Transaction Category -->
+                <!-- Item -->
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Transaction Category
+                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="item_id">
+                            Item
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <select name="category"
-                            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded
-                            leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            id="bought_forms">
-                            <option value="">-- Select answer --</option>
-                            <option value="Stock In">Stock In</option>
-                            <option value="Stock Out">Stock Out</option>
-                            <option value="Total">Total</option>
+                        <select name="item_id" id="item_id" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            <option value=""></option>
+                            @foreach($stocks as $stock)
+                                <option value="{{ $stock->id }}" {{ old('item_id') == $stock->id ? 'selected' : '' }}>{{ $stock->stock_name }}</option>
+                            @endforeach
                         </select>
-                        @error('category')
+                        @error('item_id')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
@@ -102,35 +99,30 @@
                     </div>
                 </div>
 
-                <!-- ✅ Current State Toggle -->
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Current State
-                        </label>
-                    </div>
-                    <div class="md:w-2/3 flex items-center space-x-3">
-                        <label for="current_state" class="flex items-center cursor-pointer">
-                            <div class="relative">
-                                <input type="checkbox" id="current_state" name="current_state" value="1" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-all duration-300"></div>
-                                <div class="absolute left-0 top-0.5 bg-white w-5 h-5 rounded-full transition-all duration-300 peer-checked:translate-x-full"></div>
-                            </div>
-                            <span class="ml-3 text-gray-700 text-sm font-semibold" id="state_label">Inactive</span>
-                        </label>
-                    </div>
-                </div>
-
                 <!-- Submit -->
-                <div class="md:flex md:items-center">
-                    <div class="md:w-1/3"></div>
-                    <div class="md:w-2/3">
-                        <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none
-                            text-white font-bold py-2 px-4 rounded" type="submit">
-                            Save Enquiry
-                        </button>
-                    </div>
+             <div class="md:flex md:items-center">
+                <div class="md:w-1/3"></div>
+
+                <div class="md:w-2/3 flex items-center space-x-3">
+                    <button
+                        class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none
+                        text-white font-bold py-2 px-4 rounded"
+                        type="submit">
+                        Generate Report
+                    </button>
+
+                    <button
+                        class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none
+                        text-white font-bold py-2 px-4 rounded"
+                        type="submit"
+                        formaction="{{ route('inventory.report.detailed') }}"
+                        formmethod="POST"
+                        formtarget="_blank">
+                        Generate Detailed Report
+                    </button>
                 </div>
+            </div>
+
             </form>
 
             <!-- SweetAlert Notifications -->
@@ -158,14 +150,26 @@
         </div>
     </div>
 
-    <!-- Script for toggle label -->
+    <!-- Select2 Styles & Scripts -->
+    {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
+
+    <!-- Initialize Select2 -->
+    @push('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkbox = document.getElementById('current_state');
-            const label = document.getElementById('state_label');
-            checkbox.addEventListener('change', function() {
-                label.textContent = this.checked ? 'Active' : 'Inactive';
-            });
+    $(document).ready(function() {
+        $('#item_id').select2({
+            placeholder:  "-- Select Item --",
+            allowClear: true,
+            width: '100%'
         });
-    </script>
+    });
+</script>
+        
+    @endpush
+   
+
 @endsection

@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sessionsDiv.classList.remove('hidden');
             // Add required and enable session inputs
             document.querySelectorAll('input[name^="num_of_sessions"]').forEach(input => {
-                // input.setAttribute('required', 'required');
+                input.setAttribute('required', 'required');
                 input.removeAttribute('disabled');
             });
         } else {

@@ -1193,17 +1193,7 @@
             <span class="ml-2 text-sm font-semibold">Inventory</span>
         </a> --}}
 
-        <!-- @role('Supervisor')
-            <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
-            <svg class="h-4 w-4 fill-current" aria-hidden="true" focusable="false"
-                data-prefix="fas" data-icon="boxes-stacked"
-                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img">
-                <path fill="currentColor"
-                    d="M160 0H32C14.33 0 0 14.33 0 32V160c0 17.67 14.33 32 32 32H160c17.67 0 32-14.33 32-32V32C192 14.33 177.7 0 160 0zM160 352H32C14.33 352 0 366.3 0 384V480c0 17.67 14.33 32 32 32H160c17.67 0 32-14.33 32-32V384C192 366.3 177.7 352 160 352zM480 0H352C334.3 0 320 14.33 320 32V160c0 17.67 14.33 32 32 32H480c17.67 0 32-14.33 32-32V32C512 14.33 497.7 0 480 0zM480 352H352C334.3 352 320 366.3 320 384V480c0 17.67 14.33 32 32 32H480c17.67 0 32-14.33 32-32V384C512 366.3 497.7 352 480 352z"/>
-            </svg>
-            <span class="ml-2 text-sm font-semibold">Inventory</span>
-        </a>
-        @endrole -->
+        
 
         @role('Student')
             <div>
@@ -1280,7 +1270,7 @@
             </script>
         @endrole
         @role('Supervisor')
-        <a href="{{ route('view.inventory') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
+        <a href="{{ route('view.inventory.admin') }}" class="flex items-center text-gray-600 py-2 hover:text-blue-700">
             <svg class="h-4 w-4 fill-current" aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                 <path fill="currentColor"

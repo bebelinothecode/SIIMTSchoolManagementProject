@@ -16,7 +16,7 @@
         </a>
     </div>
 
-    <form action="{{ route('view.inventory') }}" method="GET" class="flex items-center mt-4 space-x-4">
+    <form action="{{ route('view.inventory.admin') }}" method="GET" class="flex items-center mt-4 space-x-4">
         <input 
             type="text" 
             name="search" 
