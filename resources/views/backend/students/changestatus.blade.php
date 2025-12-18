@@ -31,6 +31,7 @@
                             <select name="student_defer" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                                 <option value="">--Select Status--</option>
                                 <option value="defer">Defer</option>
+                                <option value="active">Active</option>
                                 <option value="Completed">Completed</option>
                                 <!-- <option value="">--Select Parent--</option>
                                 <option value="">--Select Parent--</option> -->

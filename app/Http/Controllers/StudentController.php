@@ -1161,9 +1161,9 @@ class StudentController extends Controller
     // }
 
     public function changeStudentsStatus(Request $request, $id)
-    {
+    {   
         $validatedData = $request->validate([
-            'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed'
+            'student_defer' => 'required|string|in:defer,withdrawn,expelled,Completed,active'
         ]);
 
         try {
@@ -1184,6 +1184,10 @@ class StudentController extends Controller
                     $student->status = 'Completed';
                     $student->save();
                     return redirect()->back()->with('success', 'Student status updated to Completed successfully');
+                case 'active':
+                    $student->status = 'active';
+                    $student->save();
+                    return redirect()->back()->with('success', 'Student status updated to active successfully');
 
                 case 'withdrawn':
                     $student->status = 'Withdrawn';

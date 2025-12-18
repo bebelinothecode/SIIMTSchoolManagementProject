@@ -361,6 +361,9 @@ class ReportsController extends Controller
             $feeTransactionsQuery->where('fees_type', $feesType);
         }
 
+        // Add orderBy clause to sort transactions in descending order
+        $feeTransactionsQuery->orderBy('created_at', 'desc');
+
         $feeTransactions = $feeTransactionsQuery->get();
 
         // ✅ Step 5: Totals per method
@@ -1196,4 +1199,3 @@ DECIMAL(10,2))')) ?? 0;
 
 
 }
-
